@@ -25,17 +25,12 @@ void setup() {
   tft.setTextSize(2);
   tft.println("I can has colors?");
 
-
-  delay (500);
-
   tft.fillScreen(0x00); // PONGO LA PANTALLA EN NEGRO COMO PARA CLEREAR EL DISPLAY
-  
 
   tft.setCursor(26, 120);
   tft.setTextColor(ILI9341_RED);
   tft.setTextSize(3);
   tft.println("Prendiendo");
-
 
   tft.setCursor(20, 160);
   tft.setTextColor(ILI9341_BLUE);
