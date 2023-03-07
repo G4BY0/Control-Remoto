@@ -1,8 +1,10 @@
-#include <Arduino.h>
+// DESARROLLADO POR MELVIN GABY Y JOACO
+
 #include <SPI.h>
 #include <SD.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
+
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -10,7 +12,7 @@
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(9600);
 
   tft.begin();
@@ -57,9 +59,45 @@ void setup() {
   tft.setTextSize(1);
   tft.println("Melvin Schwartzbart");
 
+  
+  
+
 
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop() { 
+
+  if(SD.begin()){
+
+    Serial.println("Memoria SD detectada");
+
+    tft.setCursor(70, 20);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(1);
+    tft.println("Memoria SD detectada");
+
+    Serial.println("  Crear Perfil");
+    
+    if(!Serial.available()){
+
+
+    }
+    //LUEGO AGREGAR SI QUIERO BORRAR UN PERFIL
+
+
+
+  }
+  else {
+
+    Serial.println("Ingrese memoria SD");
+
+    tft.setCursor(70, 20);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(1);
+    tft.println("Ingrese memoria SD");
+
+  }
+
+
+
 }
