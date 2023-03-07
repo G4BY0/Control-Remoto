@@ -1,5 +1,5 @@
 // DESARROLLADO POR MELVIN GABY Y JOACO
-
+/*
 #include <SPI.h>
 #include <SD.h>
 #include <Adafruit_GFX.h>
@@ -101,3 +101,5 @@ void loop() {
 
 
 }
+
+*/

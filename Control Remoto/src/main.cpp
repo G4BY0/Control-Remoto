@@ -61,5 +61,37 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  
+if(SD.begin()){
+
+  Serial.println("Memoria SD detectada");
+
+  tft.setCursor(70, 20);
+  tft.setTextColor(ILI9341_RED);
+  tft.setTextSize(1);
+  tft.println("Memoria SD detectada");
+
+  Serial.println("  Crear Perfil");
+    
+  if(!Serial.available()){
+
+
+  }
+  //LUEGO AGREGAR SI QUIERO BORRAR UN PERFIL
+
+
+
+  }
+  else {
+
+    Serial.println("Ingrese memoria SD");
+
+    tft.setCursor(70, 20);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(1);
+    tft.println("Ingrese memoria SD");
+
+  }
+
+
 }
