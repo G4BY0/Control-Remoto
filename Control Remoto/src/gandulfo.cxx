@@ -1,8 +1,11 @@
+#include "gandulfo.h"
+
+
 namespace displayOutput{
   
-  void setup{
+  void Initializing{
 
-    .begin();
+    begin();
 
   }
 
@@ -10,10 +13,20 @@ namespace displayOutput{
     
     private:
     
-    sizeOfLetters = 3;
+    const int sizeOfLetters = 3;
+    
+    Adafruit_ILI9341 *outputTft;
 
     public:
-  
+
+    void Hub(Adafruit_ILI9341 outputTft_){
+
+      outputTft -> outputTft_;
+
+      outputTft.begin();
+
+    }
+
     void showProfiles(){
 
     
