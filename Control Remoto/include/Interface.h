@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_ILI9341.h>
 #include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -32,9 +33,12 @@ Adafruit_SSD1306 oled;
 
 public:
 
+    Adafruit_SSD1306 oled;
+
     void Display(Adafruit_SSD1306 oled_ptr);
       
 
+    void hub();
+
 };
 
-class 
