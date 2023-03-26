@@ -1,55 +1,43 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SH110X.h>
 
-// OLED FeatherWing buttons map to different pins depending on board.
-// The I2C (Wire) bus may also be different.
+Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
+
+// OLED FeatherWing buttons map to different pins depending on board:
 #if defined(ESP8266)
   #define BUTTON_A  0
   #define BUTTON_B 16
   #define BUTTON_C  2
-  #define WIRE Wire
-#elif defined(ESP32)
+#elif defined(ESP32) && !defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2)
   #define BUTTON_A 15
   #define BUTTON_B 32
   #define BUTTON_C 14
-  #define WIRE Wire
 #elif defined(ARDUINO_STM32_FEATHER)
   #define BUTTON_A PA15
   #define BUTTON_B PC7
   #define BUTTON_C PC5
-  #define WIRE Wire
 #elif defined(TEENSYDUINO)
   #define BUTTON_A  4
   #define BUTTON_B  3
   #define BUTTON_C  8
-  #define WIRE Wire
-#elif defined(ARDUINO_FEATHER52832)
+#elif defined(ARDUINO_NRF52832_FEATHER)
   #define BUTTON_A 31
   #define BUTTON_B 30
   #define BUTTON_C 27
-  #define WIRE Wire
-#elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040)
-  #define BUTTON_A  9
-  #define BUTTON_B  8
-  #define BUTTON_C  7
-  #define WIRE Wire1
-#else // 32u4, M0, M4, nrf52840 and 328p
+#else // 32u4, M0, M4, nrf52840, esp32-s2 and 328p
   #define BUTTON_A  9
   #define BUTTON_B  6
   #define BUTTON_C  5
-  #define WIRE Wire
 #endif
 
-Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &WIRE);
-
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
-  Serial.println("OLED FeatherWing test");
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Address 0x3C for 128x32
+  Serial.println("128x64 OLED FeatherWing test");
+  delay(250); // wait for the OLED to power up
+  display.begin(0x3C, true); // Address 0x3C default
 
   Serial.println("OLED begun");
 
@@ -63,7 +51,8 @@ void setup() {
   display.clearDisplay();
   display.display();
 
-  Serial.println("IO test");
+  display.setRotation(1);
+  Serial.println("Button test");
 
   pinMode(BUTTON_A, INPUT_PULLUP);
   pinMode(BUTTON_B, INPUT_PULLUP);
@@ -71,13 +60,12 @@ void setup() {
 
   // text display tests
   display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
+  display.setTextColor(SH110X_WHITE);
   display.setCursor(0,0);
   display.print("Connecting to SSID\n'adafruit':");
   display.print("connected!");
   display.println("IP: 10.0.1.23");
   display.println("Sending val #0");
-  display.setCursor(0,0);
   display.display(); // actually display all of the above
 }
 
