@@ -2,43 +2,76 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_ILI9341.h>
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SH110X.h>
+#include "PIN.h" 
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+/* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
+#define I2C_ADDRESS     0x3c //initialize with the I2C addr 0x3C Typically eBay OLED's
+//#define i2c_Address 0x3d //initialize with the I2C addr 0x3D Typically Adafruit OLED's
 
-/*********************************************************************************************
-    Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-    The pins for I2C are defined by the Wire-library. 
-    On an arduino UNO:       A4(SDA), A5(SCL)
-    On an arduino MEGA 2560: 20(SDA), 21(SCL)
-    On an arduino LEONARDO:   2(SDA),  3(SCL), ...
-********************************************************************************************/
+#define SCREEN_WIDTH    128 // OLED display width, in pixels
+#define SCREEN_HEIGHT   64 // OLED display height, in pixels
+#define OLED_RESET      -1   //   QT-PY / XIAO
 
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
+#define TRUE_PULLUP     0x0;
+#define TRUE_PULLDOWN   0x1;
+#define FALSE_PULLUP    0x1;
+#define FALSE_PULLDOWN  0x0;
 
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+//--------HUB---------------
+#define LINE1_X 10
+#define LINE1_Y 10
+#define LINE2_X 10
+#define LINE2_Y 30  
+#define LINE3_X 10
+#define LINE3_Y 50  
+//-------------------------
+
+bool FLAG_CURSOR_UP;
+bool FLAG_CURSOR_DOWN;
+bool FLAG_CURSOR_LEFT;
+bool FLAG_CURSOR_RIGHT;
+bool FLAG_CURSOR_BACK;
+bool FLAG_CURSOR_ENTER;
 
 
-/*!
-    @brief clase que toma direccion de memoria del objeto del OLED y lleva a cabo la salida grafica
+
+
+inline bool buttonState();
+Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+/*! @brief Cursor que se desplaza a traves del display
+
+    @param  AMOUNT_OF_OPTIONS
+            Cantidad de opciones que puede llegar a desplazarse
+
 */
-class Display {
 
-protected:
+class Cursor{
 
-Adafruit_SSD1306 oled;
+private:
 
-public:
+  int AMOUNT_OF_OPTIONS;
 
-    Adafruit_SSD1306 oled;
+public:  
 
-    void Display(Adafruit_SSD1306 oled_ptr);
-      
+  Cursor(const int AMOUNT_OF_OPTIONS__);
 
-    void hub();
+  void Options(void);
 
 };
+
+
+class Display {
+
+public:
+  
+  void begin();
+
+  void hub();
+
+};
+
+
+
 

@@ -1,27 +1,83 @@
 #include "Interface.h"
 
-class Display {
 
+inline bool buttonState(const uint8_t PIN_BUTTON) { 
+  return (digitalRead(PIN_BUTTON)); 
+}
+    
+Cursor::Cursor(const int AMOUNT_OF_OPTIONS__){
 
-public:
+  this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
 
-    void Display(Adafruit_SSD1306 oled_ptr){
-        
-        this->oled = oled_ptr;
-        oled.begin(SSD1306_SWITCHCAPVCC,0x3C);
-        oled.clearDisplay();
+}
 
-    }
+void Cursor::Options(void){
 
-    void hub(){
-        
-        oled.clearDisplay();
-        oled.setTextColor(ILI9341_WHITE);
-        //oled.setCursor(10,30);
-        //oled.setTextSize(2);
-        //oled.print("");
-        oled.display();
+  while(FLAG_CURSOR_ENTER == false){
+
+    if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN){
+
+      FLAG_CURSOR_DOWN = true;
 
     }
 
-};
+    else if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN){
+        
+      FLAG_CURSOR_UP = true;
+
+    }
+
+    else if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) {
+        
+      FLAG_CURSOR_ENTER = true;
+        
+    }
+    
+  }
+
+}
+
+void Display::begin(){
+
+  pinMode(PIN::Buttons::UP,     INPUT);
+  pinMode(PIN::Buttons::DOWN,   INPUT);
+  pinMode(PIN::Buttons::LEFT ,  INPUT);
+  pinMode(PIN::Buttons::RIGHT , INPUT);
+  pinMode(PIN::Buttons::BACK ,  INPUT);
+  pinMode(PIN::Buttons::ENTER,  INPUT);
+
+  FLAG_CURSOR_ENTER = false;
+  FLAG_CURSOR_BACK  = false;
+  FLAG_CURSOR_UP    = false;
+  FLAG_CURSOR_DOWN  = false;
+  FLAG_CURSOR_LEFT  = false;
+  FLAG_CURSOR_RIGHT = false;
+
+}
+
+void Display::hub(){
+        
+  display.clearDisplay();
+
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  
+  display.setCursor(LINE1_X,LINE1_Y);
+  display.print    ("  PROFILES"   );
+
+  display.setCursor(LINE2_X,LINE2_Y);
+  display.print    ("  ADD PROFILE");
+
+  display.setCursor(LINE3_X,LINE3_Y);
+  display.print    ("  DELETE PROFILE");
+
+  display.display();
+
+  Cursor cursor(3);
+
+  
+  
+
+}
+
+
