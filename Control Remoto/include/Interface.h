@@ -37,7 +37,7 @@ bool FLAG_CURSOR_ENTER;
 
 
 
-inline bool buttonState();
+inline bool buttonState(const uint8_t PIN_BUTTON);
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 /*! @brief Cursor que se desplaza a traves del display
@@ -66,9 +66,9 @@ class Display {
 
 public:
   
-  void begin();
+  void begin(void);
 
-  void hub();
+  void hub(void);
 
 };
 

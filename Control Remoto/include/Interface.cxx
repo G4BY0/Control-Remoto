@@ -37,7 +37,7 @@ void Cursor::Options(void){
 
 }
 
-void Display::begin(){
+void Display::begin(void){
 
   pinMode(PIN::Buttons::UP,     INPUT);
   pinMode(PIN::Buttons::DOWN,   INPUT);
@@ -55,7 +55,7 @@ void Display::begin(){
 
 }
 
-void Display::hub(){
+void Display::hub(void){
         
   display.clearDisplay();
 
