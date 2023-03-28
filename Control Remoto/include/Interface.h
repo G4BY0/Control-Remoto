@@ -19,12 +19,11 @@
 #define FALSE_PULLDOWN  0x0;
 
 
-#define LINE1_X 10  // COORDENADAS DE LINEA EN EL HUB
-#define LINE1_Y 10  // COORDENADAS DE LINEA EN EL HUB
-#define LINE2_X 10  // COORDENADAS DE LINEA EN EL HUB
-#define LINE2_Y 30  // COORDENADAS DE LINEA EN EL HUB
-#define LINE3_X 10  // COORDENADAS DE LINEA EN EL HUB
-#define LINE3_Y 50  // COORDENADAS DE LINEA EN EL HUB
+
+const uint8_t LINEX_COMMON = 10; // COORDENADA COMUN DE LINEA EN EL HUB, EJE X
+
+const uint8_t LINEY[3] = {10, 30, 50}; // COORDENADAS DE LINEA EN EL HUB, EJE Y
+
 
 
 bool FLAG_CURSOR_UP;    //FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA ARRIBA
@@ -49,9 +48,9 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
 class Cursor{
 
 private:
-
-  int AMOUNT_OF_OPTIONS;
-
+  const char CURSOR_DRAW = '>';
+  uint8_t AMOUNT_OF_OPTIONS;
+  uint8_t cordexCursorY(void);
 public:  
 /*!  @param  AMOUNT_OF_OPTIONS
      Cantidad de opciones que puede llegar a desplazarse

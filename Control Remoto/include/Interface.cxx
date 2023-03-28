@@ -5,6 +5,18 @@ inline bool buttonState(const uint8_t PIN_BUTTON) {
   return (digitalRead(PIN_BUTTON)); 
 }
 
+uint8_t Cursor::cordexCursorY(void){                                
+
+  if(FLAG_CURSOR_DOWN == true){
+
+    FLAG_CURSOR_DOWN == false;
+    
+
+
+  }
+
+}
+
 Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__, const uint16_t COORDENADA_CURSOR_X){
 
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
@@ -41,8 +53,9 @@ void Cursor::Options(void){
         
     }
     
-    display.setCursor();
-    
+    display.setCursor(LINEX_COMMON, LINEY[moving]);
+    display.print(CURSOR_DRAW);
+    display.fillRect();
   }
 
 }
@@ -79,13 +92,13 @@ void Display::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
-  display.setCursor(LINE1_X,LINE1_Y);
+  display.setCursor(LINEX_COMMON,LINEY[0]);
   display.print    ("  PROFILES"   );
 
-  display.setCursor(LINE2_X,LINE2_Y);
+  display.setCursor(LINEX_COMMON,LINEY[1]);
   display.print    ("  ADD PROFILE");
 
-  display.setCursor(LINE3_X,LINE3_Y);
+  display.setCursor(LINEX_COMMON,LINEY[2]);
   display.print    ("  DELETE PROFILE");
 
   display.display();
