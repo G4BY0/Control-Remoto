@@ -18,21 +18,21 @@
 #define FALSE_PULLUP    0x1;
 #define FALSE_PULLDOWN  0x0;
 
-//--------HUB---------------
-#define LINE1_X 10
-#define LINE1_Y 10
-#define LINE2_X 10
-#define LINE2_Y 30  
-#define LINE3_X 10
-#define LINE3_Y 50  
-//-------------------------
 
-bool FLAG_CURSOR_UP;
-bool FLAG_CURSOR_DOWN;
-bool FLAG_CURSOR_LEFT;
-bool FLAG_CURSOR_RIGHT;
-bool FLAG_CURSOR_BACK;
-bool FLAG_CURSOR_ENTER;
+#define LINE1_X 10  // COORDENADAS DE LINEA EN EL HUB
+#define LINE1_Y 10  // COORDENADAS DE LINEA EN EL HUB
+#define LINE2_X 10  // COORDENADAS DE LINEA EN EL HUB
+#define LINE2_Y 30  // COORDENADAS DE LINEA EN EL HUB
+#define LINE3_X 10  // COORDENADAS DE LINEA EN EL HUB
+#define LINE3_Y 50  // COORDENADAS DE LINEA EN EL HUB
+
+
+bool FLAG_CURSOR_UP;    //FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA ARRIBA
+bool FLAG_CURSOR_DOWN;  //FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA ABAJO
+bool FLAG_CURSOR_LEFT;  //FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA LA IZQUIERDA
+bool FLAG_CURSOR_RIGHT; //FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA LA DERECHA
+bool FLAG_CURSOR_BACK;  //FLAG PARA SENIALIZAR QUE EL CURSOR SALIO DEL MENU
+bool FLAG_CURSOR_ENTER; //FLAG PARA SENIALIZAR QUE EL CURSOR SELECCIONO
 
 
 
@@ -46,7 +46,6 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
             Cantidad de opciones que puede llegar a desplazarse
 
 */
-
 class Cursor{
 
 private:
@@ -54,10 +53,19 @@ private:
   int AMOUNT_OF_OPTIONS;
 
 public:  
-
-  Cursor(const int AMOUNT_OF_OPTIONS__);
+/*!  @param  AMOUNT_OF_OPTIONS
+     Cantidad de opciones que puede llegar a desplazarse
+     @param COORDENADA_CURSOR_X
+     Es la coordenada en la que el puntero se va a desplazar por el display
+     @note Si es para usar como cursor para crear un perfil o subperfil,
+     se usa el constructor que no recibe parametros
+*/
+  Cursor(const uint8_t AMOUNT_OF_OPTIONS__, const uint16_t COORDENADA_CURSOR_X);
+  Cursor(void);
 
   void Options(void);
+
+  void Writer_ptr(void);
 
 };
 

@@ -4,25 +4,33 @@
 inline bool buttonState(const uint8_t PIN_BUTTON) { 
   return (digitalRead(PIN_BUTTON)); 
 }
-    
-Cursor::Cursor(const int AMOUNT_OF_OPTIONS__){
+
+Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__, const uint16_t COORDENADA_CURSOR_X){
 
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
 
 }
 
-void Cursor::Options(void){
 
+void Cursor::Options(void){
+  
+  int moving = 0;
   while(FLAG_CURSOR_ENTER == false){
 
     if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN){
-
+      if(moving = AMOUNT_OF_OPTIONS)
+        moving = 0;
+      else
+        moving++;
       FLAG_CURSOR_DOWN = true;
-
+      
     }
 
     else if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN){
-        
+      if(moving = 0)
+        moving = AMOUNT_OF_OPTIONS;
+      else
+        moving--;
       FLAG_CURSOR_UP = true;
 
     }
@@ -33,7 +41,16 @@ void Cursor::Options(void){
         
     }
     
+    display.setCursor();
+    
   }
+
+}
+
+void Cursor::Writer_ptr(void){
+
+
+
 
 }
 
