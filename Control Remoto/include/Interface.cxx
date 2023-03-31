@@ -17,7 +17,7 @@ uint8_t Cursor::cordexCursorY(void){
 
 }
 
-Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__, const uint16_t COORDENADA_CURSOR_X){
+Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){
 
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
 
