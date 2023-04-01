@@ -32,11 +32,16 @@
 
 ********************************************************************************************************************************************/
 
+
+#ifndef PIN_H
+#define PIN_H
+
+
 namespace PIN{
   
   namespace Display{
 
-    const uint8_t SDA  = A4;
+    const uint8_t SDA    = A4;
     const uint8_t SDL    = A5;
 
   };
@@ -65,3 +70,5 @@ namespace PIN{
   };
 
 };
+
+#endif

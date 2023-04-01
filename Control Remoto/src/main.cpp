@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "Interface.h"
 
 
@@ -15,9 +16,9 @@ void setup(){
     
     Serial.begin(9600);
 
-    display.begin(I2C_ADDRESS, true);
-    display.display();
-    display.clearDisplay();
+    displayBegin();
+
+    
 
     
 
@@ -26,7 +27,13 @@ void setup(){
 
 void loop(){
 
+    switch (Interface::hub()){
 
+        case MODE::PROFILES:         Interface::profiles(void);
+        case MODE::ADDPROFILE:       Interface::addProfile(void);
+        case MODE::DELETEPROFILE:    Interface::deleteProfile(void);
+
+    }
 
 
 

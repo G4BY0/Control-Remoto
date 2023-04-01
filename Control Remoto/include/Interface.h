@@ -1,9 +1,32 @@
+/********************************************************************************************************************************************************
+  -INTERFAZ GRAFICA DEL DISPLAY
+  -INICIALIZACIONES
+  -MENUS
+  -CURSOR DEL USUARIO
+  
+*********************************************************************************************************************************************************/
+
+
+#ifndef INTERFACE_H 
+#define INTERFACE_H
+ 
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 #include "PIN.h"
+
+#define INFINITE_LOOPING 0x1
+#define SYSTEM_STRING_ERROR "SystemError"
+
+#define MODE_HUB "Hub"
+#define MODE_PROFILES "Profiles"
+#define MODE_ADDPROFILE "addProfile"
+#define MODE_DELETEPROFILE "deleteProfile"
+
+const enum MODE{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define I2C_ADDRESS 0x3c // initialize with the I2C addr 0x3C Typically eBay OLED's
@@ -13,62 +36,66 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define OLED_RESET -1    //   QT-PY / XIAO
 
+
+#define BUTTON_BACK_PRESSED 0x0
+
 #define TRUE_PULLUP 0x0;
 #define TRUE_PULLDOWN 0x1;
 #define FALSE_PULLUP 0x1;
 #define FALSE_PULLDOWN 0x0;
 
-const uint8_t LINEX_COMMON = 10; // COORDENADA COMUN DE LINEA EN EL HUB, EJE X
+#define SPACE_FOR_PUSSYS _
+#define LINE_STRING_X 20
 
-const uint8_t LINEY[3] = {10, 30, 50}; // COORDENADAS DE LINEA EN EL HUB, EJE Y
+const uint8_t LINE_STRING_Y[] = {10,20,50};
 
-bool FLAG_CURSOR_UP;    // FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA ARRIBA
-bool FLAG_CURSOR_DOWN;  // FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA ABAJO
-bool FLAG_CURSOR_LEFT;  // FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA LA IZQUIERDA
-bool FLAG_CURSOR_RIGHT; // FLAG PARA SENIALIZAR MOVIMIENTO DEL CURSOR HACIA LA DERECHA
-bool FLAG_CURSOR_BACK;  // FLAG PARA SENIALIZAR QUE EL CURSOR SALIO DEL MENU
-bool FLAG_CURSOR_ENTER; // FLAG PARA SENIALIZAR QUE EL CURSOR SELECCIONO
+void buttonsBegin(void);
 
 inline bool buttonState(const uint8_t PIN_BUTTON);
+
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-/*! @brief Cursor que se desplaza a traves del display
-
-    @param  AMOUNT_OF_OPTIONS
-            Cantidad de opciones que puede llegar a desplazarse
-
-*/
+/*! @brief Cursor que se desplaza a traves del display  */
 class Cursor
 {
 
 private:
-  const char CURSOR_DRAW = '>';
-  const char CURSOR_DRAW_DELETE = 'X';
-
+  const uint8_t LINE_CURSOR_X = 10;
+  const char CURSOR_CHARACTER = '>';
+  const char CURSOR_CHARACTER_DELETE = 'X';
+  
   uint8_t AMOUNT_OF_OPTIONS;
-  uint8_t cordexCursorY(void);
 
 public:
-  /*!  @param  AMOUNT_OF_OPTIONS
-       Cantidad de opciones que puede llegar a desplazarse
-       @param COORDENADA_CURSOR_X
-       Es la coordenada en la que el puntero se va a desplazar por el display
-       @note Si es para usar como cursor para crear un perfil o subperfil,
-       se usa el constructor que no recibe parametros
+  /*! @param  AMOUNT_OF_OPTIONS
+      Cantidad de opciones que puede desplazarse el cursor
+      @note Constructor para uso de desplazamiento de opciones
   */
   Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
-  Cursor(void); // Constructor para escritura de cadenas de caracteres (nombres de perfiles y subperfiles)
+  /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
+  Cursor(void);
+  /*! @brief Cursor funcional con sus respectivos pulsadores
+      @return el numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
+  const int8_t options(void);
 
-  void Options(void);
-
-  void Writer_ptr(void);
+  const char* Writer_ptr(void);
 };
 
-class Display
+
+void displayBegin(void);
+
+namespace Interface
 {
 
-public:
-  void begin(void);
+  const enum hub(void);
 
-  void hub(void);
+  const enum profiles(void);
+
+  const enum addProfile(void);
+
+  const enum deleteProfile(void);
+
 };
+
+
+#endif
