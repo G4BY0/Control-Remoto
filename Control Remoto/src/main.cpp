@@ -40,7 +40,11 @@ void profile__(void){
     }
     else{ //DEFINITIVAMENTE QUE SI NO ES EQUIVALENTE A BACK, ES ENTER
 
-        /*showPorofiles*/
+        showProfiles(void){
+
+            
+
+        }
 
     }
 
@@ -69,5 +73,14 @@ void hub__(void){
         case MODE::DELETEPROFILE:    Interface::deleteProfile(void);
 
     }
+
+}
+
+void showProfiles(void){
+
+    root.openRoot(volume);
+
+    // list all files in the card with date and size
+    root.ls(LS_R | LS_DATE | LS_SIZE);
 
 }
