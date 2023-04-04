@@ -30,8 +30,8 @@ const int8_t Cursor::options(void){
   while(INFINITE_LOOPING){
 
     if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN) {
-      if(moving = 1) {
-        moving = AMOUNT_OF_OPTIONS; // HACE OVERFLOW DE OPCIONES
+      if(moving = AMOUNT_OF_OPTIONS) {
+        moving = 1; // HACE OVERFLOW DE OPCIONES
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[3]); // POSICION DEL CURSOR UN INSTANTE ANTES
         display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
@@ -67,7 +67,7 @@ const int8_t Cursor::options(void){
     }
 
     else if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) { return(moving);              }
-    else if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN)  { return(BUTTON_BACK_PRESSED); }
+    else if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN)  { return(BUTTON_PRESSED::BACK); }
 
   }
 
@@ -116,13 +116,13 @@ const enum MODE Interface::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[1]);
+  display.setCursor(LINE_STRING_X,LINE_STRING_Y[0]);
   display.print    ("  PROFILES"   );
 
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[2]);
+  display.setCursor(LINE_STRING_X,LINE_STRING_Y[1]);
   display.print    ("  ADD PROFILE");
 
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[3]);
+  display.setCursor(LINE_STRING_X,LINE_STRING_Y[2]);
   display.print    ("  DELETE PROFILE");
 
   display.display();
@@ -151,16 +151,17 @@ const enum MODE Interface::hub(void){
 
 const enum MODE Interface::profiles(void){
 
-  
 
 }
 
 const enum MODE Interface::addProfile(void){
 
 
+
 }
 
 const enum MODE Interface::deleteProfile(void){
+
 
 
 }

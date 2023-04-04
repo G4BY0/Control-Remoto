@@ -33,6 +33,8 @@
 
 const enum MODE{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 
+const enum BUTTON_PRESSED{ ENTER, BACK };
+
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define I2C_ADDRESS 0x3c // initialize with the I2C addr 0x3C Typically eBay OLED's
 // #define i2c_Address 0x3d //initialize with the I2C addr 0x3D Typically Adafruit OLED's
