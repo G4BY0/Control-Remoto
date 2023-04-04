@@ -109,7 +109,7 @@ void displayBegin(void){
 
 }
 
-const enum Interface::hub(void){
+const enum MODE Interface::hub(void){
 
   display.clearDisplay();
 
@@ -149,8 +149,18 @@ const enum Interface::hub(void){
 
 }
 
-const enum Interface::profiles(void){}
+const enum MODE Interface::profiles(void){
 
-const enum Interface::addProfile(void){}
+  
 
-const enum Interface::deleteProfile(void){}
+}
+
+const enum MODE Interface::addProfile(void){
+
+
+}
+
+const enum MODE Interface::deleteProfile(void){
+
+
+}

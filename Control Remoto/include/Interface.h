@@ -4,6 +4,10 @@
   -MENUS
   -CURSOR DEL USUARIO
   
+  *********************************************************************************************************************
+  CORRECCIONES DE ERORRES DE LOS ENUM, FALTABA PONER EL TIPO DE ENUM QUE ERA. ES DECIR, Enum pedro{}; Estaba solo Enum
+  *********************************************************************************************************************
+
 *********************************************************************************************************************************************************/
 
 
@@ -16,6 +20,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
+#include <SD.h>
 #include "PIN.h"
 
 #define INFINITE_LOOPING 0x1
@@ -36,7 +41,6 @@ const enum MODE{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define OLED_RESET -1    //   QT-PY / XIAO
 
-
 #define BUTTON_BACK_PRESSED 0x0
 
 #define TRUE_PULLUP 0x0;
@@ -44,7 +48,7 @@ const enum MODE{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 #define FALSE_PULLUP 0x1;
 #define FALSE_PULLDOWN 0x0;
 
-#define SPACE_FOR_PUSSYS _
+#define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
 
 const uint8_t LINE_STRING_Y[] = {10,20,50};
@@ -87,13 +91,13 @@ void displayBegin(void);
 namespace Interface
 {
 
-  const enum hub(void);
+  const enum MODE hub(void);
 
-  const enum profiles(void);
+  const enum MODE profiles(void);
 
-  const enum addProfile(void);
+  const enum MODE addProfile(void);
 
-  const enum deleteProfile(void);
+  const enum MODE deleteProfile(void);
 
 };
 
