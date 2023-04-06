@@ -31,6 +31,23 @@ void MODE::hub__(void){
 
 }
 
+void MODE::profiles__(void){
+
+    Interface::profiles();
+
+}
+
+void MODE::addProfile__(void){
+
+    Interface::addProfile();
+
+}
+
+void MODE::deleteProfile__(void){
+
+    Interface::deleteProfile();
+
+}
 
 
 void setup(){
@@ -51,24 +68,6 @@ void setup(){
 void loop(){
 
     MODE::hub__();
-
-}
-
-void MODE::profiles__(void){
-
-    Interface::profiles();
-
-}
-
-void MODE::addProfile__(void){
-
-    Interface::addProfile();
-
-}
-
-void MODE::deleteProfile__(void){
-
-    Interface::deleteProfile();
 
 }
 

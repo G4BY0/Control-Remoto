@@ -69,6 +69,19 @@ namespace PIN{
 
   };
 
+  namespace SD_t{
+
+    // change this to match your SD shield or module;
+    // Arduino Ethernet shield: pin 4
+    // Adafruit SD shields and modules: pin 10
+    // Sparkfun SD shield: pin 8
+    // MKRZero SD: SDCARD_SS_PIN
+    const uint8_t chipSelect = 4;
+
+
+  }
+
+
 };
 
 #endif
