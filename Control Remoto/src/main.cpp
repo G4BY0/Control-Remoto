@@ -27,7 +27,6 @@ void MODE::hub__(void){
         case MODE_t::ADDPROFILE:       MODE::addProfile__();
         case MODE_t::DELETEPROFILE:    MODE::deleteProfile__();
 
-
     }
 
 }
@@ -44,6 +43,8 @@ void setup(){
 
     buttonsBegin();
 
+    SDBegin();
+    
 }
 
 
@@ -55,7 +56,7 @@ void loop(){
 
 void MODE::profiles__(void){
 
-    Interface::profiles();   
+    Interface::profiles();
 
 }
 

@@ -72,7 +72,7 @@ const int8_t Cursor::options(void){
 
 }
 
-const char* Cursor::Writer_ptr(void){
+const char* Cursor::writer_ptr(void){
   char* pointer;
   while(pointer != '\0') {
     /* DEVELOPING
@@ -159,7 +159,12 @@ const enum MODE_t Interface::profiles(void){
 
 const enum MODE_t Interface::addProfile(void){
 
+
   Cursor cursor();
+  String extension = ".txt";
+  //String name = cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
+  
+
 
 }
 

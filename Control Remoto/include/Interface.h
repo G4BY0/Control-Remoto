@@ -60,7 +60,7 @@ const uint8_t LINE_STRING_Y[] = {10,20,50};
 
 
 
-/*! @brief INICIALIZACION DE BOTONES COMO ENTRADA 
+/*! @brief Inicializacion de botonera
     @note Arduino por defecto establece como entrada los pines digitales*/
 void buttonsBegin(void);
 
@@ -96,11 +96,11 @@ public:
       @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
   const int8_t options(void);
 
-  const char* Writer_ptr(void);
+  const char* writer_ptr(void);
 
 };
 
-
+/*! @brief Inicializacion de display  */
 void displayBegin(void);
 
 namespace Interface {
@@ -112,8 +112,6 @@ namespace Interface {
   const enum MODE_t addProfile(void);
 
   const enum MODE_t deleteProfile(void);
-
-  void showProfiles(void);
 
 };
 
