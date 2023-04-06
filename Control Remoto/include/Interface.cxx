@@ -1,8 +1,7 @@
 #include "Interface.h"
 
-/*! @brief INICIALIZACION DE BOTONES COMO ENTRADA 
-    @note Arduino por defecto establece como entrada los pines digitales*/
-void buttonBegin(void){
+
+void buttonsBegin(void){
 
   pinMode(PIN::Buttons::UP,     INPUT);
   pinMode(PIN::Buttons::DOWN,   INPUT);
@@ -109,7 +108,10 @@ void displayBegin(void){
 
 }
 
-const enum MODE Interface::hub(void){
+
+
+
+const enum MODE_t Interface::hub(void){
 
   display.clearDisplay();
 
@@ -133,11 +135,11 @@ const enum MODE Interface::hub(void){
   
   case 0: // NO HACE NADA PORQUE NO SE PUEDE VOLVER PARA ATRAS EN EL HUB
 
-  case 1: return (MODE::PROFILES); 
+  case 1: return (MODE_t::PROFILES); 
 
-  case 2: return (MODE::ADDPROFILE); 
+  case 2: return (MODE_t::ADDPROFILE); 
 
-  case 3: return (MODE::DELETEPROFILE); 
+  case 3: return (MODE_t::DELETEPROFILE); 
 
   default: 
 
@@ -149,19 +151,24 @@ const enum MODE Interface::hub(void){
 
 }
 
-const enum MODE Interface::profiles(void){
-
-
-}
-
-const enum MODE Interface::addProfile(void){
-
-
+const enum MODE_t Interface::profiles(void){
+  
+  Profiles::showProfiles_();  // ESCRIBE EN EL SERIAL LOS DOCUMENTOS QUE SE ENCUENTRAN EN LA RAIZ
 
 }
 
-const enum MODE Interface::deleteProfile(void){
+const enum MODE_t Interface::addProfile(void){
 
-
+  Cursor cursor();
 
 }
+
+const enum MODE_t Interface::deleteProfile(void){
+
+  Profiles::showProfiles_();  // ESCRIBE EN EL SERIAL LOS DOCUMENTOS QUE SE ENCUENTRAN EN LA RAIZ
+  // if(/*PONER AQUI OPCIONES ONDA .txt que hay en el directorio*/ == 0){ Interface::nonProfiles() } else {continua} (DESARROLLAR IGUAL, HAY Q PENSARLO MAS A FONDO ESTA PARTE, PARA PODER VOLVER DIGO)
+  Cursor cursor(/*PONER AQUI OPCIONES ONDA .txt que hay en el directorio*/);
+
+}
+
+

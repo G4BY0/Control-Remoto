@@ -10,6 +10,30 @@ void checkFullInitialize_SD();
 
 *********************************************/
 
+namespace MODE{
+
+    void hub__(void);
+    void profiles__(void);
+    void addProfile__(void);
+    void deleteProfile__(void);
+    
+};
+
+void MODE::hub__(void){
+
+    switch (Interface::hub()){
+
+        case MODE_t::PROFILES:         MODE::profiles__();
+        case MODE_t::ADDPROFILE:       MODE::addProfile__();
+        case MODE_t::DELETEPROFILE:    MODE::deleteProfile__();
+
+
+    }
+
+}
+
+
+
 void setup(){
     
     Wire.begin();
@@ -18,69 +42,34 @@ void setup(){
 
     displayBegin();
 
-    
-
-    
+    buttonsBegin();
 
 }
 
 
 void loop(){
 
-    hub__(void);
+    MODE::hub__();
 
 }
 
-void profile__(void){
+void MODE::profiles__(void){
 
-    if(BUTTON_PRESSED::BACK = Interface::profiles(void)){
-
-        hub__();
-
-    }
-    else{ //DEFINITIVAMENTE QUE SI NO ES EQUIVALENTE A BACK, ES ENTER
-
-        showProfiles(void){
-
-            
-
-        }
-
-    }
-
-    
+    Interface::profiles();   
 
 }
 
-void addProfle__(void){
+void MODE::addProfile__(void){
 
-
-
-}
-
-void deleteProfile__(void){
-
-
+    Interface::addProfile();
 
 }
 
-void hub__(void){
+void MODE::deleteProfile__(void){
 
-    switch (Interface::hub()){
-
-        case MODE::PROFILES:         Interface::profiles(void);
-        case MODE::ADDPROFILE:       Interface::addProfile(void);
-        case MODE::DELETEPROFILE:    Interface::deleteProfile(void);
-
-    }
+    Interface::deleteProfile();
 
 }
 
-void showProfiles(void){
 
-    root.openRoot(volume);
 
-    // list all files in the card with date and size
-    root.ls(LS_R | LS_DATE | LS_SIZE);
-
-}

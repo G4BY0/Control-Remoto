@@ -22,6 +22,7 @@
 #include <Adafruit_SH110X.h>
 #include <SD.h>
 #include "PIN.h"
+#include "Profiles.h"
 
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
@@ -31,7 +32,7 @@
 #define MODE_ADDPROFILE "addProfile"
 #define MODE_DELETEPROFILE "deleteProfile"
 
-const enum MODE{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
+const enum MODE_t{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 
 const enum BUTTON_PRESSED{ ENTER, BACK };
 
@@ -46,10 +47,10 @@ const enum BUTTON_PRESSED{ ENTER, BACK };
 
 #define BUTTON_BACK_PRESSED 0x0
 
-#define TRUE_PULLUP 0x0;
-#define TRUE_PULLDOWN 0x1;
-#define FALSE_PULLUP 0x1;
-#define FALSE_PULLDOWN 0x0;
+#define TRUE_PULLUP 0x0
+#define TRUE_PULLDOWN 0x1
+#define FALSE_PULLUP 0x1
+#define FALSE_PULLDOWN 0x0
 
 #define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
@@ -57,19 +58,25 @@ const enum BUTTON_PRESSED{ ENTER, BACK };
 const uint8_t LINE_STRING_Y[] = {10,20,50};
 
 
-Sd2Card card;
-SdVolume volume;
-SdFile root;
 
+
+/*! @brief INICIALIZACION DE BOTONES COMO ENTRADA 
+    @note Arduino por defecto establece como entrada los pines digitales*/
 void buttonsBegin(void);
 
+/*! @brief Estado logico del pin de la placa de desarrollo
+    @param pin 
+            Pin de la placa de desarrollo
+    @returns Estado logico del pin de la placa de desarrollo */
 inline bool buttonState(const uint8_t PIN_BUTTON);
 
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-/*! @brief Cursor que se desplaza a traves del display  */
-class Cursor
-{
+/*! @brief Cursor que se desplaza a traves del display
+    @note Posee de dos constructores
+    @note 1- Para desplazarse entre los menus del display
+    @note 2- Para la creacion de strings que recibe del usuario*/
+class Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
@@ -79,33 +86,34 @@ private:
   uint8_t AMOUNT_OF_OPTIONS;
 
 public:
-  /*! @param  AMOUNT_OF_OPTIONS
-      Cantidad de opciones que puede desplazarse el cursor
-      @note Constructor para uso de desplazamiento de opciones
-  */
+  /*! @brief Constructor para uso de desplazamiento de opciones
+      @param  AMOUNT_OF_OPTIONS
+      Cantidad de opciones que puede desplazarse el cursor  */
   Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
   /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
   Cursor(void);
   /*! @brief Cursor funcional con sus respectivos pulsadores
-      @return el numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
+      @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
   const int8_t options(void);
 
   const char* Writer_ptr(void);
+
 };
 
 
 void displayBegin(void);
 
-namespace Interface
-{
+namespace Interface {
 
-  const enum MODE hub(void);
+  const enum MODE_t hub(void);
 
-  const enum MODE profiles(void);
+  const enum MODE_t profiles(void);
 
-  const enum MODE addProfile(void);
+  const enum MODE_t addProfile(void);
 
-  const enum MODE deleteProfile(void);
+  const enum MODE_t deleteProfile(void);
+
+  void showProfiles(void);
 
 };
 
