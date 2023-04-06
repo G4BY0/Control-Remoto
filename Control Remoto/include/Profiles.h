@@ -1,7 +1,8 @@
 #ifndef PROFILES_H
 #define PROFILES_H
 
-#include "SD.h"
+#include <SD.h>
+#include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
 
 Sd2Card card;
 SdVolume volume;
@@ -51,6 +52,18 @@ void SDBegin(void){
 namespace Profiles{
     /*! @brief Desde modo administrador, muestra en el Serial una lista del contenido del directorio raiz   */
     void showProfiles_(void);
+    /*! @brief Crea un almacenamiento para un nuevo perfil
+        @param name
+               Nombre del perfil                            */
+    void createProfile_(char* name);
+    /*! @brief Elimina el almacenamiento de un perfil
+        @param name
+               Nombre del perfil                            */
+    void deleteProfile_(char* name);
+    /*! @brief Crea un subperfil para un perfil
+        @param name
+               Nombre del perfil                            */
+    void Profiles::createSubProfile_(char* name);
 
 };
 

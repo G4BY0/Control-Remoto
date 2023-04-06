@@ -92,7 +92,7 @@ public:
   Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
   /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
   Cursor(void);
-  /*! @brief Cursor funcional con sus respectivos pulsadores
+  /*! @brief Cursor que responde en coorcondansia con la botonera
       @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
   const int8_t options(void);
 
@@ -105,12 +105,20 @@ void displayBegin(void);
 
 namespace Interface {
 
+  /*! @brief interfaz del lobby a la salida del display
+      @returns */
   const enum MODE_t hub(void);
 
+  /*! @brief interfaz del modo "profiles" a la salida del display
+  */
   const enum MODE_t profiles(void);
 
+  /*! @brief interfaz del modo "addProfile" a la salida del display
+  */
   const enum MODE_t addProfile(void);
 
+  /*! @brief interfaz del modo "deleteProfile" a la salida del display
+  */
   const enum MODE_t deleteProfile(void);
 
 };

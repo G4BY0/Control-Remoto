@@ -73,9 +73,10 @@ const int8_t Cursor::options(void){
 }
 
 const char* Cursor::writer_ptr(void){
+  /*
   char* pointer;
   while(pointer != '\0') {
-    /* DEVELOPING
+     DEVELOPING
 
     if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN) {
       if(moving = AMOUNT_OF_OPTIONS) {
@@ -92,10 +93,12 @@ const char* Cursor::writer_ptr(void){
       }
     }
 
-    */
+    
     if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) { return ("ENTER"); }
     if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN) { return ("BACK"); }
-  }
+    
+  }  
+  */  
 
 }
 
@@ -136,11 +139,11 @@ const enum MODE_t Interface::hub(void){
   case 0: // NO HACE NADA PORQUE NO SE PUEDE VOLVER PARA ATRAS EN EL HUB
 
   case 1: return (MODE_t::PROFILES); 
-
+          break;
   case 2: return (MODE_t::ADDPROFILE); 
-
+          break;
   case 3: return (MODE_t::DELETEPROFILE); 
-
+          break;
   default: 
 
   Serial.println(SYSTEM_STRING_ERROR);
@@ -161,9 +164,8 @@ const enum MODE_t Interface::addProfile(void){
 
 
   Cursor cursor();
-  String extension = ".txt";
   //String name = cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
-  
+  //Profiles::createProfile_(cursor.write_ptr());
 
 
 }
