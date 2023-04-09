@@ -13,7 +13,8 @@ SdFile root;
 const char* extensionProfiles = ".txt";
 char* slash = "/";
 
-/*! @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
+/*! \deprecated en desuso por problemas con manejo de constantes, se borro la definicion.
+    @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
     @param firstPart Parte inicial
     @param finalPart Parte final
     @returns String concatenado  */
