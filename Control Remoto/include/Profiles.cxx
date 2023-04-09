@@ -11,9 +11,10 @@ void Profiles::showProfiles_(void){
 
 }
 
+
 void Profiles::createProfile_(const char* name){
   /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
-  char* archiveString = strcat(slash, name);
+  char* archiveString = strcat(SLASH_WITH_EOF_STR, name);
   archiveString = strcat(archiveString, extensionProfiles);
 
   SD.mkdir(archiveString) == true
@@ -25,7 +26,7 @@ void Profiles::createProfile_(const char* name){
 void Profiles::deleteProfile_(const char* name){
 
  
-  char* archiveString = strcat(slash, name); 
+  char* archiveString = strcat(SLASH_WITH_EOF_STR, name); 
   archiveString = strcat(archiveString, extensionProfiles);
 
   //Elimina archivo

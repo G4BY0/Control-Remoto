@@ -10,8 +10,9 @@ SdVolume volume;
 SdFile root;
 
 // String extensionProfiles = ".txt"; <--- C++ WAY
+#define SLASH_WITH_EOF_STR "/"
 const char* extensionProfiles = ".txt";
-char* slash = "/";
+
 
 /*! \deprecated en desuso por problemas con manejo de constantes, se borro la definicion.
     @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
@@ -66,8 +67,8 @@ namespace Profiles{
     void deleteProfile_(const char* name);
     /*! @brief Crea un subperfil para un perfil
         @param name
-               Nombre del perfil                            */
-    void Profiles::createSubProfile_(const char* name);
+               Nombre del subperfil                            */
+    void createSubProfile_(const char* name);
 
 };
 

@@ -32,9 +32,9 @@
 #define MODE_ADDPROFILE "addProfile"
 #define MODE_DELETEPROFILE "deleteProfile"
 
-const enum MODE_t{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
+enum MODE_t{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
 
-const enum BUTTON_PRESSED{ ENTER, BACK };
+enum BUTTON_PRESSED{ ENTER, BACK };
 
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
@@ -107,19 +107,19 @@ namespace Interface {
 
   /*! @brief interfaz del lobby a la salida del display
       @returns */
-  const enum MODE_t hub(void);
+  enum MODE_t hub(void);
 
   /*! @brief interfaz del modo "profiles" a la salida del display
   */
-  const enum MODE_t profiles(void);
+  enum MODE_t profiles(void);
 
   /*! @brief interfaz del modo "addProfile" a la salida del display
   */
-  const enum MODE_t addProfile(void);
+  enum MODE_t addProfile(void);
 
   /*! @brief interfaz del modo "deleteProfile" a la salida del display
   */
-  const enum MODE_t deleteProfile(void);
+  enum MODE_t deleteProfile(void);
 
 };
 

@@ -23,9 +23,9 @@ void MODE::hub__(void){
 
     switch (Interface::hub()){
 
-        case MODE_t::PROFILES:         MODE::profiles__();
-        case MODE_t::ADDPROFILE:       MODE::addProfile__();
-        case MODE_t::DELETEPROFILE:    MODE::deleteProfile__();
+        case MODE_t::PROFILES:         MODE::profiles__();      break;
+        case MODE_t::ADDPROFILE:       MODE::addProfile__();    break;
+        case MODE_t::DELETEPROFILE:    MODE::deleteProfile__(); 
 
     }
 

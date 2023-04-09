@@ -36,6 +36,7 @@
 #ifndef PIN_H
 #define PIN_H
 
+#include <Arduino.h>
 
 namespace PIN{
   
