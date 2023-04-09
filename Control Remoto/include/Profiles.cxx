@@ -1,9 +1,5 @@
 #include "Profiles.h"
 
-// String extensionProfiles = ".txt"; <--- C++ WAY
-const char* extensionProfiles = ".txt";
-char* slash = "/";
-
 void Profiles::showProfiles_(void){
 
   //FUNCION DEPRECATED, despues ver su nueva funcion!!!!
@@ -15,10 +11,9 @@ void Profiles::showProfiles_(void){
 
 }
 
-void Profiles::createProfile_(char* name){
-  
-  //String archive = '/' + name + extensionProfiles; <--- C++ WAY
-  char* archiveString = strcat(slash, name); // <--- C WAY
+void Profiles::createProfile_(const char* name){
+  /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
+  char* archiveString = strcat(slash, name);
   archiveString = strcat(archiveString, extensionProfiles);
 
   SD.mkdir(archiveString) == true
@@ -27,10 +22,10 @@ void Profiles::createProfile_(char* name){
 
 }
 
-void Profiles::deleteProfile_(char* name){
+void Profiles::deleteProfile_(const char* name){
 
-  //String archiveString = '/' + name + extensionProfiles; <--- C++ WAY
-  char* archiveString = strcat(slash, name); // <--- C WAY
+ 
+  char* archiveString = strcat(slash, name); 
   archiveString = strcat(archiveString, extensionProfiles);
 
   //Elimina archivo
@@ -40,7 +35,7 @@ void Profiles::deleteProfile_(char* name){
 
 }
 
-void Profiles::createSubProfile_(char* name){
+void Profiles::createSubProfile_(const char* name){
 
   //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
   Cursor cursor();

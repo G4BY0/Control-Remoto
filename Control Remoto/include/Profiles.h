@@ -9,8 +9,15 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 
+// String extensionProfiles = ".txt"; <--- C++ WAY
+const char* extensionProfiles = ".txt";
+char* slash = "/";
 
-
+/*! @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
+    @param firstPart Parte inicial
+    @param finalPart Parte final
+    @returns String concatenado  */
+inline char* strcatconst(const char* firstPart, const char* finalPart);
 
 void SDBegin(void){
 
@@ -51,15 +58,15 @@ namespace Profiles{
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
                Nombre del perfil                            */
-    void createProfile_(char* name);
+    void createProfile_(const char* name);
     /*! @brief Elimina el almacenamiento de un perfil
         @param name
                Nombre del perfil                            */
-    void deleteProfile_(char* name);
+    void deleteProfile_(const char* name);
     /*! @brief Crea un subperfil para un perfil
         @param name
                Nombre del perfil                            */
-    void Profiles::createSubProfile_(char* name);
+    void Profiles::createSubProfile_(const char* name);
 
 };
 
