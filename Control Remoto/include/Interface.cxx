@@ -51,8 +51,6 @@ enum MODE_t Interface::hub(void){
 
   switch (cursor.options()) {
   
-  case 0: // NO HACE NADA PORQUE NO SE PUEDE VOLVER PARA ATRAS EN EL HUB
-
   case 1: return (MODE_t::PROFILES); 
           break;
   case 2: return (MODE_t::ADDPROFILE); 
