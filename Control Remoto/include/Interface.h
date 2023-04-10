@@ -20,7 +20,9 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
+#include <IRremote.h>
 #include <SD.h>
+
 #include "PIN.h"
 #include "Profiles.h"
 

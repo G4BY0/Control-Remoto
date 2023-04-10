@@ -78,10 +78,16 @@ namespace PIN{
     // Sparkfun SD shield: pin 8
     // MKRZero SD: SDCARD_SS_PIN
     const uint8_t chipSelect = 4;
-
+    
 
   }
 
+  namespace IR{
+
+    #define IR_RECEIVE_PIN  11
+    #define IR_SEND_PIN     10
+
+  }
 
 };
 
