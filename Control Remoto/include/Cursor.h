@@ -2,7 +2,7 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <interface.h>
+#include "Interface.h"
 
 /*! @brief Cursor que se desplaza a traves del display
     @note Posee de dos constructores
@@ -19,7 +19,7 @@ private:
 
 public:
   /*! @brief Constructor para uso de desplazamiento de opciones
-      @param  AMOUNT_OF_OPTIONS
+      @param  AMOUNT_OF_OPTIONS__
       Cantidad de opciones que puede desplazarse el cursor  */
   Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
   /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
