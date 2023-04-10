@@ -25,6 +25,7 @@
 
 #include "PIN.h"
 #include "Profiles.h"
+#include "Cursor.h"
 
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
@@ -73,34 +74,6 @@ void buttonsBegin(void);
 inline bool buttonState(const uint8_t PIN_BUTTON);
 
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-/*! @brief Cursor que se desplaza a traves del display
-    @note Posee de dos constructores
-    @note 1- Para desplazarse entre los menus del display
-    @note 2- Para la creacion de strings que recibe del usuario*/
-class Cursor {
-
-private:
-  const uint8_t LINE_CURSOR_X = 10;
-  const char CURSOR_CHARACTER = '>';
-  const char CURSOR_CHARACTER_DELETE = 'X';
-  
-  uint8_t AMOUNT_OF_OPTIONS;
-
-public:
-  /*! @brief Constructor para uso de desplazamiento de opciones
-      @param  AMOUNT_OF_OPTIONS
-      Cantidad de opciones que puede desplazarse el cursor  */
-  Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
-  /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
-  Cursor(void);
-  /*! @brief Cursor que responde en coorcondansia con la botonera
-      @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
-  const int8_t options(void);
-
-  const char* writer_ptr(void);
-
-};
 
 /*! @brief Inicializacion de display  */
 void displayBegin(void);

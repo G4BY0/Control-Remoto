@@ -3,8 +3,7 @@
 
 
 /**********************************************
-void checkFullInitialize_Display();
-void checkFullInitialize_SD();
+void infraredBegin();
 
 - EN DESARROLLO ESTAS FUNCIONES
 

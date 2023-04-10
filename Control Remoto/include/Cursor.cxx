@@ -1,4 +1,4 @@
-#include "Interface.h"
+#include "Cursor.h"
 
 Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){ 
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__; 
