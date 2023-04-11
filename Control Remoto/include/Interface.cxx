@@ -10,6 +10,10 @@ void buttonsBegin(void){
   pinMode(PIN::Buttons::BACK ,  INPUT);
   pinMode(PIN::Buttons::ENTER,  INPUT);
 
+  pinMode(PIN::InfraredReceiver::DATA, INPUT);
+  pinMode(PIN::InfraredTransmitter::DATA, OUTPUT);
+  
+
 }
 
 inline bool buttonState(const uint8_t PIN_BUTTON) { 
