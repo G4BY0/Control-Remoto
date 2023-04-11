@@ -4,6 +4,7 @@
 #include "PIN.h"
 #include <SD.h>
 #include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
+#include "Infrared.h"
 
 Sd2Card card;
 SdVolume volume;
@@ -68,7 +69,7 @@ namespace Profiles{
     /*! @brief Crea un subperfil para un perfil
         @param name
                Nombre del subperfil                            */
-    void createSubProfile_(const char* name);
+    void createSubProfile_(const char* name, storedIRDataStruct* storedIRData);
 
 };
 
