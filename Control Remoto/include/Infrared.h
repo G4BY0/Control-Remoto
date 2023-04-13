@@ -20,7 +20,9 @@ void infraredBegin(void);
     @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc
     
 */
-void Receive(void);
+void Receive_start(void);
+void Receive_check(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_PIN);
+void Receive_stop(void);
 
 /*! @brief Envia senial infrarroja
     @param profileName nombre del perfil que se encuentra

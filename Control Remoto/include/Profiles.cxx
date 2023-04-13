@@ -36,7 +36,7 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-void Profiles::createSubProfile_(const char* name){
+void Profiles::createSubProfile_(const char* name, storedIRDataStruct* storedIRData){
 
   //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
   Cursor cursor();

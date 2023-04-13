@@ -20,12 +20,46 @@ void infraredBegin(void){
 
 }
 
-void Receive(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_PIN){
-    
+void Receive_start(void){
+
   // Restart receiver
   Serial.println(F("Start Receiving for infrared signals"));
   IrReceiver.start();
-    
+
+}
+
+void Receive_check(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_PIN){
+
+  if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
+    Serial.print(F("Ignore data with rawlen="));
+    Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
+    return;
+   }
+  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
+    Serial.println(F("Ignore repeat"));
+    return;
+  }
+  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_AUTO_REPEAT) {
+    Serial.println(F("Ignore autorepeat"));
+    return;
+  }
+  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_PARITY_FAILED) {
+    Serial.println(F("Ignore parity error"));
+    return;
+  }
+  if (IrReceiver.decode()) {
+    /*
+    * Button is not pressed and data available -> store received data and resume
+    */
+    storeCode();
+    IrReceiver.resume(); // resume receiver
+}
+
+void Receive_stop(void){
+  
+  Serial.println(F("Stop receiving"));
+  IrReceiver.stop();
+
 }
 
 void sendCode(storedIRDataStruct *aIRDataToSend) {
@@ -49,23 +83,6 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 // Stores the code for later playback in sStoredIRData
 // Most of this code is just logging
 void storeCode(storedIRDataStruct* sStoredIRData) {
-  if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
-    Serial.print(F("Ignore data with rawlen="));
-    Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
-    return;
-   }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
-    Serial.println(F("Ignore repeat"));
-    return;
-  }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_AUTO_REPEAT) {
-    Serial.println(F("Ignore autorepeat"));
-    return;
-  }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_PARITY_FAILED) {
-    Serial.println(F("Ignore parity error"));
-    return;
-  }
   /*
   * Copy decoded data
   */
@@ -87,5 +104,5 @@ void storeCode(storedIRDataStruct* sStoredIRData) {
     sStoredIRData->receivedIRData.flags = 0; // clear flags -esp. repeat- for later sending
     Serial.println();
   }
-
+  
 }
