@@ -1,7 +1,9 @@
 #include "Infrared.h"
 
+#define DELAY_BETWEEN_REPEAT 50
+#define SEND_BUTTON_PIN PIN::Buttons::ENTER
 
-
+bool sSendButtonWasActive;
 
 void infraredBegin(void){
 
@@ -20,10 +22,52 @@ void infraredBegin(void){
 
 }
 
-void Receive(void){
+void Receive(storedIRDataStruct *sStoredIRData){
 
+  // If button pressed, send the code.
+  bool tSendButtonIsActive = (digitalRead(SEND_BUTTON_PIN) == LOW); // Button pin is active LOW
 
- 
+  /*
+   * Check for current button state
+  */
+  if (tSendButtonIsActive) {
+    if (!sSendButtonWasActive) {
+      Serial.println(F("Stop receiving"));
+      IrReceiver.stop();
+    }
+    /*
+    * Button pressed -> send stored data
+    */
+    //Serial.print(F("Button pressed, now sending "));
+    //if (sSendButtonWasActive == tSendButtonIsActive) {
+    //  Serial.print(F("repeat "));
+    //  sStoredIRData->receivedIRData.flags = IRDATA_FLAGS_IS_REPEAT;
+    //} else {
+    //  sStoredIRData->receivedIRData.flags = IRDATA_FLAGS_EMPTY;
+    //}
+    //Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
+    //sendCode(sStoredIRData);
+    //delay(DELAY_BETWEEN_REPEAT); // Wait a bit between retransmissions
+//
+    //} else if (sSendButtonWasActive) {
+    //  /*
+    //  * Button is just released -> activate receiving
+   //  */
+    //  // Restart receiver
+    //  Serial.println(F("Button released -> start receiving"));
+    //  IrReceiver.start();
+
+   // } else if (IrReceiver.decode()) {
+      /*
+      * Button is not pressed and data available -> store received data and resume
+      */
+    ///  storeCode();
+    //  IrReceiver.resume(); // resume receiver
+    //}
+
+    sSendButtonWasActive = tSendButtonIsActive;
+    delay(100);
+    
 }
 
     
