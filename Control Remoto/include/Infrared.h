@@ -16,22 +16,33 @@ struct storedIRDataStruct {
     @note Arduino por defecto establece como entrada los pines digitales*/
 void infraredBegin(void);
 
-/*! @brief Preparado para recibir la senial infrarroja
+/*! @brief Inicia el proceso para recibir señales infrarrojas
     @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc
     
 */
 void Receive_start(void);
-void Receive_check(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_PIN);
+
+/*! @brief Checkea si es correcta la cadena binaria recibida
+    @note Compara con la escructura del objeto IrReceiver.decodedIRData
+*/
+void Receive_check(void);
+
+
+/*! @brief Checkea si es correcta la cadena binaria recibida
+    @note Compara con la escructura del objeto IrReceiver.decodedIRData
+*/
 void Receive_stop(void);
 
-/*! @brief Envia senial infrarroja
-    @param profileName nombre del perfil que se encuentra
-    @param subProfileName nomber del subperfil que denomina a la cadena binaria
+/*! @brief Envia señal infrarroja
+    @param aIRDataToSend recibe puntero o direccion de memoria
+    @note usara la estructura recibida referencia para el envio de la informacion
 */
-
 void sendCode(storedIRDataStruct *aIRDataToSend);
 
-
+/*! @brief Almacena datos del infrarrojo
+    @param sStoredIRData recibe puntero o direccion de memoria
+    @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+*/
 void storeCode(storedIRDataStruct* sStoredIRData);
 
 

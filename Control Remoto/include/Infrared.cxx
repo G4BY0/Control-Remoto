@@ -1,11 +1,15 @@
 #include "Infrared.h"
 
 #define DELAY_BETWEEN_REPEAT 50
-#define SEND_BUTTON_PIN PIN::Buttons::ENTER
+#define DISABLE_LEDFEEDBACK 0x0 // false
+#define ENABLE_LEDFEEDBACK 0x1 // true
 
 bool sSendButtonWasActive;
 
 void infraredBegin(void){
+
+  pinMode(PIN::InfraredReceiver::DATA, INPUT);
+  pinMode(PIN::InfraredTransmitter::DATA, OUTPUT);
 
   // Just to know which program is running on my Arduino
   Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
@@ -14,10 +18,10 @@ void infraredBegin(void){
   IrReceiver.begin(PIN::InfraredReceiver::DATA, ENABLE_LED_FEEDBACK);
   Serial.print(F("Ready to receive IR signals of protocols: "));
   printActiveIRProtocols(&Serial);
-  Serial.println(F("at pin " STR(IR_RECEIVE_PIN)));
+  Serial.print(F("at pin " STR(IR_RECEIVE_PIN)));
 
-  IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
-
+  //IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
+  IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
 }
 
 void Receive_start(void){
@@ -28,7 +32,7 @@ void Receive_start(void){
 
 }
 
-void Receive_check(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_PIN){
+void Receive_check(void){
 
   if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
     Serial.print(F("Ignore data with rawlen="));
@@ -53,6 +57,7 @@ void Receive_check(storedIRDataStruct *sStoredIRData, const uint_8t SEND_BUTTON_
     */
     storeCode();
     IrReceiver.resume(); // resume receiver
+  }
 }
 
 void Receive_stop(void){
@@ -71,21 +76,16 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
         Serial.print(aIRDataToSend->rawCodeLength);
         Serial.println(F(" marks or spaces"));
     } else {
-
-        /*
-         * Use the write function, which does the switch for different protocols
-         */
+        // Use the write function, which does the switch for different protocols
         IrSender.write(&aIRDataToSend->receivedIRData);
         printIRResultShort(&Serial, &aIRDataToSend->receivedIRData, false);
     }
 }
 
-// Stores the code for later playback in sStoredIRData
-// Most of this code is just logging
+// Stores the code for later playback
 void storeCode(storedIRDataStruct* sStoredIRData) {
-  /*
-  * Copy decoded data
-  */
+  
+  //Copy decoded data
   sStoredIRData->receivedIRData = IrReceiver.decodedIRData;
 
   if (sStoredIRData->receivedIRData.protocol == UNKNOWN) {
@@ -94,9 +94,8 @@ void storeCode(storedIRDataStruct* sStoredIRData) {
     Serial.println(F(" timing entries as raw "));
     IrReceiver.printIRResultRawFormatted(&Serial, true); // Output the results in RAW format
     sStoredIRData->rawCodeLength = IrReceiver.decodedIRData.rawDataPtr->rawlen - 1;
-    /*
-     * Store the current raw data in a dedicated array for later usage
-     */
+    
+    //Store the current raw data in a dedicated array for later usage
     IrReceiver.compensateAndStoreIRResultInArray(sStoredIRData->rawCode);
   } else {
     IrReceiver.printIRResultShort(&Serial);

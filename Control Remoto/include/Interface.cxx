@@ -8,11 +8,7 @@ void buttonsBegin(void){
   pinMode(PIN::Buttons::LEFT ,  INPUT);
   pinMode(PIN::Buttons::RIGHT , INPUT);
   pinMode(PIN::Buttons::BACK ,  INPUT);
-  pinMode(PIN::Buttons::ENTER,  INPUT);
-
-  pinMode(PIN::InfraredReceiver::DATA, INPUT);
-  pinMode(PIN::InfraredTransmitter::DATA, OUTPUT);
-  
+  pinMode(PIN::Buttons::ENTER,  INPUT);  
 
 }
 
@@ -29,9 +25,6 @@ void displayBegin(void){
   display.display();
 
 }
-
-
-
 
 enum MODE_t Interface::hub(void){
 
@@ -79,11 +72,9 @@ enum MODE_t Interface::profiles(void){
 
 enum MODE_t Interface::addProfile(void){
 
-
   Cursor cursor();
   //String name = cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
   //Profiles::createProfile_(cursor.write_ptr());
-
 
 }
 
