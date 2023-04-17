@@ -4,12 +4,15 @@ Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__; 
 }
 
-Cursor::Cursor(void){}
+Cursor::Cursor(void){
 
 
-const int8_t Cursor::options(void){
+}
+
+
+const uint8_t Cursor::options(void){
   
-  uint16_t moving = 0;
+  uint8_t moving = 0;
   while(INFINITE_LOOPING){
 
     if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN) {
@@ -50,7 +53,7 @@ const int8_t Cursor::options(void){
     }
 
     else if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) { return(moving);              }
-    else if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN)  { return(BUTTON_PRESSED::BACK); }
+    else if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN)  { return(BUTTON_PRESSED_BACK); }
 
   }
 

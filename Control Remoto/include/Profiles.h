@@ -6,6 +6,17 @@
 #include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
 #include "Infrared.h"
 
+//dependiendo del sistema operativo, incluye o no la definicion.
+#ifndef _IOFBF
+#define _IOFBF            0x0000
+#endif
+#ifndef _IOLBF
+#define _IOLBF            0x0040
+#endif
+#ifndef _IONBF
+#define _IONBF            0x0004
+#endif
+
 Sd2Card card;
 SdVolume volume;
 SdFile root;
@@ -31,9 +42,10 @@ void SDBegin(void){
         Serial.println("* is a card inserted?");
         Serial.println("* is your wiring correct?");
         Serial.println("* did you change the chipSelect pin to match your shield or module?");
-        while (1);
+        while (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect));
     } else {
         Serial.println("Wiring is correct and a card is present.");
+        SD.begin();
     }
 
     // TIPO DE TARJETA SD
@@ -58,6 +70,7 @@ void SDBegin(void){
 namespace Profiles{
     /*! @brief Desde modo administrador, muestra en el Serial una lista del contenido del directorio raiz   */
     void showProfiles_(void);
+    
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
                Nombre del perfil                            */
@@ -74,4 +87,4 @@ namespace Profiles{
 };
 
 
-#endif
+#endif //Profiles_h

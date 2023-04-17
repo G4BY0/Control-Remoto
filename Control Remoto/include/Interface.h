@@ -30,14 +30,18 @@
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
 
-#define MODE_HUB "Hub"
-#define MODE_PROFILES "Profiles"
-#define MODE_ADDPROFILE "addProfile"
-#define MODE_DELETEPROFILE "deleteProfile"
+#define MODE_HUB 0x0              /* LOBBY*/
+#define MODE_PROFILES 0x1         /*PERFILES*/
+#define MODE_ADDPROFILE 0x2       /*CREAR PERFILES*/
+#define MODE_DELETEPROFILE 0x3    /*ELIMINAR PERFILES*/
+#if 0
+/*Posibles modos futuros*/
+#define MODE_HELP 0x4             /* Muestra como funciona el sistema y explica como va la cosa*/
+#endif
 
-enum MODE_t{ HUB, PROFILES, ADDPROFILE, DELETEPROFILE };
+#define BUTTON_PRESSED_ENTER 0x0
+#define BUTTON_PRESSED_BACK 0x1
 
-enum BUTTON_PRESSED{ ENTER, BACK };
 
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
@@ -55,10 +59,13 @@ enum BUTTON_PRESSED{ ENTER, BACK };
 #define FALSE_PULLUP 0x1
 #define FALSE_PULLDOWN 0x0
 
+#define MAX_LINE_OPTIONS_OUTPUT 3
 #define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
 
-const uint8_t LINE_STRING_Y[] = {10,20,50};
+
+
+const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 
 /*! @brief Inicializacion de botonera
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -77,23 +84,29 @@ void displayBegin(void);
 
 namespace Interface {
 
-  /*! @brief interfaz del lobby a la salida del display
-      @returns */
-  enum MODE_t hub(void);
+  /*! @brief   Interfaz del lobby a la salida del display
+      @returns Numero normalizado que indica el modo seleccionado*/
+  uint8_t hub(void);
 
-  /*! @brief interfaz del modo "profiles" a la salida del display
+  /*! @brief    Interfaz del modo "profiles" a la salida del display 
+      @returns  'true'  El modo cumplió satisfactoriamente. 
+                'false' No cumplio satisfactorimante.
   */
-  enum MODE_t profiles(void);
+  boolean profiles(void);
 
-  /*! @brief interfaz del modo "addProfile" a la salida del display
+  /*! @brief    Interfaz del modo "addProfile" a la salida del display
+      @returns  'true'  El modo cumplió satisfactoriamente. 
+                'false' No cumplio satisfactorimante.
   */
-  enum MODE_t addProfile(void);
+  boolean addProfile(void);
 
-  /*! @brief interfaz del modo "deleteProfile" a la salida del display
+  /*! @brief    Interfaz del modo "deleteProfile" a la salida del display
+      @returns  'true'  El modo cumplió satisfactoriamente. 
+                'false' No cumplio satisfactorimante.
   */
-  enum MODE_t deleteProfile(void);
+  boolean deleteProfile(void);
 
 };
 
 
-#endif
+#endif //Interface_h

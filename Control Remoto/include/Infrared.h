@@ -2,6 +2,8 @@
 #include <IRremote.hpp>
 #include "PIN.h"
 
+#ifndef INFRARED_H
+#define INFRARED_H
 
 // Storage for the recorded code
 struct storedIRDataStruct {
@@ -17,8 +19,7 @@ struct storedIRDataStruct {
 void infraredBegin(void);
 
 /*! @brief Inicia el proceso para recibir señales infrarrojas
-    @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc
-    
+    @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc  
 */
 void Receive_start(void);
 
@@ -34,15 +35,16 @@ void Receive_check(void);
 void Receive_stop(void);
 
 /*! @brief Envia señal infrarroja
-    @param aIRDataToSend recibe puntero o direccion de memoria
+    @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(storedIRDataStruct *aIRDataToSend);
+void sendCode(void);
 
 /*! @brief Almacena datos del infrarrojo
-    @param sStoredIRData recibe puntero o direccion de memoria
+    @param sStoredIRData recibe estructura con la data de la señal
     @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
 void storeCode(storedIRDataStruct* sStoredIRData);
 
 
+#endif //Infrared_h

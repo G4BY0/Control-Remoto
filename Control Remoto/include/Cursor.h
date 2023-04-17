@@ -26,11 +26,11 @@ public:
   Cursor(void);
   /*! @brief Cursor que responde en coorcondansia con la botonera
       @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
-  const int8_t options(void);
+  const uint8_t options(void);
 
   const char* writer_ptr(void);
 
 };
 
 
-#endif
+#endif //Cursor_h

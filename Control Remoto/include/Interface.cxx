@@ -26,7 +26,7 @@ void displayBegin(void){
 
 }
 
-enum MODE_t Interface::hub(void){
+uint8_t Interface::hub(void){
 
   display.clearDisplay();
 
@@ -45,32 +45,18 @@ enum MODE_t Interface::hub(void){
   display.display();
 
   Cursor cursor(3);
-
-  switch (cursor.options()) {
+  return cursor.options();
   
-  case 1: return (MODE_t::PROFILES); 
-          break;
-  case 2: return (MODE_t::ADDPROFILE); 
-          break;
-  case 3: return (MODE_t::DELETEPROFILE); 
-          break;
-  default: 
-
-  Serial.println(SYSTEM_STRING_ERROR);
-  display.setCursor(0,0);
-  display.print(SYSTEM_STRING_ERROR);
-
-  }
 
 }
 
-enum MODE_t Interface::profiles(void){
+boolean Interface::profiles(void){
   
   Profiles::showProfiles_();  // ESCRIBE EN EL SERIAL LOS DOCUMENTOS QUE SE ENCUENTRAN EN LA RAIZ
 
 }
 
-enum MODE_t Interface::addProfile(void){
+boolean Interface::addProfile(void){
 
   Cursor cursor();
   //String name = cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
@@ -78,7 +64,7 @@ enum MODE_t Interface::addProfile(void){
 
 }
 
-enum MODE_t Interface::deleteProfile(void){
+boolean Interface::deleteProfile(void){
 
   Profiles::showProfiles_();  // ESCRIBE EN EL SERIAL LOS DOCUMENTOS QUE SE ENCUENTRAN EN LA RAIZ
   // if(/*PONER AQUI OPCIONES ONDA .txt que hay en el directorio*/ == 0){ Interface::nonProfiles() } else {continua} (DESARROLLAR IGUAL, HAY Q PENSARLO MAS A FONDO ESTA PARTE, PARA PODER VOLVER DIGO)
