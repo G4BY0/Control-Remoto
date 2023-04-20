@@ -33,39 +33,7 @@ const char* extensionProfiles = ".txt";
     @returns String concatenado  */
 inline char* strcatconst(const char* firstPart, const char* finalPart);
 
-void SDBegin(void){
-
-    // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
-    // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
-    if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
-        Serial.println("initialization failed. Things to check:");
-        Serial.println("* is a card inserted?");
-        Serial.println("* is your wiring correct?");
-        Serial.println("* did you change the chipSelect pin to match your shield or module?");
-        while (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect));
-    } else {
-        Serial.println("Wiring is correct and a card is present.");
-        SD.begin();
-    }
-
-    // TIPO DE TARJETA SD
-    Serial.println();
-    Serial.print("Card type:         ");
-    switch (card.type()) {
-        case SD_CARD_TYPE_SD1:
-            Serial.println("SD1");
-            break;
-        case SD_CARD_TYPE_SD2:
-            Serial.println("SD2");
-            break;
-        case SD_CARD_TYPE_SDHC:
-            Serial.println("SDHC");
-            break;
-        default:
-        Serial.println("Unknown");
-    }
-
-}
+/*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
 */
 void SDBegin(void);
