@@ -52,7 +52,9 @@ uint8_t Interface::hub(void){
 
 boolean Interface::profiles(void){
   
-  Profiles::showProfiles_();  // ESCRIBE EN EL SERIAL LOS DOCUMENTOS QUE SE ENCUENTRAN EN LA RAIZ
+  String ProfilesName = Profiles::showProfiles_();
+
+
 
 }
 

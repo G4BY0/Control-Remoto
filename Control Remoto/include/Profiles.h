@@ -66,10 +66,16 @@ void SDBegin(void){
     }
 
 }
+    @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
+*/
+void SDBegin(void);
 
 namespace Profiles{
-    /*! @brief Desde modo administrador, muestra en el Serial una lista del contenido del directorio raiz   */
-    void showProfiles_(void);
+    /*! @brief Desde modo administrador, muestra en el Serial una lista del contenido del directorio raiz  
+        @returns Vector de strings, la primera posicion del vector almacena
+                 la cantidad de perfiles que tiene el directorio de cache
+     */
+    String showProfiles_(void);
     
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name

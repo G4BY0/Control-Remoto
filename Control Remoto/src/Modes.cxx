@@ -27,7 +27,7 @@ void MODE::addProfile__(void){
 
   if(Interface::addProfile()){
 
-
+    Profiles::createProfile_();
 
   } 
 
@@ -37,7 +37,7 @@ void MODE::deleteProfile__(void){
 
   if(Interface::deleteProfile()){
 
-
+    Profiles::deleteProfile_();
 
   } 
 

@@ -13,7 +13,6 @@ struct storedIRDataStruct {
     uint8_t rawCodeLength; // The length of the code
 };
 
-
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
 void infraredBegin(void);

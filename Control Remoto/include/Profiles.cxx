@@ -1,44 +1,53 @@
 #include "Profiles.h"
 
-/*! \deprecated Abria q extraer lo que se envia del serial osea leerlo, demasiado trabajo. Solucion abajo de esta
-void Profiles::showProfiles_(void){
 
-  //FUNCION DEPRECATED, despues ver su nueva funcion!!!!
-  root.openRoot(volume);
+void SDBegin(void){
 
-  // list all files in the card with date and size
-  root.ls(LS_R | LS_DATE | LS_SIZE);
+    // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
+    // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
+    if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
+        Serial.println("initialization failed. Things to check:");
+        Serial.println("* is a card inserted?");
+        Serial.println("* is your wiring correct?");
+        Serial.println("* did you change the chipSelect pin to match your shield or module?");
+        while (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect));
+    } else {
+        Serial.println("Wiring is correct and a card is present.");
+        SD.begin();
+    }
 
+    // TIPO DE TARJETA SD
+    Serial.println();
+    Serial.print("Card type:         ");
+    switch (card.type()) {
+        case SD_CARD_TYPE_SD1:
+            Serial.println("SD1");
+            break;
+        case SD_CARD_TYPE_SD2:
+            Serial.println("SD2");
+            break;
+        case SD_CARD_TYPE_SDHC:
+            Serial.println("SDHC");
+            break;
+        default:
+        Serial.println("Unknown");
+    }
 
 }
-*/
 
 /*! Escribe en un buffer por linea, los archivos y directorios que se encuentran en raiz
     @returns buffer por linea
     @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
 */
-void Profiles::showProfiles_(void){
-  /* EN DESARROLLO, PARA PROXIMAS VERSIONES SE USARA UN BUFFER EN VEZ DE UN ARCHIVO DE TEXTO COMO CACHE Y NO PILA
-  //Depiendo del compilador BUFSIZ varia. Este va a ser el tama;o del buffer, con 256 basta.
-  char* bufferOfStringsPerLine = new char[BUFSIZ];
-
-  //Salida de mi buffer de strings
-  __file StreamOfStringPerLine;
-  FILE* StreamOfStringPerLine_ptr = &StreamOfStringPerLine;
-  /*! -Seteo el buffer como entrada, 
-      @param buffer de salida al que ira
-      @param bufferOfstrings el buffer en cuestion a usar
-      @param modeOfBuffer el tipo de modo de buffer, existen 3
-      @param BUFSIZ tama;o del buffer en cuestion
-      setvbuf( StreamOfStringPerLine_ptr , bufferOfStringsPerLine , _IOLBF , BUFSIZ );
-  */
-  
+String Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
 
+  //Crear Cache.txt si es que no existe
   SD.mkdir("Cache.txt");
 
+  //Cache abierto tipo escritura
   File cacheFile = SD.open("Cache.txt",FILE_WRITE);
 
 
@@ -66,8 +75,33 @@ void Profiles::showProfiles_(void){
     }
   }while(archivo);
 
-  cacheFile.close();
   rootForRead.close();
+  cacheFile.close();
+
+  //Ahora abierto el cache pero en Lectura
+  File cacheFile = SD.open("Cache.txt",FILE_READ);
+
+  if (cacheFile) {
+    int line_count = 0;
+    while (cacheFile.available()) {
+
+      String profileNames[line_count] = cacheFile.readStringUntil('\n');  // \n character is discarded from buffer
+      line_count++;
+
+      Serial.print("Line ");
+      Serial.print(line_count);
+      Serial.print(": ");
+      Serial.println(profileNames->c_str());
+      return profileNames;
+
+    }
+
+    cacheFile.close();
+  } else {
+      Serial.print(F("SD Card: error on opening file"));
+      return "error";
+  }
+
 
 }
 
