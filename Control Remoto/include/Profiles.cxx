@@ -1,4 +1,4 @@
-#include "Profiles.h"
+#include "Profiles.hpp"
 
 
 void SDBegin(void){
@@ -34,6 +34,7 @@ void SDBegin(void){
     }
 
 }
+//--------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*! Escribe en un buffer por linea, los archivos y directorios que se encuentran en raiz
     @returns buffer por linea
@@ -52,23 +53,28 @@ String Profiles::showProfiles_(void){
 
 
   rootForRead = SD.open("/");
-
+  String* profilesName;
   do{
     archivo = (rootForRead.openNextFile());
     if(!archivo){
         //Si no hay archivo siguiente
         Serial.println("END");
         cacheFile.println("END");
+
     }else{
       Serial.print(archivo.name());  //Imprimo el nombre
       if (archivo.isDirectory()){
           //Si es un directorio
           Serial.print("directorio");
           cacheFile.print("directorio");
+
+          
       }else{
           //Si es un archivo
           Serial.print("archivo");
           cacheFile.print("archivo");
+          realloc(profilesName, )
+
       }
       Serial.print("\n");
       cacheFile.print("\n");
@@ -85,6 +91,7 @@ String Profiles::showProfiles_(void){
     int line_count = 0;
     while (cacheFile.available()) {
 
+    
       String profileNames[line_count] = cacheFile.readStringUntil('\n');  // \n character is discarded from buffer
       line_count++;
 
