@@ -80,7 +80,7 @@ String Profiles::showProfiles_(void){
 
   //Ahora abierto el cache pero en Lectura
   File cacheFile = SD.open("Cache.txt",FILE_READ);
-
+  
   if (cacheFile) {
     int line_count = 0;
     while (cacheFile.available()) {
@@ -91,11 +91,13 @@ String Profiles::showProfiles_(void){
       Serial.print("Line ");
       Serial.print(line_count);
       Serial.print(": ");
-      Serial.println(profileNames->c_str());
-      return profileNames;
+      Serial.println(profileNames[line_count].c_str());
+      
 
     }
-
+    profileNames[0] = line_count;
+    return profileNames[0];
+    
     cacheFile.close();
   } else {
       Serial.print(F("SD Card: error on opening file"));
