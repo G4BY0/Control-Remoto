@@ -73,7 +73,7 @@ String Profiles::showProfiles_(void){
           //Si es un archivo
           Serial.print("archivo");
           cacheFile.print("archivo");
-          realloc(profilesName, )
+          profilesName = (String*) realloc(profilesName, sizeof(String) *  );
 
       }
       Serial.print("\n");

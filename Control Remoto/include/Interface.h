@@ -24,7 +24,7 @@
 #include <SD.h>
 
 #include "PIN.h"
-#include "Profiles.h"
+#include "Profiles.hpp"
 #include "Cursor.h"
 
 #define INFINITE_LOOPING 0x1
