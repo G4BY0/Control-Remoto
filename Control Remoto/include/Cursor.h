@@ -10,7 +10,7 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include "Interface.h"
+#include <Interface.h>
 
 /*! @brief Cursor que se desplaza a traves del display
     @note Posee de dos constructores
@@ -39,6 +39,5 @@ public:
   const char* writer_ptr(void);
 
 };
-
 
 #endif //Cursor_h

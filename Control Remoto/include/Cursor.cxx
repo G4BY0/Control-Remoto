@@ -13,11 +13,7 @@ Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){
   this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__; 
 }
 
-Cursor::Cursor(void){
-
-
-}
-
+Cursor::Cursor(void){}
 
 const uint8_t Cursor::options(void){
   

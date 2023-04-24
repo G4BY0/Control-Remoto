@@ -9,8 +9,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
 
-
-
 #ifndef PROFILES_H
 #define PROFILES_H
 
@@ -19,7 +17,14 @@
 #include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
 #include "Infrared.h"
 
-//dependiendo del sistema operativo, incluye o no la definicion.
+//Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
+struct Keep : public storedIRDataStruct {
+
+    char* nameSubProfile;
+
+} keep;
+
+//Dependiendo del sistema operativo, incluye o no la definicion.
 #ifndef _IOFBF
 #define _IOFBF            0x0000
 #endif
@@ -34,7 +39,7 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 
-// String extensionProfiles = ".txt"; <--- C++ WAY
+//String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
 const char* extensionProfiles = ".txt";
 
