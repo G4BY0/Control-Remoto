@@ -1,3 +1,12 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Source code of Cursor class form Cursor.h
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #include "Cursor.h"
 
 Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){ 

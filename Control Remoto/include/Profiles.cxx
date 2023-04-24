@@ -1,3 +1,12 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Source code of members of Profiles.hpp
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #include "Profiles.hpp"
 
 
@@ -47,12 +56,13 @@ String Profiles::showProfiles_(void){
 
   //Crear Cache.txt si es que no existe
   SD.mkdir("Cache.txt");
-
+  
   //Cache abierto tipo escritura
   File cacheFile = SD.open("Cache.txt",FILE_WRITE);
 
 
   rootForRead = SD.open("/");
+  int stringCounter = 0;
   String* profilesName;
   do{
     archivo = (rootForRead.openNextFile());
@@ -73,7 +83,7 @@ String Profiles::showProfiles_(void){
           //Si es un archivo
           Serial.print("archivo");
           cacheFile.print("archivo");
-          profilesName = (String*) realloc(profilesName, sizeof(String) *  );
+          profilesName = (String*) realloc(profilesName, sizeof(String) *  ++stringCounter );
 
       }
       Serial.print("\n");
@@ -83,34 +93,6 @@ String Profiles::showProfiles_(void){
 
   rootForRead.close();
   cacheFile.close();
-
-  //Ahora abierto el cache pero en Lectura
-  File cacheFile = SD.open("Cache.txt",FILE_READ);
-  
-  if (cacheFile) {
-    int line_count = 0;
-    while (cacheFile.available()) {
-
-    
-      String profileNames[line_count] = cacheFile.readStringUntil('\n');  // \n character is discarded from buffer
-      line_count++;
-
-      Serial.print("Line ");
-      Serial.print(line_count);
-      Serial.print(": ");
-      Serial.println(profileNames[line_count].c_str());
-      
-
-    }
-    profileNames[0] = line_count;
-    return profileNames[0];
-    
-    cacheFile.close();
-  } else {
-      Serial.print(F("SD Card: error on opening file"));
-      return "error";
-  }
-
 
 }
 

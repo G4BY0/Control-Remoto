@@ -1,3 +1,16 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Movimento de almacenamiento
+ * de perfiles dentro de la SD
+ * usando la PILA para su desplazamiento
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
+
+
 #ifndef PROFILES_H
 #define PROFILES_H
 
@@ -24,8 +37,6 @@ SdFile root;
 // String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
 const char* extensionProfiles = ".txt";
-
-
 
 /*! \deprecated en desuso por problemas con manejo de constantes, se borro la definicion.
     @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
@@ -62,4 +73,4 @@ namespace Profiles{
 };
 
 
-#endif //Profiles_h
+#endif //Profiles_hpp

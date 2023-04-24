@@ -1,3 +1,12 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Manejo de las señales infrarrojas 
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #include <Arduino.h>
 #include <IRremote.hpp>
 #include "PIN.h"

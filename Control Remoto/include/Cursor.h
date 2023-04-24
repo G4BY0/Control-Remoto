@@ -1,3 +1,11 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Cursor de desplazamiento de los menus 
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
 
 #ifndef CURSOR_H
 #define CURSOR_H

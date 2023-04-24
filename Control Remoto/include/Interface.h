@@ -1,15 +1,14 @@
-/********************************************************************************************************************************************************
-  -INTERFAZ GRAFICA DEL DISPLAY
-  -INICIALIZACIONES
-  -MENUS
-  -CURSOR DEL USUARIO
-  
-  *********************************************************************************************************************
-  CORRECCIONES DE ERORRES DE LOS ENUM, FALTABA PONER EL TIPO DE ENUM QUE ERA. ES DECIR, Enum pedro{}; Estaba solo Enum
-  *********************************************************************************************************************
-
-*********************************************************************************************************************************************************/
-
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * -INTERFAZ GRAFICA DEL DISPLAY
+ * -INICIALIZACIONES
+ * -MENUS
+ * -CURSOR DEL USUARIO
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
 
 #ifndef INTERFACE_H 
 #define INTERFACE_H
@@ -72,11 +71,12 @@ const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 void buttonsBegin(void);
 
 /*! @brief Estado logico del pin de la placa de desarrollo
-    @param pin 
-            Pin de la placa de desarrollo
+    @param PIN_BUTTON 
+           Pin de la placa de desarrollo
     @returns Estado logico del pin de la placa de desarrollo */
 inline bool buttonState(const uint8_t PIN_BUTTON);
 
+//Objeto para el manejo del Display OLED
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 /*! @brief Inicializacion de display  */
