@@ -60,7 +60,7 @@ namespace Profiles{
         @returns Vector de strings, la primera posicion del vector almacena
                  la cantidad de perfiles que tiene el directorio de cache
      */
-    String showProfiles_(void);
+    String* showProfiles_(void);
     
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
@@ -71,8 +71,12 @@ namespace Profiles{
                Nombre del perfil                            */
     void deleteProfile_(const char* name);
     /*! @brief Crea un subperfil para un perfil
-        @param name
-               Nombre del subperfil                            */
+        @param subProfilename
+               Nombre del subperfil
+        @param storedIRData
+                Estructura con la DATA del infrarrojo
+        @param profileName
+                Nombre del perfil en el que quiere guardar el subperfil*/
     void createSubProfile_(const char* name, storedIRDataStruct* storedIRData);
 
 };

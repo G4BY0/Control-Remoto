@@ -49,7 +49,7 @@ void SDBegin(void){
     @returns buffer por linea
     @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
 */
-String Profiles::showProfiles_(void){
+String* Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
@@ -62,7 +62,7 @@ String Profiles::showProfiles_(void){
 
 
   rootForRead = SD.open("/");
-  int stringCounter = 0;
+  uint16_t stringCounter = 0;
   String* profilesName;
   do{
     archivo = (rootForRead.openNextFile());
@@ -121,7 +121,7 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-void Profiles::createSubProfile_(const char* name, storedIRDataStruct* storedIRData){
+void Profiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
 
   //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
   Cursor cursor();
