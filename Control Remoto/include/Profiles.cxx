@@ -63,7 +63,7 @@ String* Profiles::showProfiles_(void){
 
   rootForRead = SD.open("/");
   uint16_t stringCounter = 0;
-  String* profilesName;
+  String* profilesName = NULL;
   do{
     archivo = (rootForRead.openNextFile());
     if(!archivo){
@@ -84,6 +84,7 @@ String* Profiles::showProfiles_(void){
           Serial.print("archivo");
           cacheFile.print("archivo");
           profilesName = (String*) realloc(profilesName, sizeof(String) *  ++stringCounter );
+          
 
       }
       Serial.print("\n");
@@ -93,6 +94,8 @@ String* Profiles::showProfiles_(void){
 
   rootForRead.close();
   cacheFile.close();
+
+  return profilesName;
 
 }
 

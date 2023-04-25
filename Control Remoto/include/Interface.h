@@ -89,22 +89,16 @@ namespace Interface {
   uint8_t hub(void);
 
   /*! @brief    Interfaz del modo "profiles" a la salida del display 
-      @returns  'true'  El modo cumplió satisfactoriamente. 
-                'false' No cumplio satisfactorimante.
   */
-  boolean profiles(void);
+  void profiles(void);
 
   /*! @brief    Interfaz del modo "addProfile" a la salida del display
-      @returns  'true'  El modo cumplió satisfactoriamente. 
-                'false' No cumplio satisfactorimante.
   */
-  boolean addProfile(void);
+  void addProfile(void);
 
   /*! @brief    Interfaz del modo "deleteProfile" a la salida del display
-      @returns  'true'  El modo cumplió satisfactoriamente. 
-                'false' No cumplio satisfactorimante.
   */
-  boolean deleteProfile(void);
+  void deleteProfile(void);
 
 };
 

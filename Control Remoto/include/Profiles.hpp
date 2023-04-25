@@ -18,11 +18,11 @@
 #include "Infrared.h"
 
 //Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
-struct Keep : public storedIRDataStruct {
+struct Keep_t : public storedIRDataStruct {
 
     char* nameSubProfile;
 
-} keep;
+};
 
 //Dependiendo del sistema operativo, incluye o no la definicion.
 #ifndef _IOFBF
