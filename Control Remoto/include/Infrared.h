@@ -48,11 +48,12 @@ void Receive_stop(void);
 */
 void sendCode(void);
 
-/*! @brief Almacena datos del infrarrojo
-    @param sStoredIRData recibe estructura con la data de la señal
+/*! @brief Almacena datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
+    @param profileName nombre del perfil en el que se encontrara el subperfil
+    @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
     @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
-void storeCode(storedIRDataStruct* sStoredIRData);
+void storeCode(const char* profileName, const char* subProfileName);
 
 
 #endif //Infrared_h
