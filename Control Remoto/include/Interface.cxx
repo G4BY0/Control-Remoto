@@ -62,13 +62,13 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
 
   
-const int button_up_pin = 2;
-const int button_down_pin = 3;
+  const int button_up_pin = 2;
+  const int button_down_pin = 3;
 
-const int max_lines = 5; // Máximo número de líneas que se pueden mostrar en pantalla
-int current_page = 0; // Página actual del texto
-int num_pages = 0; // Número total de páginas del texto
-int current_line = 0; // Línea actual del texto
+  const int max_lines = 5; // Máximo número de líneas que se pueden mostrar en pantalla
+  int current_page = 0; // Página actual del texto
+  int num_pages = 0; // Número total de páginas del texto
+  int current_line = 0; // Línea actual del texto
 
   // ---------------------------------------------------------------------
   const String* arrayProfilesName = Profiles::showProfiles_();
@@ -161,6 +161,74 @@ void Interface::deleteProfile(void){
 }
 
 
+void Interface::subProfiles(char){
+  
+  const int button_up_pin = 2;
+  const int button_down_pin = 3;
+
+  const int max_lines = 5; // Máximo número de líneas que se pueden mostrar en pantalla
+  int current_page = 0; // Página actual del texto
+  int num_pages = 0; // Número total de páginas del texto
+  int current_line = 0; // Línea actual del texto
+
+  // ---------------------------------------------------------------------
+  const String* arrayProfilesName = SubProfiles::showSubProfiles();
+  
+  // Leer el estado de los botones
+  bool button_up = digitalRead(button_up_pin) == LOW;
+  bool button_down = digitalRead(button_down_pin) == LOW;
+
+  // Mostrar el texto en pantalla
+  const String* text_ptr = Profiles::showProfiles_(); // getTextPointer();
+  
+  
+  if (text_ptr == nullptr) {
+    Serial.println("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
+    return; // El puntero es nulo, salir de la función
+    
+  }
+
+  int num_lines = countLines(text_ptr);
+  num_pages = num_lines / max_lines;
+  if (num_lines % max_lines != 0) {
+    num_pages++; // Añadir una página adicional para mostrar las líneas restantes
+  }
+
+  display.clearDisplay();
+  for (int i = current_page*max_lines; i < (current_page+1)*max_lines; i++) {
+    if (i >= num_lines) {
+      break; // Se han mostrado todas las líneas, salir del bucle
+    }
+
+    const String& line = text_ptr[i];
+    display.setCursor(0, (i - current_page*max_lines)*10);
+    display.println(line);
+  }
+  display.display();
+
+  // Actualizar la posición del cursor basado en los botones
+  if (button_up && current_line > 0) {
+    current_line--;
+  }
+  else if (button_down && current_line < max_lines - 1 && current_page*max_lines + current_line < num_lines - 1) {
+    current_line++;
+  }
+
+  // Actualizar la página del texto si es necesario
+  if (current_line == 0 && button_up && current_page > 0) {
+    current_page--;
+  }
+  else if (current_line == max_lines - 1 && button_down && current_page < num_pages - 1) {
+    current_page++;
+  }
+  //-------------------------------------------------------
+
+  
+
+
+}
+
+
 //PARTE DE LO DE SHOWPROFILES
 // Función que devuelve un puntero al texto a mostrar
 const String* getTextPointer() {
@@ -177,3 +245,4 @@ int countLines(const String* text) {
   }
   return count;
 }
+

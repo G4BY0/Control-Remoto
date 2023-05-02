@@ -56,7 +56,7 @@ inline char* strcatconst(const char* firstPart, const char* finalPart);
 void SDBegin(void);
 
 namespace Profiles{
-    /*! @brief Desde modo administrador, muestra en el Serial una lista del contenido del directorio raiz  
+    /*! @brief Devuelve un vector de strings que 
         @returns Vector de strings, la primera posicion del vector almacena
                  la cantidad de perfiles que tiene el directorio de cache
      */
@@ -81,5 +81,19 @@ namespace Profiles{
 
 };
 
+namespace SubProfiles{
+
+    /*! @brief Convierte Bloque de memoria con los nombres de los subperfiles
+        @param name
+               Nombre del perfil                            */
+    String* showSubProfiles(const char* profileName){
+
+    
+
+
+    }
+
+
+};
 
 #endif //Profiles_hpp

@@ -94,7 +94,7 @@ String* Profiles::showProfiles_(void){
 
   rootForRead.close();
   cacheFile.close();
-
+  
   return profilesName;
 
 }
@@ -131,5 +131,11 @@ void Profiles::createSubProfile_(const char* subProfileName, storedIRDataStruct*
   //cursor.write_ptr();
   //SD write y toda esa modiva para guardar el hexa, bits y infrarrojo
   // SD write agregar END al final
+
+}
+
+void SubProfiles::showSubProfiles(const char* profileName){
+
+  
 
 }
