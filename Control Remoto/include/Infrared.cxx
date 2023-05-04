@@ -83,6 +83,8 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 // Stores the code for later playback
 void storeCode(void) {
   
+  
+
   storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
 
   //Copy decoded data
@@ -104,7 +106,6 @@ void storeCode(void) {
     Serial.println();
   }
 
-  delete sStoredIRData;
-  
+  delete[] sStoredIRData;
   
 }

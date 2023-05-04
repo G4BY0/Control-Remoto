@@ -49,46 +49,39 @@ void SDBegin(void){
     @returns buffer por linea
     @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
 */
-String* Profiles::showProfiles_(void){
+String** Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
 
-  //Crear Cache.txt si es que no existe
-  SD.mkdir("Cache.txt");
-  
-  //Cache abierto tipo escritura
-  File cacheFile = SD.open("Cache.txt",FILE_WRITE);
-
+  uint16_t numberOfProfiles;
 
   rootForRead = SD.open("/");
   uint16_t stringCounter = 0;
-  String* profilesName = NULL;
+  String** profilesName = nullptr;
+
   do{
     archivo = (rootForRead.openNextFile());
     if(!archivo){
-        //Si no hay archivo siguiente
-        Serial.println("END");
-        cacheFile.println("END");
-
+      //Si no hay archivo siguiente
+      Serial.println("Doesn't find any other profile.");
+        
     }else{
-      Serial.print(archivo.name());  //Imprimo el nombre
+      Serial.print("Perfil: ");
+      Serial.println(archivo.name());  //Imprimo el nombre
       if (archivo.isDirectory()){
-          //Si es un directorio
-          Serial.print("directorio");
-          cacheFile.print("directorio");
+        //Si es un directorio
 
-          
       }else{
-          //Si es un archivo
-          Serial.print("archivo");
-          cacheFile.print("archivo");
-          profilesName = (String*) realloc(profilesName, sizeof(String) *  ++stringCounter );
+        //Si es un archivo
+        profilesName[++numberOfProfiles] = (String*) malloc(sizeof(String*));
+        *profilesName = 
+        *profilesName = (String*) realloc(profilesName, sizeof(String) *  ++stringCounter );
           
 
       }
       Serial.print("\n");
-      cacheFile.print("\n");
+      
     }
   }while(archivo);
 

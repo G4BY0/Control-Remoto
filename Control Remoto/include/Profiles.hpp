@@ -86,7 +86,7 @@ namespace SubProfiles{
     /*! @brief Convierte Bloque de memoria con los nombres de los subperfiles
         @param name
                Nombre del perfil                            */
-    String* showSubProfiles(const char* profileName){
+    String** showSubProfiles(const char* profileName){
 
     
 

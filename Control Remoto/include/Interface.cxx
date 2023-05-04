@@ -121,21 +121,6 @@ void Interface::profiles(void){
   }
   //-------------------------------------------------------
 
-  /* 
-  if(arrayProfilesName == nullptr){
-
-    Serial.println("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
-    return;
-
-  } else {
-
-    Serial.println("Mostrando perfiles:");
-    display.
-
-  } 
-  */
-
-
 }
 
 void Interface::addProfile(void){
@@ -143,8 +128,8 @@ void Interface::addProfile(void){
 
   Cursor cursor();
   Profiles::createProfile_(cursor.write_ptr());
-  //String name = cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
-  //Profiles::createProfile_(cursor.write_ptr());
+  //cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
+
 
 }
 
