@@ -62,8 +62,8 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
 
   
-  const int button_up_pin = 2;
-  const int button_down_pin = 3;
+  const int button_up_pin = PIN::Buttons::UP;
+  const int button_down_pin = PIN::Buttons::DOWN;
 
   const int max_lines = 5; // Máximo número de líneas que se pueden mostrar en pantalla
   int current_page = 0; // Página actual del texto
@@ -215,7 +215,7 @@ void Interface::subProfiles(char){
 
 
 //PARTE DE LO DE SHOWPROFILES
-// Función que devuelve un puntero al texto a mostrar
+// Función que devuelve un puntero al texto a mostrar, de simulacion
 const String* getTextPointer() {
   static const String text[] = {"Cadena 1", "Cadena 2", "Cadena 3", "Cadena 4", "Cadena 5", "Cadena 6", "Cadena 7", "Cadena 8", "Cadena 9", "Cadena 10"};
   const String* ptr = text;

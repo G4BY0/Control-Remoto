@@ -49,17 +49,16 @@ void SDBegin(void){
     @returns buffer por linea
     @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
 */
-String** Profiles::showProfiles_(void){
+const char** Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
 
-  uint16_t numberOfProfiles;
+  char** profilesName = nullptr;
+  uint16_t numberOfProfiles = 0;
 
   rootForRead = SD.open("/");
-  uint16_t stringCounter = 0;
-  String** profilesName = nullptr;
-
+ 
   do{
     archivo = (rootForRead.openNextFile());
     if(!archivo){
@@ -67,17 +66,18 @@ String** Profiles::showProfiles_(void){
       Serial.println("Doesn't find any other profile.");
         
     }else{
-      Serial.print("Perfil: ");
-      Serial.println(archivo.name());  //Imprimo el nombre
+      
       if (archivo.isDirectory()){
         //Si es un directorio
 
       }else{
         //Si es un archivo
-        profilesName[++numberOfProfiles] = (String*) malloc(sizeof(String*));
-        *profilesName = 
-        *profilesName = (String*) realloc(profilesName, sizeof(String) *  ++stringCounter );
-          
+        Serial.print("Perfil: ");
+        Serial.println(archivo.name());  //Imprimo el nombre
+
+        profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
+        profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
+        profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
 
       }
       Serial.print("\n");
@@ -86,7 +86,6 @@ String** Profiles::showProfiles_(void){
   }while(archivo);
 
   rootForRead.close();
-  cacheFile.close();
   
   return profilesName;
 
@@ -127,8 +126,20 @@ void Profiles::createSubProfile_(const char* subProfileName, storedIRDataStruct*
 
 }
 
-void SubProfiles::showSubProfiles(const char* profileName){
+const char** SubProfiles::showSubProfiles(char*&& profileName){
+
+  File rootForRead;
+  
+  /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
+  profileName = strcat(SLASH_WITH_EOF_STR, profileName);
+  profileName = strcat(profileName, extensionProfiles);
+
+  rootForRead = SD.open(profileName);
+
 
   
+
+
+  rootForRead.close();
 
 }

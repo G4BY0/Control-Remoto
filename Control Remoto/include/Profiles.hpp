@@ -43,13 +43,6 @@ SdFile root;
 #define SLASH_WITH_EOF_STR "/"
 const char* extensionProfiles = ".txt";
 
-/*! \deprecated en desuso por problemas con manejo de constantes, se borro la definicion.
-    @brief Concatena primer puntero tipo char constante con el segundo del mismo tipo
-    @param firstPart Parte inicial
-    @param finalPart Parte final
-    @returns String concatenado  */
-inline char* strcatconst(const char* firstPart, const char* finalPart);
-
 /*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
 */
@@ -86,7 +79,7 @@ namespace SubProfiles{
     /*! @brief Convierte Bloque de memoria con los nombres de los subperfiles
         @param name
                Nombre del perfil                            */
-    String** showSubProfiles(const char* profileName){
+    const char** showSubProfiles(const char* profileName){
 
     
 
