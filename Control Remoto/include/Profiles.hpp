@@ -20,7 +20,7 @@
 //Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
 struct Keep_t : public storedIRDataStruct {
 
-    char* nameSubProfile;
+    char nameSubProfile[12];
 
 };
 
@@ -63,6 +63,11 @@ namespace Profiles{
         @param name
                Nombre del perfil                            */
     void deleteProfile_(const char* name);
+
+};
+
+namespace SubProfiles{
+
     /*! @brief Crea un subperfil para un perfil
         @param subProfilename
                Nombre del subperfil
@@ -72,20 +77,10 @@ namespace Profiles{
                 Nombre del perfil en el que quiere guardar el subperfil*/
     void createSubProfile_(const char* name, storedIRDataStruct* storedIRData);
 
-};
-
-namespace SubProfiles{
-
     /*! @brief Convierte Bloque de memoria con los nombres de los subperfiles
         @param name
                Nombre del perfil                            */
-    const char** showSubProfiles(const char* profileName){
-
-    
-
-
-    }
-
+    const char** showSubProfiles(const char* profileName);
 
 };
 
