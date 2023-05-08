@@ -82,6 +82,14 @@ namespace SubProfiles{
         @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) */
     const char** showSubProfiles(const char* profileName);
 
+    /*! @brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
+        @param profileName nombre del perfil en el que se encontrara el subperfil
+        @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+        @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+        @returns Puntero Estatico de la estructura de datos del subperfil solicitado
+    */
+    storedIRDataStruct* ReturnSubProfile(const char* profileName, const char* subProfileName);
+
 };
 
 #endif //Profiles_hpp

@@ -60,32 +60,20 @@ uint8_t Interface::hub(void){
 }
 
 void Interface::profiles(void){
-
-  
-  const int button_up_pin = PIN::Buttons::UP;
-  const int button_down_pin = PIN::Buttons::DOWN;
-
-  const int max_lines = 5; // Máximo número de líneas que se pueden mostrar en pantalla
-  int current_page = 0; // Página actual del texto
-  int num_pages = 0; // Número total de páginas del texto
-  int current_line = 0; // Línea actual del texto
-
-  // ---------------------------------------------------------------------
-  const String* arrayProfilesName = Profiles::showProfiles_();
-  // Leer el estado de los botones
-  bool button_up = digitalRead(button_up_pin) == LOW;
-  bool button_down = digitalRead(button_down_pin) == LOW;
-
-  // Mostrar el texto en pantalla
-  const String* text_ptr = Profiles::showProfiles_(); // getTextPointer();
   
 
-  if (text_ptr == nullptr) {
-    Interface::nonProfiles();
+  const char** && names = Profiles::showProfiles_();
+  
+  if (names == nullptr) {
+    Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
-    
   }
 
+  CursorV2 cursor(names,&display);
+
+  const char* && selected = cursor.getSelectedOption();
+
+  SubProfiles::showSubProfiles(selected);
   
 
 }

@@ -64,5 +64,4 @@ void sendCode(void);
 */
 void storeCode(const char* profileName, const char* subProfileName);
 
-
 #endif //Infrared_h

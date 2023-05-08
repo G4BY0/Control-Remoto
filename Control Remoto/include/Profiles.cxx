@@ -97,20 +97,24 @@ void Profiles::createProfile_(const char* name){
   char* directoryString = strcat(SLASH_WITH_EOF_STR, name);
   directoryString = strcat(directoryString, extensionProfiles);
 
-  SD.mkdir(directoryString) == true
+  File rootForWrite;
+
+  SD.open(directoryString) == true
     ? Serial.println("Successfully created.")
     : Serial.println("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile.");
+
+  
 
 }
 
 void Profiles::deleteProfile_(const char* name){
 
  
-  char* directoryString = strcat(SLASH_WITH_EOF_STR, name); 
-  directoryString = strcat(directoryString, extensionProfiles);
+  char* filePath = strcat(SLASH_WITH_EOF_STR, name); 
+  filePath = strcat(filePath, extensionProfiles);
 
   //Elimina archivo
-  SD.rmdir(directoryString) == true 
+  SD.remove(filePath) == true 
     ? Serial.println("Successfully eliminated.")
     : Serial.println("Unsuccessfully eliminated, check out if already doesn't exists...");
 
@@ -129,16 +133,43 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
 const char** SubProfiles::showSubProfiles(char* profileName){
 
   File rootForRead;
+  File archivo;
+  char** subProfilesName = nullptr;
+  uint16_t numberOfSubProfiles = 0;
   
   /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
   profileName = strcat(SLASH_WITH_EOF_STR, profileName);
   profileName = strcat(profileName, extensionProfiles);
 
-  rootForRead = SD.open(profileName);
+  archivo = (rootForRead.openNextFile());
 
+  rootForRead = SD.open(profileName, FILE_READ);
 
+  //Si es un archivo
+  Serial.print("Perfil: ");
+  Serial.println(archivo.name());  //Imprimo el nomb
+  
+  Serial.println("Subperfiles:");
+  subProfilesName = (char**) realloc(subProfilesName, sizeof( char* ) * (++numberOfSubProfiles) );
+  subProfilesName[numberOfSubProfiles] = new char[sizeof(archivo.name())];
+  subProfilesName[numberOfSubProfiles] = strcpy(subProfilesName[numberOfSubProfiles], archivo.name());
   
 
+
+  rootForRead.close();
+
+}
+
+storedIRDataStruct* ReturnSubProfile(const char* profileName, const char* subProfileName){
+
+  File rootForRead;
+  rootForRead = SD.open(profileName, FILE_READ);
+  size_t && bytesFile = sizeof(rootForRead.size()) / sizeof(storedIRDataStruct);
+  for(uint16_t Iterator ; ){
+
+    
+
+  }
 
   rootForRead.close();
 
