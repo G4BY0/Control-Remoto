@@ -14,6 +14,13 @@
 #ifndef INFRARED_H
 #define INFRARED_H
 
+#ifndef SUCCESS
+  #define SUCCESS EXIT_SUCCESS
+#endif
+#ifndef FAILURE
+  #define FAILURE EXIT_FAILURE
+#endif
+
 // Storage for the recorded code
 struct storedIRDataStruct {
     IRData receivedIRData;
@@ -33,8 +40,10 @@ void Receive_start(void);
 
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
+    @returns Si pasa las pruebas retorna EXIT_SUCCESS, sino EXIT_FAILURE.
+
 */
-void Receive_check(void);
+bool Receive_check(void);
 
 
 /*! @brief Checkea si es correcta la cadena binaria recibida

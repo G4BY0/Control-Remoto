@@ -100,6 +100,19 @@ namespace Interface {
   */
   void deleteProfile(void);
 
+  /*! @brief    Interfaz del modo "sub-profiles" a la salida del display
+      @param    profileName_ Nombre del perfil (tipo String)
+  */
+  void subProfiles(const char *profileName_);
+
+  /*! @brief    Interfaz del modo "No hay perfiles almacenados" a la salida del display
+  */
+  void nonProfiles(void);
+
+  /*! @brief    Interfaz del modo "No hay sub-perfiles almacenados" a la salida del display
+  */
+  void nonSubProfiles(void);
+
 };
 
 

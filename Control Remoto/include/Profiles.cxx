@@ -99,7 +99,7 @@ void Profiles::createProfile_(const char* name){
 
   SD.mkdir(directoryString) == true
     ? Serial.println("Successfully created.")
-    : Serial.println("Unsuccessfully created, check if already exists... \n If is the case, first delete that profile.");
+    : Serial.println("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile.");
 
 }
 
@@ -112,11 +112,11 @@ void Profiles::deleteProfile_(const char* name){
   //Elimina archivo
   SD.rmdir(directoryString) == true 
     ? Serial.println("Successfully eliminated.")
-    : Serial.println("Unsuccessfully eliminated, checkl if already doesn't exists...");
+    : Serial.println("Unsuccessfully eliminated, check out if already doesn't exists...");
 
 }
 
-void Subprofiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
+void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
 
   //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
   Cursor cursor();
@@ -126,7 +126,7 @@ void Subprofiles::createSubProfile_(const char* subProfileName, storedIRDataStru
 
 }
 
-const char** SubProfiles::showSubProfiles(char*&& profileName){
+const char** SubProfiles::showSubProfiles(char* profileName){
 
   File rootForRead;
   

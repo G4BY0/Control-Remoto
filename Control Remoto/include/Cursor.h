@@ -10,12 +10,14 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <Interface.h>
+#include "Interface.h"
+#include <Adafruit_SH110X.h>
 
 /*! @brief Cursor que se desplaza a traves del display
     @note Posee de dos constructores
     @note 1- Para desplazarse entre los menus del display
-    @note 2- Para la creacion de strings que recibe del usuario*/
+    @note 2- Para la creacion de strings que recibe del usuario
+    \deprecated Cursor nuevo desarrollado llamado: CursorV2*/
 class Cursor {
 
 private:
@@ -39,5 +41,30 @@ public:
   const char* writer_ptr(void);
 
 };
+
+/*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
+
+#define UP_BUTTON_PIN PIN::Buttons::UP
+#define DOWN_BUTTON_PIN PIN::Buttons::DOWN
+#define ENTER_BUTTON_PIN PIN::Buttons::ENTER
+#define BACK_BUTTON_PIN PIN::Buttons::BACK
+
+class CursorV2 {
+  private:
+    char** options;
+    Adafruit_SH1106G* sh1106;
+    int currentIndex;
+    int totalPages;
+    int currentPage;
+  public:
+    CursorV2(char** menuOptions, Adafruit_SH1106G* display);
+
+    int getNumberOfOptions();
+
+    void showCurrentPage();
+
+    char* getSelectedOption();
+};
+
 
 #endif //Cursor_h

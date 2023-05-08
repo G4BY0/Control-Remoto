@@ -31,30 +31,34 @@ void Receive_start(void){
 
 }
 
-void Receive_check(void){
+
+bool Receive_check(void){
 
   if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
     Serial.print(F("Ignore data with rawlen="));
     Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
-    return;
+    return FAILURE;
    }
   if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
     Serial.println(F("Ignore repeat"));
-    return;
+    return FAILURE;
   }
   if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_AUTO_REPEAT) {
     Serial.println(F("Ignore autorepeat"));
-    return;
+    return FAILURE;
   }
   if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_PARITY_FAILED) {
     Serial.println(F("Ignore parity error"));
-    return;
+    return FAILURE;
   }
   if (IrReceiver.decode()) {
     //Store received data and resume
     storeCode();
     IrReceiver.resume(); //Resume receiver
+    return SUCCESS;
   }
+
+  return FAILURE;
 }
 
 void Receive_stop(void){
@@ -81,7 +85,7 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 }
 
 // Stores the code for later playback
-void storeCode(void) {
+void storeCode(const char* profileName, const char* subProfileName) {
   
   
 

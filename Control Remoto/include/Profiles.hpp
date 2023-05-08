@@ -49,11 +49,10 @@ const char* extensionProfiles = ".txt";
 void SDBegin(void);
 
 namespace Profiles{
-    /*! @brief Devuelve un vector de strings que 
-        @returns Vector de strings, la primera posicion del vector almacena
-                 la cantidad de perfiles que tiene el directorio de cache
+    /*! @brief Hace lectura del nombre de los perfiles dentro del almacenamiento  
+        @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los perfiles)
      */
-    String* showProfiles_(void);
+    const char** showProfiles_(void);
     
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
@@ -75,11 +74,12 @@ namespace SubProfiles{
                 Estructura con la DATA del infrarrojo
         @param profileName
                 Nombre del perfil en el que quiere guardar el subperfil*/
-    void createSubProfile_(const char* name, storedIRDataStruct* storedIRData);
+    void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
 
-    /*! @brief Convierte Bloque de memoria con los nombres de los subperfiles
+    /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
         @param name
-               Nombre del perfil                            */
+               Nombre del perfil
+        @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) */
     const char** showSubProfiles(const char* profileName);
 
 };
