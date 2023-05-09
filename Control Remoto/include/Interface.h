@@ -37,10 +37,15 @@
 /*Posibles modos futuros*/
 #define MODE_HELP 0x4             /* Muestra como funciona el sistema y explica como va la cosa*/
 #endif
-
+ 
 #define BUTTON_PRESSED_ENTER 0x0
 #define BUTTON_PRESSED_BACK 0x1
 
+/*! @brief Estado logico del pin de la placa de desarrollo
+    @param PIN_BUTTON 
+           Pin de la placa de desarrollo
+    @returns Estado logico del pin de la placa de desarrollo */
+#define buttonState(PIN_BUTTON) digitalRead(PIN_BUTTON) 
 
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
@@ -62,19 +67,11 @@
 #define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
 
-
-
 const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 
 /*! @brief Inicializacion de botonera
     @note Arduino por defecto establece como entrada los pines digitales*/
 void buttonsBegin(void);
-
-/*! @brief Estado logico del pin de la placa de desarrollo
-    @param PIN_BUTTON 
-           Pin de la placa de desarrollo
-    @returns Estado logico del pin de la placa de desarrollo */
-inline bool buttonState(const uint8_t PIN_BUTTON);
 
 //Objeto para el manejo del Display OLED
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -114,8 +111,5 @@ namespace Interface {
   void nonSubProfiles(void);
 
 };
-
-
-
 
 #endif //Interface_h

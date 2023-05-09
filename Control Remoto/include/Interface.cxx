@@ -21,10 +21,6 @@ void buttonsBegin(void){
 
 }
 
-inline bool buttonState(const uint8_t PIN_BUTTON) { 
-  return (digitalRead(PIN_BUTTON)); 
-}
-
 
 void displayBegin(void){
 
@@ -130,11 +126,12 @@ void Interface::nonProfiles(void){
   display.println("Almacenados");
 
   display.setCursor(10,40);
-  display.println("Pulsa boton: Back para");
+  display.println("Pulsa boton Back para");
   display.setCursor(10,50);
   display.println("Volver");
 
   display.display();
+  while(buttonState(PIN::Buttons::BACK));
 
 }
 
@@ -149,10 +146,11 @@ void Interface::nonSubProfiles(void){
   display.println("Almacenados");
 
   display.setCursor(10,40);
-  display.println("Pulsa boton: Back para");
+  display.println("Pulsa boton Back para");
   display.setCursor(10,50);
   display.println("Volver");
 
   display.display();
+  while(buttonState(PIN::Buttons::BACK));
 
 }

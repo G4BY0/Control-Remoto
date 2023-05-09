@@ -94,27 +94,26 @@ const char** Profiles::showProfiles_(void){
 
 void Profiles::createProfile_(const char* name){
   /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
-  char* directoryString = strcat(SLASH_WITH_EOF_STR, name);
-  directoryString = strcat(directoryString, extensionProfiles);
+  char* && profilePath = strcat(SLASH_WITH_EOF_STR, name);
+  profilePath = strcat(profilePath, extensionProfiles);
 
   File rootForWrite;
-
-  SD.open(directoryString) == true
+  rootForWrite = SD.open(profilePath, FILE_WRITE);
+  rootForWrite.available()
     ? Serial.println("Successfully created.")
     : Serial.println("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile.");
 
-  
+  rootForWrite.close();
 
 }
 
 void Profiles::deleteProfile_(const char* name){
-
  
-  char* filePath = strcat(SLASH_WITH_EOF_STR, name); 
-  filePath = strcat(filePath, extensionProfiles);
+  char* && profilePath = strcat(SLASH_WITH_EOF_STR, name); 
+  profilePath = strcat(profilePath, extensionProfiles);
 
   //Elimina archivo
-  SD.remove(filePath) == true 
+  SD.remove(profilePath) == true 
     ? Serial.println("Successfully eliminated.")
     : Serial.println("Unsuccessfully eliminated, check out if already doesn't exists...");
 
@@ -145,31 +144,62 @@ const char** SubProfiles::showSubProfiles(char* profileName){
 
   rootForRead = SD.open(profileName, FILE_READ);
 
+  if(!rootForRead.available()){
+
+    Serial.println("The file cannot be open successfully");
+    return;
+
+  }
+
   //Si es un archivo
   Serial.print("Perfil: ");
-  Serial.println(archivo.name());  //Imprimo el nomb
+  Serial.println(archivo.name());  //Imprimo el nombre
   
   Serial.println("Subperfiles:");
   subProfilesName = (char**) realloc(subProfilesName, sizeof( char* ) * (++numberOfSubProfiles) );
   subProfilesName[numberOfSubProfiles] = new char[sizeof(archivo.name())];
   subProfilesName[numberOfSubProfiles] = strcpy(subProfilesName[numberOfSubProfiles], archivo.name());
-  
-
 
   rootForRead.close();
 
 }
 
-storedIRDataStruct* ReturnSubProfile(const char* profileName, const char* subProfileName){
+Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   File rootForRead;
   rootForRead = SD.open(profileName, FILE_READ);
-  size_t && bytesFile = sizeof(rootForRead.size()) / sizeof(storedIRDataStruct);
-  for(uint16_t Iterator ; ){
 
-    
+  if(!rootForRead.available()){
+
+    Serial.println("The file cannot be open successfully");
+    return;
 
   }
+
+  size_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
+
+  Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
+
+  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++  ){
+
+    if(rootForRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+      
+      Serial.println("Unsuccessfull reading from File");
+
+    }
+
+    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == SUCCESS){
+      
+      Keep_t IrStructFinded = retiredFromSD[structPerFile];
+      delete[] retiredFromSD;
+      return &IrStructFinded;
+
+    }
+
+    return nullptr; // En caso de problemas
+
+  }
+
 
   rootForRead.close();
 

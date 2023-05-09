@@ -41,7 +41,7 @@ SdFile root;
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
-const char* extensionProfiles = ".txt";
+const char* extensionProfiles = ".db";
 
 /*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
