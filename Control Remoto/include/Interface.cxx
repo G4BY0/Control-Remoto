@@ -38,6 +38,11 @@ uint8_t Interface::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
+  const char** optionsString = new char*[5];
+  optionsString = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE"};
+
+  CursorV2 cursor(optionsString,&display);
+
   display.setCursor(LINE_STRING_X,LINE_STRING_Y[0]);
   display.print    ("  PROFILES"   );
 
@@ -49,8 +54,8 @@ uint8_t Interface::hub(void){
 
   display.display();
 
-  Cursor cursor(3);
-  return cursor.options();
+  
+  return cursor.getSelectedOption();
   
 
 }
@@ -59,9 +64,9 @@ void Interface::profiles(void){
   
 
   const char** && names = Profiles::showProfiles_();
-  
+
   if (names == nullptr) {
-    Interface::nonSubProfiles();
+    Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
@@ -86,10 +91,19 @@ void Interface::addProfile(void){
 
 void Interface::deleteProfile(void){
 
-  Profiles::showProfiles_(); 
+   const char** && names = Profiles::showProfiles_();
+  
+  if (names == nullptr) {
+    Interface::nonSubProfiles();
+    return; // El puntero es nulo, salir de la función
+  }
 
-  Cursor cursor();
-  Profiles::deleteProfile_(cursor.write_ptr());
+  CursorV2 cursor(names,&display);
+
+  const char* && selected = cursor.getSelectedOption();
+
+  Profiles::deleteProfile_(selected);
+
 
   // if(/*PONER AQUI OPCIONES ONDA .txt que hay en el directorio*/ == 0){ Interface::nonProfiles() } else {continua} (DESARROLLAR IGUAL, HAY Q PENSARLO MAS A FONDO ESTA PARTE, PARA PODER VOLVER DIGO)
  
@@ -101,7 +115,7 @@ void Interface::subProfiles(const char *profileName_){
 
   const char** && names = SubProfiles::showSubProfiles(profileName_);
   
-  if (*names == nullptr) {
+  if (names == nullptr) {
     Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
     
@@ -152,5 +166,53 @@ void Interface::nonSubProfiles(void){
 
   display.display();
   while(buttonState(PIN::Buttons::BACK));
+
+}
+
+void Interface::createSubProfile(void){
+
+  //Primero muestro en pantalla los perfiles
+  const char** && namesProfile = Profiles::showProfiles_();
+
+  if (namesProfile == nullptr) {
+    Interface::nonProfiles();
+    return; // El puntero es nulo, salir de la función
+  }
+
+  CursorV2 cursor(namesProfile,&display);
+
+  const char* && selected = cursor.getSelectedOption();
+
+  const char* && namesSubProfile = SubProfiles::showSubProfiles(selected);
+
+  CursorV2 cursor2(namesProfile,&display); 
+
+  const char* && selected = cursor2.getSelectedOption();
+
+
+
+}
+
+void Interface::deleteSubProfile(void){
+
+  //Primero muestro en pantalla los perfiles
+  const char** && names = Profiles::showProfiles_();
+
+  if (names == nullptr) {
+    Interface::nonProfiles();
+    return; // El puntero es nulo, salir de la función
+  }
+
+  CursorV2 cursor(names,&display);
+
+  const char* && selected = cursor.getSelectedOption();
+
+  names = SubProfiles::showSubProfiles(selected);
+
+  CursorV2 cursor2(names,&display); 
+
+  selected = cursor2.getSelectedOption();
+
+  SubProfiles::deleteSubProfile();
 
 }

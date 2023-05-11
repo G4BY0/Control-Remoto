@@ -108,10 +108,17 @@ void Profiles::createProfile_(const char* name){
 }
 
 void Profiles::deleteProfile_(const char* name){
- 
+  
+  if(name == nullptr){
+
+    Serial.println("nullptr Received, exit from deleProfile()");
+
+  }
+
   char* && profilePath = strcat(SLASH_WITH_EOF_STR, name); 
   profilePath = strcat(profilePath, extensionProfiles);
 
+  
   //Elimina archivo
   SD.remove(profilePath) == true 
     ? Serial.println("Successfully eliminated.")
@@ -125,7 +132,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   Cursor cursor();
   //cursor.write_ptr();
   //SD write y toda esa modiva para guardar el hexa, bits y infrarrojo
-  // SD write agregar END al final
+  
 
 }
 
@@ -167,12 +174,22 @@ const char** SubProfiles::showSubProfiles(char* profileName){
 Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   File rootForRead;
+
+
   rootForRead = SD.open(profileName, FILE_READ);
 
   if(!rootForRead.available()){
 
     Serial.println("The file cannot be open successfully");
-    return;
+    return; //Failure
+
+  }
+
+  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
+  if( ( sizeof(rootForRead.size()) % sizeof(Keep_t) ) != 0){ 
+
+    Serial.println("The has wrong data stored, doesn't match with normalized information");
+    return; //Failure
 
   }
 
@@ -192,7 +209,7 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
       
       Keep_t IrStructFinded = retiredFromSD[structPerFile];
       delete[] retiredFromSD;
-      return &IrStructFinded;
+      return &IrStructFinded; //Success
 
     }
 
@@ -202,5 +219,27 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
 
   rootForRead.close();
+
+}
+
+void SubProfiles::storeSubProfiles(Keep_t storeIR, const char* profileName){
+
+  File rootForWrite;
+
+  char* && profilePath = strcat(SLASH_WITH_EOF_STR, profileName); 
+  profilePath = strcat(profilePath, extensionProfiles);
+
+  rootForWrite = SD.open(profilePath,FILE_WRITE);
+
+  if(!rootForWrite.available()){
+
+    Serial.println("Unsuccessfull writting from File");
+    return;
+
+  }
+
+  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) );
+  
+  rootForWrite.close();
 
 }
