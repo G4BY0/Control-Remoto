@@ -83,13 +83,6 @@ namespace PIN{
 
   }
 
-  namespace IR{
-
-    #define IR_RECEIVE_PIN  11
-    #define IR_SEND_PIN     10
-
-  }
-
 };
 
 #endif // PIN_H

@@ -110,6 +110,16 @@ namespace Interface {
   */
   void nonSubProfiles(void);
 
+  #pragma region Pre-Alpha // Version Primera de Salida
+  /*! @brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
+  */
+  void createSubProfile(void);
+
+  /*! @brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
+  */
+  void deleteSubProfile(void);
+  #pragma endregion // Fin de funciones agregadas para Pre-Alpha
+
 };
 
 #endif //Interface_h

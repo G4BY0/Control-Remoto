@@ -21,6 +21,10 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
+
+#define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
+#define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
+
 // Storage for the recorded code
 struct storedIRDataStruct {
     IRData receivedIRData;
@@ -41,10 +45,8 @@ void Receive_start(void);
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
     @returns Si pasa las pruebas retorna EXIT_SUCCESS, sino EXIT_FAILURE.
-
 */
 bool Receive_check(void);
-
 
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData

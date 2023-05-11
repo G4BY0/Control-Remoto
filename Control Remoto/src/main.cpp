@@ -7,7 +7,8 @@ namespace MODE{
     void profiles__(void);
     void addProfile__(void);
     void deleteProfile__(void);
-    
+    void addSubProfile__(void);
+    void deleteSubProfile__(void);
 };
 
 

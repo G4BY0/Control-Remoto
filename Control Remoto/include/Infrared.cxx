@@ -1,8 +1,8 @@
 #include "Infrared.h"
 
 #define DELAY_BETWEEN_REPEAT 50
-#define DISABLE_LEDFEEDBACK 0x0 // false
-#define ENABLE_LEDFEEDBACK 0x1  // true
+#define DISABLE_LEDFEEDBACK false // false
+#define ENABLE_LEDFEEDBACK true  // true
 
 void infraredBegin(void){
 
@@ -87,8 +87,6 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 // Stores the code for later playback
 void storeCode(const char* profileName, const char* subProfileName) {
   
-  
-
   storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
 
   //Copy decoded data
@@ -113,4 +111,3 @@ void storeCode(const char* profileName, const char* subProfileName) {
   delete[] sStoredIRData;
   
 }
-

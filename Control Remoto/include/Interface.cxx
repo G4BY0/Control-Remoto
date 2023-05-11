@@ -42,20 +42,13 @@ uint8_t Interface::hub(void){
   optionsString = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE"};
 
   CursorV2 cursor(optionsString,&display);
-
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[0]);
-  display.print    ("  PROFILES"   );
-
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[1]);
-  display.print    ("  ADD PROFILE");
-
-  display.setCursor(LINE_STRING_X,LINE_STRING_Y[2]);
-  display.print    ("  DELETE PROFILE");
-
-  display.display();
-
   
-  return cursor.getSelectedOption();
+  const char* && selected = cursor.getSelectedOption();
+
+  for(uint8_t option; option < 5; option++){ if(strcmp( selected , optionsString[option] ) == 0) return option; }
+
+  delete[] optionsString;
+  return; //Si hay problemas retorna
   
 
 }
@@ -74,18 +67,15 @@ void Interface::profiles(void){
 
   const char* && selected = cursor.getSelectedOption();
 
-  SubProfiles::showSubProfiles(selected);
+  Interface::subProfiles(selected);
   
 
 }
 
 void Interface::addProfile(void){
 
-
-  Cursor cursor();
   Profiles::createProfile_(cursor.write_ptr());
   //cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
-
 
 }
 
@@ -110,7 +100,6 @@ void Interface::deleteProfile(void){
 
 }
 
-
 void Interface::subProfiles(const char *profileName_){
 
   const char** && names = SubProfiles::showSubProfiles(profileName_);
@@ -121,11 +110,11 @@ void Interface::subProfiles(const char *profileName_){
     
   }
 
-  CursorV2 cursor(names,&display);
+  CursorV2 cursor( names ,&display);
 
   const char* && selected = cursor.getSelectedOption();
 
-  SubProfiles::showSubProfiles(selected);
+  // Desarrollar a infrarrojo el subperfil solicitado
 
 }
 
@@ -183,7 +172,7 @@ void Interface::createSubProfile(void){
 
   const char* && selected = cursor.getSelectedOption();
 
-  const char* && namesSubProfile = SubProfiles::showSubProfiles(selected);
+  const char** && namesSubProfile = SubProfiles::showSubProfiles(selected);
 
   CursorV2 cursor2(namesProfile,&display); 
 
@@ -205,14 +194,14 @@ void Interface::deleteSubProfile(void){
 
   CursorV2 cursor(names,&display);
 
-  const char* && selected = cursor.getSelectedOption();
+  const char* && selectedProfile = cursor.getSelectedOption();
 
-  names = SubProfiles::showSubProfiles(selected);
-
+  names = SubProfiles::showSubProfiles(selectedProfile);
+  
   CursorV2 cursor2(names,&display); 
 
-  selected = cursor2.getSelectedOption();
+  const char* && selectedSubProfile = cursor2.getSelectedOption();
 
-  SubProfiles::deleteSubProfile();
+  SubProfiles::deleteSubProfile(selectedProfile, selectedSubProfile);
 
 }

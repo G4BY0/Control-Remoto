@@ -95,8 +95,16 @@ namespace SubProfiles{
 
     /*! @brief Guarda en el almacenamiento el subPerfil recibido
         @param  storeIR estructura Normalizada con los datos a almacenar
+        @param profileName nombre del perfil en el que se almacenará el subperfil
     */
     void storeSubProfiles(Keep_t storeIR, const char* profileName);
+
+    /*! @brief  Elimina en el almacenamiento el subPerfil recibido
+    *   @param profileName nombre del perfil en el que se encontrara el subperfil
+    *   @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+    *   @note Borra la estructura que almacena el nombre del subperfil
+    */
+    void deleteSubProfile(const char* profileName, const char* subProfileName);
 
 };
 

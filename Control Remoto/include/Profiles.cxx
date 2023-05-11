@@ -188,7 +188,7 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
   if( ( sizeof(rootForRead.size()) % sizeof(Keep_t) ) != 0){ 
 
-    Serial.println("The has wrong data stored, doesn't match with normalized information");
+    Serial.println("Profile has wrong data stored, doesn't match with normalized information");
     return; //Failure
 
   }
@@ -197,7 +197,7 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
-  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++  ){
+  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
 
     if(rootForRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
       
@@ -233,7 +233,7 @@ void SubProfiles::storeSubProfiles(Keep_t storeIR, const char* profileName){
 
   if(!rootForWrite.available()){
 
-    Serial.println("Unsuccessfull writting from File");
+    Serial.println("Unsuccessfull opened Profile");
     return;
 
   }
@@ -241,5 +241,54 @@ void SubProfiles::storeSubProfiles(Keep_t storeIR, const char* profileName){
   rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) );
   
   rootForWrite.close();
+
+}
+
+void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfileName){
+
+  File rootForWrite;
+
+  char* && profilePath = strcat(SLASH_WITH_EOF_STR, profileName); 
+  profilePath = strcat(profilePath, extensionProfiles);
+
+  rootForWrite = SD.open(profilePath,FILE_WRITE);
+  
+  if(!rootForWrite.available()){
+
+    Serial.println("Unsuccessfull writting from File");
+    return;
+
+  }
+
+  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
+  if( ( sizeof(rootForWrite.size()) % sizeof(Keep_t) ) != 0){ 
+
+    Serial.println("Profile has wrong data stored, doesn't match with normalized information");
+    return; //Failure
+
+  }
+
+  size_t && structPerFile = sizeof(rootForWrite.size()) / sizeof(Keep_t);
+
+  Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
+
+  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
+
+    if(rootForWrite.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+
+      Serial.println("Unsuccessfull reading from File");
+
+    }
+    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == SUCCESS){
+
+      Keep_t IrStructFinded = retiredFromSD[structPerFile];
+      delete[] retiredFromSD;
+      return;
+    }
+
+  }
+
+  rootForWrite.close();
+  return; // En caso de problemas
 
 }

@@ -4,9 +4,13 @@ void MODE::hub__(void){
 
   switch (Interface::hub()){
 
-    case MODE_PROFILES:         MODE::profiles__();      
-    case MODE_ADDPROFILE:       MODE::addProfile__();    
-    case MODE_DELETEPROFILE:    MODE::deleteProfile__(); 
+    case 0:     MODE::profiles__();         break;   
+    case 1:     MODE::addProfile__();       break;
+    case 2:     MODE::deleteProfile__();    break;
+    #pragma region Pre-Alpha Modes
+    case 3:     MODE::addSubProfile__();    break;
+    case 4:     MODE::deleteSubProfile__(); break;
+    #pragma endregion
 
   }
 
@@ -14,32 +18,30 @@ void MODE::hub__(void){
 
 void MODE::profiles__(void){
 
-  if(Interface::profiles()){
-
-    Interface::
-
-
-  } 
+  Interface::profiles();
 
 }
 
 void MODE::addProfile__(void){
 
-  if(Interface::addProfile()){
-
-    Profiles::createProfile_();
-
-  } 
+  Interface::addProfile();
 
 }
 
 void MODE::deleteProfile__(void){
 
-  if(Interface::deleteProfile()){
+  Interface::deleteProfile();
 
-    Profiles::deleteProfile_();
+}
 
-  } 
+void MODE::addSubProfile__(void){
 
+  Interface::createSubProfile();
+
+}
+
+void MODE::deleteSubProfile__(void){
+
+  Interface::deleteSubProfile();
 
 }
