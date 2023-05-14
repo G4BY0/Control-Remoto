@@ -153,6 +153,8 @@ class Writter{
 class WritterV2{
 
   private:
+  Adafruit_SH1106G* display_ptr;
+  Adafruit_SH1106G& display = *display_ptr;
   ///////////////////////////
   //      -VARIABLES-      //
   ///////////////////////////
@@ -164,12 +166,12 @@ class WritterV2{
   dataPackage data;
 
   //Pins
-  const uint8_t leftPin = PIN::Buttons::LEFT;
-  const uint8_t rightPin = PIN::Buttons::RIGHT;
-  const uint8_t upPin = PIN::Buttons::UP;
-  const uint8_t downPin = PIN::Buttons::DOWN;
-  const uint8_t selectPin = PIN::Buttons::ENTER;
-  const uint8_t switchPin = 7;
+  const int leftPin = 2;
+  const int rightPin = 3;
+  const int upPin = 4;
+  const int downPin = 5;
+  const int selectPin = 6;
+  const int switchPin = 7;
 
   //timeDelay
   int buttonDelay = 0;
@@ -195,36 +197,30 @@ class WritterV2{
   char msgToSend[30];
   int num = 0;
 
+  //receiveText
+  int msgFlag = 0;
+  char convertedMsg[30];
+  bool displayMsg = false;
+  bool ringFlag = true;
+
   //drawBlink
   int xBlink = 0;
   int yBlink1 = 0;
   int yBlink2 = 0;
 
-  ///////////////////////
-  //      -SETUP-      //
-  ///////////////////////{
-  //atcSetup();
-  
-
-  //////////////////////
-  //      -LOOP-      //
-  //////////////////////
-  //atcLoop();
-
-  Adafruit_SH1106G* display_ptr;
-  Adafruit_SH1106G& display = *display_ptr;
-
   public:
 
-  WritterV2::WritterV2(Adafruit_SH1106G* displayObject_ptr);
-  void atcSetup(void);
-  void atcLoop(void);
-  void timeDelay(void);
+  WritterV2(Adafruit_SH1106G* displayReference);
 
-  void drawMenu(void);
-  void drawCursor(void);
-  void drawText(void);
-  void drawBlink(void);
+  inline void WritterV2::setup(void);
+  inline void WritterV2::loop(void);
+  void WritterV2::atcSetup(void);
+  void WritterV2::atcLoop(void);
+  void WritterV2::timeDelay(void);
+  void WritterV2::drawMenu(void);
+  void WritterV2::drawCursor(void);
+  void WritterV2::drawText(void);
+  void WritterV2::drawBlink(void);
 
 };
 
