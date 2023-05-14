@@ -80,6 +80,7 @@ void Interface::addProfile(void){
   if(profileName.c_str() == nullptr) return; // Failure
   String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
   if(subProfileName.c_str() == nullptr) return; // Failure
+  
   Profiles::createProfile_(profileName.c_str());
   SubProfiles::createSubProfile_(subProfileName.c_str() , ReceivingAndStoring( profileName.c_str() , subProfileName.c_str() ) , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 

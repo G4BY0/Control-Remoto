@@ -25,8 +25,6 @@
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
-#ifndef storedIRDataStruct_type
-#define storedIRDataStruct_type
 // Storage for the recorded code
 struct storedIRDataStruct {
     IRData receivedIRData;
@@ -34,7 +32,8 @@ struct storedIRDataStruct {
     uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
     uint8_t rawCodeLength; // The length of the code
 };
-#endif
+
+
 
 
 /*! @brief Inicializacion de infrarrojos
@@ -74,6 +73,6 @@ void storeCode(const char* profileName, const char* subProfileName);
     @returns Infrarrojo Recibido
     @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
-Keep_t& ReceivingAndStoring(const char* profileName, const char* subProfileName);
+storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName);
 
 #endif //Infrared_h

@@ -126,8 +126,17 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-[[deprecated("En desuso porque no se usara en la version Pre-Alpha")]]
 void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
+
+  Keep_t* storedIRDataWithStr = new Keep_t;
+
+  //Logica de copiado de una estructura a otra
+  storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData;
+  constexpr const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
+  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
+    storedIRDataWithStr->rawCode[iterator] = storedIRData->rawCode[iterator];
+  storedIRDataWithStr->rawCodeLength = storedIRData->rawCodeLength;
+  strcpy( storedIRDataWithStr->nameSubProfile , subProfileName );
 
   File rootStoring;
   rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
@@ -139,15 +148,12 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
 
   }
 
+  rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
 
-  Keep_t storedIRDataWithStr;
+  rootStoring.close();
 
-  storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData;
-  constexpr const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
-  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData) )
-    storedIRDataWithStr.rawCode[iterator] = storedIRData->rawCode[iterator];
-  storedIRDataWithStr.rawCodeLength = storedIRData->rawCodeLength;
-  strcpy( storedIRDataWithStr.nameSubProfile , subProfileName );
+  delete[] storedIRDataWithStr;
+  
   
 
   

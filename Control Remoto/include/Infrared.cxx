@@ -113,13 +113,13 @@ void storeCode(const char* profileName, const char* subProfileName) {
   
 }
 
-storedIRDataStruct& ReceivingAndStoring(const char* profileName, const char* subProfileName){
+storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName){
 
   //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
   Receive_start();
-  Receive_check(); 
+  if( Receive_check() ) return nullptr;
   Receive_stop();
 
-
+  
 
 }
