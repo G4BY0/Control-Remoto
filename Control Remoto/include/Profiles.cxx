@@ -49,7 +49,7 @@ void SDBegin(void){
     @returns buffer por linea
     @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
 */
-const char** Profiles::showProfiles_(void){
+char** Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
@@ -80,7 +80,7 @@ const char** Profiles::showProfiles_(void){
         profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
 
       }
-      Serial.print("\n");
+      Serial.print('\n');
       
     }
   }while(archivo);
@@ -112,13 +112,13 @@ void Profiles::deleteProfile_(const char* name){
   if(name == nullptr){
 
     Serial.println("nullptr Received, exit from deleProfile()");
+    return;
 
   }
 
   char* && profilePath = strcat(SLASH_WITH_EOF_STR, name); 
-  profilePath = strcat(profilePath, extensionProfiles);
+  profilePath = strcat( profilePath , extensionProfiles );
 
-  
   //Elimina archivo
   SD.remove(profilePath) == true 
     ? Serial.println("Successfully eliminated.")
@@ -126,30 +126,49 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
+[[deprecated("En desuso porque no se usara en la version Pre-Alpha")]]
 void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
+
+  File rootStoring;
+  rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
+
+  if(!rootStoring.available()){
+
+    Serial.println("The file cannot be open successfully");
+    return; 
+
+  }
+
+
+  Keep_t storedIRDataWithStr;
+
+  storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData;
+  constexpr const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
+  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData) )
+    storedIRDataWithStr.rawCode[iterator] = storedIRData->rawCode[iterator];
+  storedIRDataWithStr.rawCodeLength = storedIRData->rawCodeLength;
+  strcpy( storedIRDataWithStr.nameSubProfile , subProfileName );
+  
+
+  
 
   //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
   Cursor cursor();
   //cursor.write_ptr();
   //SD write y toda esa modiva para guardar el hexa, bits y infrarrojo
   
-
 }
 
-const char** SubProfiles::showSubProfiles(char* profileName){
+char** SubProfiles::showSubProfiles(char* profileName){
 
   File rootForRead;
   File archivo;
   char** subProfilesName = nullptr;
   uint16_t numberOfSubProfiles = 0;
   
-  /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
-  profileName = strcat(SLASH_WITH_EOF_STR, profileName);
-  profileName = strcat(profileName, extensionProfiles);
-
   archivo = (rootForRead.openNextFile());
 
-  rootForRead = SD.open(profileName, FILE_READ);
+  rootForRead = SD.open( profilePath(profileName) , FILE_READ );
 
   if(!rootForRead.available()){
 
@@ -222,14 +241,11 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
 }
 
-void SubProfiles::storeSubProfiles(Keep_t storeIR, const char* profileName){
+void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
   File rootForWrite;
 
-  char* && profilePath = strcat(SLASH_WITH_EOF_STR, profileName); 
-  profilePath = strcat(profilePath, extensionProfiles);
-
-  rootForWrite = SD.open(profilePath,FILE_WRITE);
+  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
 
   if(!rootForWrite.available()){
 
@@ -248,10 +264,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
   File rootForWrite;
 
-  char* && profilePath = strcat(SLASH_WITH_EOF_STR, profileName); 
-  profilePath = strcat(profilePath, extensionProfiles);
-
-  rootForWrite = SD.open(profilePath,FILE_WRITE);
+  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
   
   if(!rootForWrite.available()){
 

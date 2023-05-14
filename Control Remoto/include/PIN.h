@@ -17,8 +17,8 @@
 # INFRARED TRANSMITTER
 
     - DATA      = DIGITAL PIN 12
-  - VCC         = MICROCONTROLLER_VCC
-  - GND         = MICROCONTROLLER_GND
+    - VCC         = MICROCONTROLLER_VCC
+    - GND         = MICROCONTROLLER_GND
 
 # BUTTONS 
  // PULL UP INSTALATIONS
@@ -37,7 +37,7 @@
 #ifndef PIN_H
 #define PIN_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 namespace PIN{
   

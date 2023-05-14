@@ -13,7 +13,7 @@
 #ifndef INTERFACE_H 
 #define INTERFACE_H
  
-
+#include <stdint.h>
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -40,12 +40,14 @@
  
 #define BUTTON_PRESSED_ENTER 0x0
 #define BUTTON_PRESSED_BACK 0x1
-
-/*! @brief Estado logico del pin de la placa de desarrollo
+#ifndef buttonState_function_Macro
+  #define buttonState_function_Macro
+  /*! @brief Estado logico del pin de la placa de desarrollo
     @param PIN_BUTTON 
            Pin de la placa de desarrollo
     @returns Estado logico del pin de la placa de desarrollo */
-#define buttonState(PIN_BUTTON) digitalRead(PIN_BUTTON) 
+  #define buttonState(PIN_BUTTON) digitalRead(PIN_BUTTON) 
+#endif
 
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/

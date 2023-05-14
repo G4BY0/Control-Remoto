@@ -21,7 +21,6 @@ void buttonsBegin(void){
 
 }
 
-
 void displayBegin(void){
 
   display.begin(I2C_ADDRESS, true);
@@ -31,6 +30,7 @@ void displayBegin(void){
 
 }
 
+
 uint8_t Interface::hub(void){
 
   display.clearDisplay();
@@ -38,8 +38,8 @@ uint8_t Interface::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
-  const char** optionsString = new char*[5];
-  optionsString = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE"};
+  char* strings[] = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE"};
+  char** optionsString = strings;
 
   CursorV2 cursor(optionsString,&display);
   
@@ -47,7 +47,7 @@ uint8_t Interface::hub(void){
 
   for(uint8_t option; option < 5; option++){ if(strcmp( selected , optionsString[option] ) == 0) return option; }
 
-  delete[] optionsString;
+
   return; //Si hay problemas retorna
   
 
@@ -56,7 +56,7 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
   
 
-  const char** && names = Profiles::showProfiles_();
+  char** names = Profiles::showProfiles_();
 
   if (names == nullptr) {
     Interface::nonProfiles();
@@ -73,15 +73,21 @@ void Interface::profiles(void){
 }
 
 void Interface::addProfile(void){
+  
+  Writter writter( &display );
 
-  Profiles::createProfile_(cursor.write_ptr());
-  //cursor.writer_ptr(); DESARROLLAR ESTA PARTE IGUAL...
+  String profileName = writter.stringFinished();
+  if(profileName.c_str() == nullptr) return; // Failure
+  String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+  if(subProfileName.c_str() == nullptr) return; // Failure
+  Profiles::createProfile_(profileName.c_str());
+  SubProfiles::createSubProfile_(subProfileName.c_str() , ReceivingAndStoring( profileName.c_str() , subProfileName.c_str() ) , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 
 void Interface::deleteProfile(void){
 
-   const char** && names = Profiles::showProfiles_();
+  char** names = Profiles::showProfiles_();
   
   if (names == nullptr) {
     Interface::nonSubProfiles();
@@ -94,15 +100,11 @@ void Interface::deleteProfile(void){
 
   Profiles::deleteProfile_(selected);
 
-
-  // if(/*PONER AQUI OPCIONES ONDA .txt que hay en el directorio*/ == 0){ Interface::nonProfiles() } else {continua} (DESARROLLAR IGUAL, HAY Q PENSARLO MAS A FONDO ESTA PARTE, PARA PODER VOLVER DIGO)
- 
-
 }
 
 void Interface::subProfiles(const char *profileName_){
 
-  const char** && names = SubProfiles::showSubProfiles(profileName_);
+  char** names = SubProfiles::showSubProfiles(profileName_);
   
   if (names == nullptr) {
     Interface::nonSubProfiles();
@@ -134,7 +136,18 @@ void Interface::nonProfiles(void){
   display.println("Volver");
 
   display.display();
-  while(buttonState(PIN::Buttons::BACK));
+  
+  //Descomentar para que solo sea el boton BACK
+  while( buttonState(PIN::Buttons::BACK) );
+
+  //Descomentar para que sea para cualquier boton
+  /*while(  buttonState(PIN::Buttons::BACK)  ||
+            buttonState(PIN::Buttons::ENTER) ||
+            buttonState(PIN::Buttons::UP)    ||
+            buttonState(PIN::Buttons::DOWN)  ||
+            buttonState(PIN::Buttons::LEFT)  ||
+            buttonState(PIN::Buttons::RIGHT) );
+  */
 
 }
 
@@ -154,14 +167,25 @@ void Interface::nonSubProfiles(void){
   display.println("Volver");
 
   display.display();
-  while(buttonState(PIN::Buttons::BACK));
+
+  //Descomentar para que solo sea el boton BACK
+  while( buttonState(PIN::Buttons::BACK) );
+
+  //Descomentar para que sea para cualquier boton
+  /*while(  buttonState(PIN::Buttons::BACK)  ||
+            buttonState(PIN::Buttons::ENTER) ||
+            buttonState(PIN::Buttons::UP)    ||
+            buttonState(PIN::Buttons::DOWN)  ||
+            buttonState(PIN::Buttons::LEFT)  ||
+            buttonState(PIN::Buttons::RIGHT) );
+  */
 
 }
 
 void Interface::createSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
-  const char** && namesProfile = Profiles::showProfiles_();
+  char** namesProfile = Profiles::showProfiles_();
 
   if (namesProfile == nullptr) {
     Interface::nonProfiles();
@@ -178,14 +202,12 @@ void Interface::createSubProfile(void){
 
   const char* && selected = cursor2.getSelectedOption();
 
-
-
 }
 
 void Interface::deleteSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
-  const char** && names = Profiles::showProfiles_();
+  char** names = Profiles::showProfiles_();
 
   if (names == nullptr) {
     Interface::nonProfiles();

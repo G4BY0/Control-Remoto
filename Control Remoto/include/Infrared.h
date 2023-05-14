@@ -25,6 +25,8 @@
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
+#ifndef storedIRDataStruct_type
+#define storedIRDataStruct_type
 // Storage for the recorded code
 struct storedIRDataStruct {
     IRData receivedIRData;
@@ -32,6 +34,8 @@ struct storedIRDataStruct {
     uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
     uint8_t rawCodeLength; // The length of the code
 };
+#endif
+
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -40,7 +44,7 @@ void infraredBegin(void);
 /*! @brief Inicia el proceso para recibir señales infrarrojas
     @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc  
 */
-void Receive_start(void);
+inline void Receive_start(void);
 
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
@@ -51,7 +55,7 @@ bool Receive_check(void);
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
 */
-void Receive_stop(void);
+inline void Receive_stop(void);
 
 /*! @brief Envia señal infrarroja
     @param aIRDataToSend recibe estructura con la data de la señal
@@ -65,5 +69,11 @@ void sendCode(void);
     @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
 void storeCode(const char* profileName, const char* subProfileName);
+
+/*! @brief Conjunto de metodos de preparacion para recibir Infrarrojo
+    @returns Infrarrojo Recibido
+    @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+*/
+Keep_t& ReceivingAndStoring(const char* profileName, const char* subProfileName);
 
 #endif //Infrared_h

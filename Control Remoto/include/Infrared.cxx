@@ -85,6 +85,7 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 }
 
 // Stores the code for later playback
+[[deprecated("Debido a la reorganizacion del codigo, quedo en desuso")]]
 void storeCode(const char* profileName, const char* subProfileName) {
   
   storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
@@ -110,4 +111,15 @@ void storeCode(const char* profileName, const char* subProfileName) {
 
   delete[] sStoredIRData;
   
+}
+
+storedIRDataStruct& ReceivingAndStoring(const char* profileName, const char* subProfileName){
+
+  //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
+  Receive_start();
+  Receive_check(); 
+  Receive_stop();
+
+
+
 }

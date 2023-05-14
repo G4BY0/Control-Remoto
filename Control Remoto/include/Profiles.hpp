@@ -20,7 +20,7 @@
 //Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
 struct Keep_t : public storedIRDataStruct {
 
-    char nameSubProfile[12];
+    char nameSubProfile[20];
 
 };
 
@@ -41,7 +41,12 @@ SdFile root;
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
-const char* extensionProfiles = ".db";
+#define extensionProfiles ".db"
+
+/*! @brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles' 
+    @param string nombre de perfil a convertir en directorio
+    @return puntero al string PATH*/
+#define profilePath(string) strcat(strcat(SLASH_WITH_EOF_STR, profileName),extensionProfiles)
 
 /*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
@@ -52,7 +57,7 @@ namespace Profiles{
     /*! @brief Hace lectura del nombre de los perfiles dentro del almacenamiento  
         @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los perfiles)
      */
-    const char** showProfiles_(void);
+    char** showProfiles_(void);
     
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
@@ -75,6 +80,7 @@ namespace SubProfiles{
     *   @param profileName
     *           Nombre del perfil en el que quiere guardar el subperfil
     */
+    [[deprecated("En desuso porque no se usara en la version Pre-Alpha")]]
     void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
 
     /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
@@ -82,7 +88,7 @@ namespace SubProfiles{
     *          Nombre del perfil
     *    @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) 
     */
-    const char** showSubProfiles(const char* profileName);
+    char** showSubProfiles(const char* profileName);
 
     /*! @brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
     *   @param profileName nombre del perfil en el que se encontrara el subperfil
@@ -97,7 +103,7 @@ namespace SubProfiles{
         @param  storeIR estructura Normalizada con los datos a almacenar
         @param profileName nombre del perfil en el que se almacenará el subperfil
     */
-    void storeSubProfiles(Keep_t storeIR, const char* profileName);
+    void storeSubProfile(Keep_t storeIR, const char* profileName);
 
     /*! @brief  Elimina en el almacenamiento el subPerfil recibido
     *   @param profileName nombre del perfil en el que se encontrara el subperfil
