@@ -264,4 +264,4 @@ void Writter::keyboard(void) {
 
 }
 
-String Writter::stringFinished(void){ return To_Transmit;}
+inline String Writter::stringFinished(void){ return To_Transmit;} // Desarrollar para el loop

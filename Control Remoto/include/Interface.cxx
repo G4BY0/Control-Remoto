@@ -97,6 +97,8 @@ void Interface::deleteProfile(void){
 
   CursorV2 cursor(names,&display);
 
+  
+
   const char* && selected = cursor.getSelectedOption();
 
   Profiles::deleteProfile_(selected);
@@ -125,30 +127,57 @@ void Interface::nonProfiles(void){
 
   Serial.println("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
 
+  display.setTextColor(SH110X_WHITE);
   display.setTextSize(1);
   display.setCursor(10,10);
-  display.println("No hay perfiles");
-  display.setCursor(10,20);
-  display.println("Almacenados");
+  display.println("No profiles stored");
 
-  display.setCursor(10,40);
-  display.println("Pulsa boton Back para");
-  display.setCursor(10,50);
-  display.println("Volver");
+  display.setCursor(15,30);
+  display.println("Press any button");
+  display.setCursor(25,40);
+  display.println("to turn back");
 
   display.display();
   
   //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) );
+  // while( buttonState(PIN::Buttons::BACK) );
 
+  #pragma region Blink_nonProfiles_PulseAnyBotton
   //Descomentar para que sea para cualquier boton
-  /*while(  buttonState(PIN::Buttons::BACK)  ||
-            buttonState(PIN::Buttons::ENTER) ||
-            buttonState(PIN::Buttons::UP)    ||
-            buttonState(PIN::Buttons::DOWN)  ||
-            buttonState(PIN::Buttons::LEFT)  ||
-            buttonState(PIN::Buttons::RIGHT) );
-  */
+  for(  unsigned long TimeForBlink = millis()  ;
+        buttonState(PIN::Buttons::BACK)     |
+        buttonState(PIN::Buttons::ENTER)    |
+        buttonState(PIN::Buttons::UP)       |
+        buttonState(PIN::Buttons::DOWN)     |
+        buttonState(PIN::Buttons::LEFT)     |
+        buttonState(PIN::Buttons::RIGHT)    ;
+     )
+  {
+    bool AlternatingBlink;
+    if( (millis() - TimeForBlink) >= BLINK_TIME){
+      TimeForBlink = millis();
+      AlternatingBlink = !AlternatingBlink;
+      display.setCursor(15,30);
+      display.println("                ");
+      display.setCursor(25,40);
+      display.println("            ");
+      display.display();
+
+    } else {
+      TimeForBlink = millis();
+      AlternatingBlink = !AlternatingBlink;
+      TimeForBlink = millis();
+      display.setCursor(10,10);
+      display.println("No profiles stored");
+
+      display.setCursor(15,30);
+      display.println("Press any button");
+      display.setCursor(25,40);
+      display.println("to turn back");
+
+    }
+  }
+  #pragma endregion // Blink_PulseAnyBotton
 
 }
 
@@ -156,30 +185,57 @@ void Interface::nonSubProfiles(void){
 
   Serial.println("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
 
+  display.setTextColor(SH110X_WHITE);
   display.setTextSize(1);
-  display.setCursor(10,10);
-  display.println("No hay sub-perfiles");
-  display.setCursor(10,20);
-  display.println("Almacenados");
+  display.setCursor(5,10);
+  display.println("No sub-profiles stored");
 
-  display.setCursor(10,40);
-  display.println("Pulsa boton Back para");
-  display.setCursor(10,50);
-  display.println("Volver");
+  display.setCursor(15,30);
+  display.println("Press any button");
+  display.setCursor(25,40);
+  display.println("to turn back");
 
   display.display();
 
   //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) );
+  // while( buttonState(PIN::Buttons::BACK) );
 
+  #pragma region Blink_nonSubProfiles_PulseAnyBotton
   //Descomentar para que sea para cualquier boton
-  /*while(  buttonState(PIN::Buttons::BACK)  ||
-            buttonState(PIN::Buttons::ENTER) ||
-            buttonState(PIN::Buttons::UP)    ||
-            buttonState(PIN::Buttons::DOWN)  ||
-            buttonState(PIN::Buttons::LEFT)  ||
-            buttonState(PIN::Buttons::RIGHT) );
-  */
+  for(  unsigned long TimeForBlink = millis()  ;
+        buttonState(PIN::Buttons::BACK)     |
+        buttonState(PIN::Buttons::ENTER)    |
+        buttonState(PIN::Buttons::UP)       |
+        buttonState(PIN::Buttons::DOWN)     |
+        buttonState(PIN::Buttons::LEFT)     |
+        buttonState(PIN::Buttons::RIGHT)    ;
+     )
+  {
+    bool AlternatingBlink;
+    if( (millis() - TimeForBlink) >= BLINK_TIME){
+      TimeForBlink = millis();
+      AlternatingBlink = !AlternatingBlink;
+      display.setCursor(15,30);
+      display.println("                ");
+      display.setCursor(25,40);
+      display.println("            ");
+      display.display();
+
+    } else {
+      TimeForBlink = millis();
+      AlternatingBlink = !AlternatingBlink;
+      TimeForBlink = millis();
+      display.setCursor(5,10);
+      display.println("No sub-profiles stored");
+
+      display.setCursor(15,30);
+      display.println("Press any button");
+      display.setCursor(25,40);
+      display.println("to turn back");
+
+    }
+  }
+  #pragma endregion // Blink_PulseAnyBotton
 
 }
 

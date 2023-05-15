@@ -221,6 +221,7 @@ class WritterV2{
   void WritterV2::drawCursor(void);
   void WritterV2::drawText(void);
   void WritterV2::drawBlink(void);
+  inline String stringFinished(void);
 
 };
 

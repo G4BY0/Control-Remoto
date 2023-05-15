@@ -69,6 +69,10 @@
 #define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
 
+//region Blink_PulseAnyBotton
+#define BLINK_TIME 500
+
+
 const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 
 /*! @brief Inicializacion de botonera
