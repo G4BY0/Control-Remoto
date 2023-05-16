@@ -52,9 +52,7 @@ bool Receive_check(void){
     return FAILURE;
   }
   if (IrReceiver.decode()) {
-    //Store received data and resume
-    storeCode();
-    IrReceiver.resume(); //Resume receiver
+    
     return SUCCESS;
   }
 
@@ -64,6 +62,7 @@ bool Receive_check(void){
 void Receive_stop(void){
   
   Serial.println(F("Stop receiving"));
+  IrReceiver.resume(); //Resume receiver
   IrReceiver.stop();
 
 }
@@ -85,8 +84,7 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
 }
 
 // Stores the code for later playback
-[[deprecated("Debido a la reorganizacion del codigo, quedo en desuso")]]
-void storeCode(const char* profileName, const char* subProfileName) {
+storedIRDataStruct* storeCode(void) {
   
   storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
 
@@ -109,17 +107,26 @@ void storeCode(const char* profileName, const char* subProfileName) {
     Serial.println();
   }
 
-  delete[] sStoredIRData;
-  
+  return sStoredIRData;
+
 }
 
+#pragma region Desarrollo
 storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName){
 
   //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
   Receive_start();
+
   if( Receive_check() ) return nullptr;
+  
+  Keep_t* structStoredHeap = SubProfiles::convertIRData(storeCode());
+  Keep_t Informacion = *structStoredHeap;
+
+  SubProfiles::storeSubProfile(  Informacion, subProfileName );
+
+  delete[] structStoredHeap;
+
   Receive_stop();
 
-  
-
 }
+#pragma endregion

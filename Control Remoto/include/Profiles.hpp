@@ -72,30 +72,37 @@ namespace Profiles{
 };
 
 namespace SubProfiles{
+    /*! @brief Crea un tipo de estructura estatica que es = Irdata + Nombre del Subperfil (Tipo Char[20])
+     *  @param storedIRData 
+     *         Recibe estructura normalizada de la informacion del infrarrojo
+     *  @note Recordar eliminar la memoria dinamica reservada luego de su uso
+     *  @returns Tipo de estructura con el agregado mencionado
+    */
+    Keep_t convertIRData(storedIRDataStruct* storedIRData);
 
     /*! @brief Crea un subperfil para un perfil
-    *   @param subProfilename
-    *          Nombre del subperfil
-    *   @param storedIRData
-    *           Estructura con la DATA del infrarrojo
-    *   @param profileName
-    *           Nombre del perfil en el que quiere guardar el subperfil
+     *  @param subProfilename
+     *         Nombre del subperfil
+     *  @param storedIRData
+     *          Estructura con la DATA del infrarrojo
+     *  @param profileName
+     *           Nombre del perfil en el que quiere guardar el subperfil
     */
     [[deprecated("En desuso porque no se usara en la version Pre-Alpha")]]
     void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
 
     /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
-    *   @param name
-    *          Nombre del perfil
-    *    @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) 
+     *  @param name
+     *         Nombre del perfil
+     *  @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) 
     */
     char** showSubProfiles(const char* profileName);
 
     /*! @brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
-    *   @param profileName nombre del perfil en el que se encontrara el subperfil
-    *   @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
-    *   @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
-    *   @returns Puntero Estatico de la estructura de datos del subperfil solicitado
+     *  @param profileName nombre del perfil en el que se encontrara el subperfil
+     *  @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+     *  @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+     *  @returns Puntero Estatico de la estructura de datos del subperfil solicitado
     */
     Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName);
 
@@ -107,9 +114,9 @@ namespace SubProfiles{
     void storeSubProfile(Keep_t storeIR, const char* profileName);
 
     /*! @brief  Elimina en el almacenamiento el subPerfil recibido
-    *   @param profileName nombre del perfil en el que se encontrara el subperfil
-    *   @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
-    *   @note Borra la estructura que almacena el nombre del subperfil
+     *   @param profileName nombre del perfil en el que se encontrara el subperfil
+     *   @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+     *   @note Borra la estructura que almacena el nombre del subperfil
     */
     void deleteSubProfile(const char* profileName, const char* subProfileName);
 

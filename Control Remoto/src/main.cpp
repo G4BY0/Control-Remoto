@@ -1,18 +1,10 @@
 #warning "Project is in developing, it's not already yet!"
+#warning "Joaco estuvo aqui"
 #include "Arduino.h"
 #include "Interface.h"
-
-namespace MODE{
-
-    void hub__(void);
-    void profiles__(void);
-    void addProfile__(void);
-    void deleteProfile__(void);
-    void addSubProfile__(void);
-    void deleteSubProfile__(void);
-};
-
-
+#include "Profiles.hpp"
+#include "Infrared.h"
+#include "Modes.hpp"
 
 void setup(){
     
@@ -22,7 +14,7 @@ void setup(){
     Serial.println("Tipo de compilador Utilizado: ");
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
-    #pragma region Compilador_Usado
+    //#pragma region Compilador_Usado
     #if defined(__GNUC__)
         Serial.println("GNU :)");
         Serial.print("Version del compilador de GNU es: ");
@@ -38,7 +30,7 @@ void setup(){
     #else
         Serial.println("Generico :((");
     #endif
-    #pragma endregion
+    //#pragma endregion
 
     displayBegin();
     buttonsBegin();

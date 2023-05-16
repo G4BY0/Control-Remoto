@@ -7,12 +7,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
 
+#ifndef INFRARED_H
+#define INFRARED_H
+
 #include <Arduino.h>
 #include <IRremote.hpp>
 #include "PIN.h"
+#include "Profiles.hpp"
 
-#ifndef INFRARED_H
-#define INFRARED_H
 
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS
@@ -60,19 +62,23 @@ inline void Receive_stop(void);
     @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(void);
+void sendCode(storedIRDataStruct* aIRDataToSend);
 
-/*! @brief Almacena datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
-    @param profileName nombre del perfil en el que se encontrara el subperfil
-    @param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
-    @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+/*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
+    @returns Retorna la estructura normalizada de la copia de datos
+    @note Retorna la copia de datos almacenado en un espacio de la memoria Heap (tipo estatico)
 */
-void storeCode(const char* profileName, const char* subProfileName);
+storedIRDataStruct* storeCode(void);
 
+#pragma region Desarrollo
 /*! @brief Conjunto de metodos de preparacion para recibir Infrarrojo
+    @param profileName Nombre del perfil dado   
+    @param subProfileName Nombre del subperfil dado
     @returns Infrarrojo Recibido
-    @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
+    @note Usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
 storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName);
+#endif
+
 
 #endif //Infrared_h

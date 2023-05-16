@@ -74,7 +74,7 @@ void Interface::profiles(void){
 
 void Interface::addProfile(void){
   
-  Writter writter( &display );
+  WritterV2 writter( &display );
 
   String profileName = writter.stringFinished();
   if(profileName.c_str() == nullptr) return; // Failure
@@ -140,7 +140,7 @@ void Interface::nonProfiles(void){
   display.display();
   
   //Descomentar para que solo sea el boton BACK
-  // while( buttonState(PIN::Buttons::BACK) );
+  while( buttonState(PIN::Buttons::BACK) );
 
   #pragma region Blink_nonProfiles_PulseAnyBotton
   //Descomentar para que sea para cualquier boton
@@ -198,7 +198,7 @@ void Interface::nonSubProfiles(void){
   display.display();
 
   //Descomentar para que solo sea el boton BACK
-  // while( buttonState(PIN::Buttons::BACK) );
+  while( buttonState(PIN::Buttons::BACK) );
 
   #pragma region Blink_nonSubProfiles_PulseAnyBotton
   //Descomentar para que sea para cualquier boton

@@ -9,7 +9,6 @@
 
 #include "Profiles.hpp"
 
-
 void SDBegin(void){
 
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
@@ -47,13 +46,10 @@ void SDBegin(void){
   File transferFile = SD.open(TRANSFER_FILE_DIRANDNAME);
   transferFile.close();
   }
-}
-//--------------------------------------------------------------------------------------------------------------------------------------------------
 
-/*! Escribe en un buffer por linea, los archivos y directorios que se encuentran en raiz
-    @returns buffer por linea
-    @note En esta funcion, me fume alto porrazo y salio, pregunten cuando no este tan deserebrado porq la locura que hice no tiene sentido
-*/
+}
+
+
 char** Profiles::showProfiles_(void){
  
   File rootForRead;
@@ -93,7 +89,6 @@ char** Profiles::showProfiles_(void){
 
 }
 
-
 void Profiles::createProfile_(const char* name){
   /*    Conversion de nombre recibido a tipo string archivo, (con el slash + name + extension)    */
   char* && profilePath = strcat(SLASH_WITH_EOF_STR, name);
@@ -127,21 +122,32 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
+Keep_t SubProfiles::convertIRData(storedIRDataStruct* storedIRData, const char* subProfileName){
+
+  Keep_t storedIRDataWithStr;
+
+  //Logica de copiado de una estructura a otra sumandole el nombre del subperfil
+  storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData; // Copio estructura de datos
+
+  const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
+  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData) )
+    storedIRDataWithStr.rawCode[iterator] = storedIRData->rawCode[iterator];
+  storedIRDataWithStr.rawCodeLength = storedIRData->rawCodeLength;
+
+  strcpy( storedIRDataWithStr.nameSubProfile , subProfileName ); //Copio string, nombre del subperfil (char[20])
+
+  delete[] storedIRData; // Lo borro porque no se usara mas
+  return storedIRDataWithStr;
+}
+
 void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
 
-  Keep_t* storedIRDataWithStr = new Keep_t;
-
-  //Logica de copiado de una estructura a otra
-  storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData;
-  constexpr const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
-  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
-    storedIRDataWithStr->rawCode[iterator] = storedIRData->rawCode[iterator];
-  storedIRDataWithStr->rawCodeLength = storedIRData->rawCodeLength;
-  strcpy( storedIRDataWithStr->nameSubProfile , subProfileName );
+  Keep_t* storedIRDataWithStr = (Keep_t*) &convertIRData(storedIRData, subProfileName);
 
   File rootStoring;
   rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
 
+  //Si el archivo no esta disponible...
   if(!rootStoring.available()){
 
     Serial.println("The file cannot be open successfully");
@@ -149,35 +155,22 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
 
   }
 
+  //Escritura de datos en el archivo
   rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
 
   rootStoring.close();
-
-  delete[] storedIRDataWithStr;
-  
-  
-
-  
-
-  //Infrarred.read funcion esa para esperar el hexa y la cantidad de bits
-  Cursor cursor();
-  //cursor.write_ptr();
-  //SD write y toda esa modiva para guardar el hexa, bits y infrarrojo
   
 }
 
 char** SubProfiles::showSubProfiles(char* profileName){
 
-  File rootForRead;
-  File archivo;
+  File rootRead;
   char** subProfilesName = nullptr;
   uint16_t numberOfSubProfiles = 0;
-  
-  archivo = (rootForRead.openNextFile());
 
-  rootForRead = SD.open( profilePath(profileName) , FILE_READ );
+  rootRead = SD.open( profilePath(profileName) , FILE_READ );
 
-  if(!rootForRead.available()){
+  if(!rootRead.available()){
 
     Serial.println("The file cannot be open successfully");
     return;
@@ -186,24 +179,51 @@ char** SubProfiles::showSubProfiles(char* profileName){
 
   //Si es un archivo
   Serial.print("Perfil: ");
-  Serial.println(archivo.name());  //Imprimo el nombre
+  Serial.println(rootRead.name());  //Imprimo el nombre
   
   Serial.println("Subperfiles:");
-  subProfilesName = (char**) realloc(subProfilesName, sizeof( char* ) * (++numberOfSubProfiles) );
-  subProfilesName[numberOfSubProfiles] = new char[sizeof(archivo.name())];
-  subProfilesName[numberOfSubProfiles] = strcpy(subProfilesName[numberOfSubProfiles], archivo.name());
 
-  rootForRead.close();
+  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
+  if( ( sizeof(rootRead.size()) % sizeof(Keep_t) ) != 0){ 
+
+    Serial.println("Profile has wrong data stored, doesn't match with normalized information");
+    return; //Failure
+
+  }
+
+  uint16_t && structPerFile = sizeof(rootRead.size()) / sizeof(Keep_t);
+
+  Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
+
+  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
+
+    if(rootRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+
+      Serial.println("Unsuccessfull reading subProfile");
+      continue;
+
+    }
+    
+    //Imprimo en el Serial el nombre del subperfil
+    Serial.println(retiredFromSD[iterator].nameSubProfile);
+
+    subProfilesName = (char**) realloc(subProfilesName, sizeof( char* ) * (iterator+1) );
+    subProfilesName[iterator+1] = new char[sizeof(retiredFromSD[iterator].nameSubProfile)];
+    strcpy( subProfilesName[iterator+1] , retiredFromSD[iterator].nameSubProfile );
+
+  }
+
+  rootRead.close();
 
 }
 
-Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
+Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   File rootForRead;
 
-
   rootForRead = SD.open(profileName, FILE_READ);
 
+  //Si el archivo no esta disponible...
   if(!rootForRead.available()){
 
     Serial.println("The file cannot be open successfully");
@@ -219,7 +239,8 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   }
 
-  size_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
+  //Numero de subperfiles que se encuentran en el archivo
+  uint16_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
 
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
@@ -242,7 +263,6 @@ Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName){
     return nullptr; // En caso de problemas
 
   }
-
 
   rootForRead.close();
 
@@ -314,10 +334,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
   }
 
-
-
   rootWriteNew.close();
   rootWriteOld.close();
-  return; // En caso de problemas
 
 }

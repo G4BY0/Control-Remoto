@@ -75,6 +75,7 @@ public:
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
+[[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] 
 class CursorV2 {
   private:
     char** options;
@@ -82,8 +83,8 @@ class CursorV2 {
     int currentIndex;
     int totalPages;
     int currentPage;
-  public:
 
+  public:
     /*! @brief Constructor
         @param menuOptions Doble puntero que apunta a array de punteros que apuntan a strings (las opciones)
         @param display Recibe referencia o puntero al objeto del display
@@ -212,15 +213,15 @@ class WritterV2{
 
   WritterV2(Adafruit_SH1106G* displayReference);
 
-  inline void WritterV2::setup(void);
-  inline void WritterV2::loop(void);
-  void WritterV2::atcSetup(void);
-  void WritterV2::atcLoop(void);
-  void WritterV2::timeDelay(void);
-  void WritterV2::drawMenu(void);
-  void WritterV2::drawCursor(void);
-  void WritterV2::drawText(void);
-  void WritterV2::drawBlink(void);
+  inline void setup(void);
+  inline void loop(void);
+  void atcSetup(void);
+  void atcLoop(void);
+  void timeDelay(void);
+  void drawMenu(void);
+  void drawCursor(void);
+  void drawText(void);
+  void drawBlink(void);
   inline String stringFinished(void);
 
 };
