@@ -1,3 +1,14 @@
+//Copyright Grupo 7, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * Writter (escritor de strings)
+ * usa los botones como perisfericos
+ * Permiten: Mayusculas, Minusculas y signos (NO INCLUYE EL ESPACIO!!! -> ' ')
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #include "Cursor.h"
 
 WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayReference) {  }

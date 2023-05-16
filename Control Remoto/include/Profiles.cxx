@@ -12,36 +12,41 @@
 
 void SDBegin(void){
 
-    // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
-    // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
-    if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
-        Serial.println("initialization failed. Things to check:");
-        Serial.println("* is a card inserted?");
-        Serial.println("* is your wiring correct?");
-        Serial.println("* did you change the chipSelect pin to match your shield or module?");
-        while (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect));
-    } else {
-        Serial.println("Wiring is correct and a card is present.");
-        SD.begin();
-    }
+  // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
+  // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
+  if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
+      Serial.println("initialization failed. Things to check:");
+      Serial.println("* is a card inserted?");
+      Serial.println("* is your wiring correct?");
+      Serial.println("* did you change the chipSelect pin to match your shield or module?");
+      while (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect));
+  } else {
+      Serial.println("Wiring is correct and a card is present.");
+      SD.begin();
+  }
+  // TIPO DE TARJETA SD
+  Serial.println();
+  Serial.print("Card type:         ");
+  switch (card.type()) {
+    case SD_CARD_TYPE_SD1:
+        Serial.println("SD1");
+        break;
+    case SD_CARD_TYPE_SD2:
+        Serial.println("SD2");
+        break;
+    case SD_CARD_TYPE_SDHC:
+        Serial.println("SDHC");
+        break;
+    default:
+    Serial.println("Unknown");
+  }
 
-    // TIPO DE TARJETA SD
-    Serial.println();
-    Serial.print("Card type:         ");
-    switch (card.type()) {
-        case SD_CARD_TYPE_SD1:
-            Serial.println("SD1");
-            break;
-        case SD_CARD_TYPE_SD2:
-            Serial.println("SD2");
-            break;
-        case SD_CARD_TYPE_SDHC:
-            Serial.println("SDHC");
-            break;
-        default:
-        Serial.println("Unknown");
-    }
-
+  // Archivo necesario para la necesidad de querer borrar subperfiles, espacio reservado para exclusivamente esa funcionalidad
+  // Estaria bueno buscar otra forma de funcionamiento para optimizar el programa (bastantes recursos!)
+  if(!SD.exists(TRANSFER_FILE_DIRANDNAME)){
+  File transferFile = SD.open(TRANSFER_FILE_DIRANDNAME);
+  transferFile.close();
+  }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -67,11 +72,8 @@ char** Profiles::showProfiles_(void){
         
     }else{
       
-      if (archivo.isDirectory()){
-        //Si es un directorio
-
-      }else{
-        //Si es un archivo
+      if (!archivo.isDirectory()){
+        //Si es un archivo 
         Serial.print("Perfil: ");
         Serial.println(archivo.name());  //Imprimo el nombre
 
@@ -102,7 +104,6 @@ void Profiles::createProfile_(const char* name){
   rootForWrite.available()
     ? Serial.println("Successfully created.")
     : Serial.println("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile.");
-
   rootForWrite.close();
 
 }
@@ -268,11 +269,17 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
 void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfileName){
 
-  File rootForWrite;
+  File rootWriteNew;
+  File rootWriteOld;
+ 
+  rootWriteOld = SD.open( profilePath(profileName) );
 
-  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
+  char * profileNameOld;
+  strcpy(profileNameOld,profileName);
+  strcpy(profileNameOld, "_old");
+
   
-  if(!rootForWrite.available()){
+  if(!rootWriteOld.available()){
 
     Serial.println("Unsuccessfull writting from File");
     return;
@@ -280,20 +287,20 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
-  if( ( sizeof(rootForWrite.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(rootWriteOld.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println("Profile has wrong data stored, doesn't match with normalized information");
     return; //Failure
 
   }
 
-  size_t && structPerFile = sizeof(rootForWrite.size()) / sizeof(Keep_t);
+  size_t && structPerFile = sizeof(rootWriteOld.size()) / sizeof(Keep_t);
 
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
 
-    if(rootForWrite.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(rootWriteOld.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
 
       Serial.println("Unsuccessfull reading from File");
 
@@ -307,7 +314,10 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
   }
 
-  rootForWrite.close();
+
+
+  rootWriteNew.close();
+  rootWriteOld.close();
   return; // En caso de problemas
 
 }

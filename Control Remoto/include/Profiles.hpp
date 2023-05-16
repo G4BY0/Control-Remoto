@@ -16,6 +16,7 @@
 #include <SD.h>
 #include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
 #include "Infrared.h"
+#define TRANSFER_FILE_DIRANDNAME "/Transfer.db"
 
 //Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
 struct Keep_t : public storedIRDataStruct {

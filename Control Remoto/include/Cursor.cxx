@@ -2,7 +2,9 @@
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
- * Source code of Cursor class form Cursor.h
+ * Definicion de metodos de las Clases: Cursor
+ *                                      CursorV2
+ *                                      Writter
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
@@ -264,4 +266,4 @@ void Writter::keyboard(void) {
 
 }
 
-inline String Writter::stringFinished(void){ return To_Transmit;} // Desarrollar para el loop
+inline String Writter::stringFinished(void){ return To_Transmit; } // Desarrollar para el loop
