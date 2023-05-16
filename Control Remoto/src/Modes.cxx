@@ -1,6 +1,7 @@
-#include "main.cpp"
+#include "Modes.hpp"
+#include "Interface.h"
 
-void MODE::hub__(void){
+inline void MODE::hub__(void){
 
   switch (Interface::hub()){
 
@@ -17,31 +18,31 @@ void MODE::hub__(void){
 
 }
 
-void MODE::profiles__(void){
+inline void MODE::profiles__(void){
 
   Interface::profiles();
 
 }
 
-void MODE::addProfile__(void){
+inline void MODE::addProfile__(void){
 
   Interface::addProfile();
 
 }
 
-void MODE::deleteProfile__(void){
+inline void MODE::deleteProfile__(void){
 
   Interface::deleteProfile();
 
 }
 
-void MODE::addSubProfile__(void){
+inline void MODE::addSubProfile__(void){
 
   Interface::createSubProfile();
 
 }
 
-void MODE::deleteSubProfile__(void){
+inline void MODE::deleteSubProfile__(void){
 
   Interface::deleteSubProfile();
 
