@@ -50,13 +50,13 @@ namespace PIN{
 
   namespace InfraredReceiver{
 
-    const uint8_t DATA   = 13;     
+    const uint8_t DATA   = 2;     
 
   };
 
   namespace InfraredTransmitter{
 
-    const uint8_t DATA   = 12;  
+    const uint8_t DATA   = 3;  
 
   };
 
