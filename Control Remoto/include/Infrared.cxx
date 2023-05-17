@@ -111,7 +111,6 @@ storedIRDataStruct* storeCode(void) {
 
 }
 
-#pragma region Desarrollo
 storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName){
 
   //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
@@ -119,14 +118,10 @@ storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* sub
 
   if( Receive_check() ) return nullptr;
   
-  Keep_t* structStoredHeap = SubProfiles::convertIRData(storeCode());
-  Keep_t Informacion = *structStoredHeap;
-
-  SubProfiles::storeSubProfile(  Informacion, subProfileName );
-
-  delete[] structStoredHeap;
+  Keep_t Informacion = SubProfiles::convertIRData(storeCode());
 
   Receive_stop();
 
+  SubProfiles::storeSubProfile(  Informacion, subProfileName );
+
 }
-#pragma endregion

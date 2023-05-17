@@ -34,8 +34,8 @@
 #define MODE_ADDPROFILE 0x2       /*CREAR PERFILES*/
 #define MODE_DELETEPROFILE 0x3    /*ELIMINAR PERFILES*/
 #if 0
-/*Posibles modos futuros*/
-#define MODE_HELP 0x4             /* Muestra como funciona el sistema y explica como va la cosa*/
+  /*Posibles modos futuros*/
+  #define MODE_HELP 0x4             /* Muestra como funciona el sistema y explica como va la cosa*/
 #endif
  
 #define BUTTON_PRESSED_ENTER 0x0

@@ -138,6 +138,7 @@ Keep_t SubProfiles::convertIRData(storedIRDataStruct* storedIRData, const char* 
 
   delete[] storedIRData; // Lo borro porque no se usara mas
   return storedIRDataWithStr;
+  
 }
 
 void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){

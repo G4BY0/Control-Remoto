@@ -14,7 +14,7 @@ void setup(){
     Serial.println("Tipo de compilador Utilizado: ");
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
-    //#pragma region Compilador_Usado
+    #pragma region Compilador_Usado
     #if defined(__GNUC__)
         Serial.println("GNU :)");
         Serial.print("Version del compilador de GNU es: ");
@@ -30,8 +30,8 @@ void setup(){
     #else
         Serial.println("Generico :((");
     #endif
-    //#pragma endregion
-
+    #pragma endregion
+    
     displayBegin();
     buttonsBegin();
     SDBegin();

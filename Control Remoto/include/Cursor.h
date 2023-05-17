@@ -49,8 +49,8 @@
     @note 1- Para desplazarse entre los menus del display
     @note 2- Para la creacion de strings que recibe del usuario
 */
-[[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] 
-class Cursor {
+
+[[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] class Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
@@ -75,8 +75,7 @@ public:
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-[[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] 
-class CursorV2 {
+[[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] class CursorV2 {
   private:
     char** options;
     Adafruit_SH1106G* sh1106;
