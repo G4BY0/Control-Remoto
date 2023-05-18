@@ -14,7 +14,7 @@
 
 namespace MODE{
 
-    inline void hub__(void);
+    void hub__(void);
     inline void profiles__(void);
     inline void addProfile__(void);
     inline void deleteProfile__(void);

@@ -13,6 +13,10 @@ void setup(){
     Serial.begin(9600);
     Serial.println("Tipo de compilador Utilizado: ");
 
+    #if defined(__AVR_ATmega32U4__) || defined(SERIAL_PORT_USBVIRTUAL) || defined(SERIAL_USB) /*stm32duino*/|| defined(USBCON) /*STM32_stm32*/|| defined(SERIALUSB_PID) || defined(ARDUINO_attiny3217)
+    delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
+    #endif
+
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
     #pragma region Compilador_Usado
     #if defined(__GNUC__)
@@ -32,6 +36,7 @@ void setup(){
     #endif
     #pragma endregion
     
+    infraredBegin();
     displayBegin();
     buttonsBegin();
     SDBegin();

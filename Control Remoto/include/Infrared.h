@@ -23,10 +23,10 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
-
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
+#define storedIRDataStruct_type
 // Storage for the recorded code
 struct storedIRDataStruct {
     IRData receivedIRData;
@@ -34,8 +34,6 @@ struct storedIRDataStruct {
     uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
     uint8_t rawCodeLength; // The length of the code
 };
-
-
 
 
 /*! @brief Inicializacion de infrarrojos
@@ -70,15 +68,14 @@ void sendCode(storedIRDataStruct* aIRDataToSend);
 */
 storedIRDataStruct* storeCode(void);
 
-
+#pragma region Developing
 /*! @brief Conjunto de metodos de preparacion para recibir Infrarrojo
     @param profileName Nombre del perfil dado   
     @param subProfileName Nombre del subperfil dado
     @returns Infrarrojo Recibido
     @note Usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
-storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName);
-
-
+void ReceivingAndStoring(const char* profileName, const char* subProfileName);
+#pragma endregion
 
 #endif //Infrared_h

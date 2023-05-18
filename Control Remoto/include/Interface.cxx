@@ -82,7 +82,7 @@ void Interface::addProfile(void){
   if(subProfileName.c_str() == nullptr) return; // Failure
   
   Profiles::createProfile_(profileName.c_str());
-  SubProfiles::createSubProfile_(subProfileName.c_str() , ReceivingAndStoring( profileName.c_str() , subProfileName.c_str() ) , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+  SubProfiles::createSubProfile_(subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 
@@ -224,7 +224,6 @@ void Interface::nonSubProfiles(void){
     } else {
       TimeForBlink = millis();
       AlternatingBlink = !AlternatingBlink;
-      TimeForBlink = millis();
       display.setCursor(5,10);
       display.println("No sub-profiles stored");
 

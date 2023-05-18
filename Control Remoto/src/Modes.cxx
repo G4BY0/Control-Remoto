@@ -1,7 +1,7 @@
 #include "Modes.hpp"
 
 
-inline void MODE::hub__(void){
+void MODE::hub__(void){
 
   switch (Interface::hub()){
 

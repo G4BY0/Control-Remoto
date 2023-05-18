@@ -10,9 +10,10 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include "Interface.h"
+#include <Arduino.h>
 #include <stdint.h>
 #include <Adafruit_SH110X.h>
+#include "Interface.h"
 
 //CursorV2 Macros
 #define UP_BUTTON_PIN PIN::Buttons::UP
@@ -50,7 +51,7 @@
     @note 2- Para la creacion de strings que recibe del usuario
 */
 
-[[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] class Cursor {
+class [[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
@@ -75,7 +76,7 @@ public:
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-[[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] class CursorV2 {
+class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] CursorV2 {
   private:
     char** options;
     Adafruit_SH1106G* sh1106;

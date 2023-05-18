@@ -17,8 +17,8 @@ void infraredBegin(void){
   Serial.print(F("Ready to receive IR signals of protocols: "));
   printActiveIRProtocols(&Serial);
   
-  Serial.println(F("at pin 11")); // PIN USADO PARA EL RECEIVER     (//Serial.print(F("at pin " STR(IR_RECEIVE_PIN)));)
-
+  Serial.print(F("at pin: "));
+  Serial.println(PIN::InfraredReceiver::DATA);
   //IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
   IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
 }
@@ -111,6 +111,7 @@ storedIRDataStruct* storeCode(void) {
 
 }
 
+#pragma region Developing
 storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName){
 
   //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
@@ -118,10 +119,11 @@ storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* sub
 
   if( Receive_check() ) return nullptr;
   
-  Keep_t Informacion = SubProfiles::convertIRData(storeCode());
+  Keep_t Informacion = SubProfiles::convertIRData( storeCode() , subProfileName);
 
   Receive_stop();
 
   SubProfiles::storeSubProfile(  Informacion, subProfileName );
 
 }
+#pragma endregion
