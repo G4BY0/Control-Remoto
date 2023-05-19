@@ -24,16 +24,10 @@
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
-#ifndef storedIRDataStruct_type
-#define storedIRDataStruct_type
+
 // Storage for the recorded code
-struct storedIRDataStruct {
-    IRData receivedIRData;
-    // extensions for sendRaw
-    uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
-    uint8_t rawCodeLength; // The length of the code
-};
-#endif
+struct storedIRDataStruct;
+
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/

@@ -7,8 +7,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
 
-#ifndef MODES_H
-#define MODES_H
+#ifndef MODES_HPP
+#define MODES_HPP
 
 #include "Interface.h"
 

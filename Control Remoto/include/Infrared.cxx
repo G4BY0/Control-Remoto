@@ -4,6 +4,14 @@
 #define DISABLE_LEDFEEDBACK false // false
 #define ENABLE_LEDFEEDBACK true  // true
 
+struct storedIRDataStruct {
+    IRData receivedIRData;
+    // extensions for sendRaw
+    uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
+    uint8_t rawCodeLength; // The length of the code
+};
+
+
 void infraredBegin(void){
 
   pinMode(PIN::InfraredReceiver::DATA, INPUT);

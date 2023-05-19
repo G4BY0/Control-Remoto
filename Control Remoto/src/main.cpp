@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include "Interface.h"
 #include "Profiles.hpp"
-#include "Infrared.h"
+#include "Infrared.hpp"
 #include "Modes.hpp"
 
 void setup(){
