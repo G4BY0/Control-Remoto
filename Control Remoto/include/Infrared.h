@@ -11,10 +11,8 @@
 #define INFRARED_H
 
 #include <Arduino.h>
-#include <IRremote.hpp>
 #include "PIN.h"
 #include "Profiles.hpp"
-
 
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS
@@ -26,6 +24,7 @@
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
+#ifndef storedIRDataStruct_type
 #define storedIRDataStruct_type
 // Storage for the recorded code
 struct storedIRDataStruct {
@@ -34,7 +33,7 @@ struct storedIRDataStruct {
     uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
     uint8_t rawCodeLength; // The length of the code
 };
-
+#endif
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/

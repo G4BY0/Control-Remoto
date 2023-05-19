@@ -1,5 +1,5 @@
 #include "Infrared.h"
-
+#include <IRremote.hpp>
 #define DELAY_BETWEEN_REPEAT 50
 #define DISABLE_LEDFEEDBACK false // false
 #define ENABLE_LEDFEEDBACK true  // true
