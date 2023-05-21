@@ -50,23 +50,22 @@
     @note 1- Para desplazarse entre los menus del display
     @note 2- Para la creacion de strings que recibe del usuario
 */
-
 class [[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
   const char CURSOR_CHARACTER = '>';
   const char CURSOR_CHARACTER_DELETE = 'X';
-  
   uint8_t AMOUNT_OF_OPTIONS;
+  Adafruit_SH1106G &display;
 
 public:
   /*! @brief Constructor para uso de desplazamiento de opciones
       @param  AMOUNT_OF_OPTIONS__
       Cantidad de opciones que puede desplazarse el cursor  */
-  Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
+  Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G &displayObject);
   /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
-  Cursor(void);
+  //Cursor(void);
   /*! @brief Cursor que responde en coorcondansia con la botonera
       @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
   const uint8_t options(void);

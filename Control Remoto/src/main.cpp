@@ -1,24 +1,28 @@
 #warning "Project is in developing, it's not already yet!"
-#warning "Joaco estuvo aqui"
-#include "Arduino.h"
+
+#include <Arduino.h>
+#include <Wire.h>
+
 #include "Interface.h"
+#include "Infrared.h"
 #include "Profiles.hpp"
-#include "Infrared.hpp"
 #include "Modes.hpp"
+
 
 void setup(){
     
     Wire.begin();
     
     Serial.begin(9600);
-    Serial.println("Tipo de compilador Utilizado: ");
 
     #if defined(__AVR_ATmega32U4__) || defined(SERIAL_PORT_USBVIRTUAL) || defined(SERIAL_USB) /*stm32duino*/|| defined(USBCON) /*STM32_stm32*/|| defined(SERIALUSB_PID) || defined(ARDUINO_attiny3217)
     delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
     #endif
-
+    
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
     #pragma region Compilador_Usado
+    Serial.println("Tipo de compilador Utilizado: ");
+
     #if defined(__GNUC__)
         Serial.println("GNU :)");
         Serial.print("Version del compilador de GNU es: ");
@@ -36,10 +40,18 @@ void setup(){
     #endif
     #pragma endregion
     
-    infraredBegin();
+    //Inicializacion del sistema del display
     displayBegin();
+
+    //Inicializacion del sistema de botones
     buttonsBegin();
+
+    //Inicializacion del sistema de almacenamiento
     SDBegin();
+
+    //Inicializacion del sistema del infrarrojo
+    infraredBegin();
+
     
 }
 

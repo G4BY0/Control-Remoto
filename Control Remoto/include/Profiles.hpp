@@ -12,14 +12,33 @@
 #ifndef PROFILES_H
 #define PROFILES_H
 
-#include "PIN.h"
+#include <stdint.h>
+#include <Arduino.h>
 #include <SD.h>
-#include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
+#include "PIN.h"
 #include "Infrared.h"
+
+
 #define TRANSFER_FILE_DIRANDNAME "/Transfer.db"
 
-//Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
-struct Keep_t : public storedIRDataStruct { char nameSubProfile[20]; };
+#ifndef SUCCESS
+  #define SUCCESS EXIT_SUCCESS
+#endif
+#ifndef FAILURE
+  #define FAILURE EXIT_FAILURE
+#endif
+
+//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
+#ifndef storedIRDataStruct_type_declaration
+#define storedIRDataStruct_type_declaration
+struct storedIRDataStruct;
+#endif
+
+//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
+#ifndef Keep_type_declaration
+#define Keep_type_declaration
+struct Keep_t;
+#endif
 
 //Dependiendo del sistema operativo, incluye o no la definicion.
 #ifndef _IOFBF
@@ -32,9 +51,11 @@ struct Keep_t : public storedIRDataStruct { char nameSubProfile[20]; };
 #define _IONBF            0x0004
 #endif
 
+/*
 Sd2Card card;
 SdVolume volume;
 SdFile root;
+*/
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"

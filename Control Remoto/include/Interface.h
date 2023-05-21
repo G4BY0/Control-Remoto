@@ -22,8 +22,9 @@
 #include <SD.h>
 
 #include "PIN.h"
-#include "Profiles.hpp"
 #include "Cursor.h"
+#include "Infrared.h"
+#include "Profiles.hpp"
 
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
@@ -57,6 +58,7 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define OLED_RESET -1    //   QT-PY / XIAO
 
+
 #define BUTTON_BACK_PRESSED 0x0
 
 #define TRUE_PULLUP 0x0
@@ -78,12 +80,10 @@ const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
     @note Arduino por defecto establece como entrada los pines digitales*/
 void buttonsBegin(void);
 
-//Objeto para el manejo del Display OLED
-Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
 /*! @brief Inicializacion de display  */
 void displayBegin(void);
 
+//! @brief Manejo de la Interfaz de Usuario en cada modo
 namespace Interface {
 
   /*! @brief   Interfaz del lobby a la salida del display

@@ -1,16 +1,18 @@
-#include "Infrared.h"
 #include <IRremote.hpp>
+#include "Infrared.h"
 #define DELAY_BETWEEN_REPEAT 50
 #define DISABLE_LEDFEEDBACK false // false
 #define ENABLE_LEDFEEDBACK true  // true
 
+#ifndef storedIRDataStruct_type_definition
+#define storedIRDataStruct_type_definition
 struct storedIRDataStruct {
-    IRData receivedIRData;
-    // extensions for sendRaw
-    uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
-    uint8_t rawCodeLength; // The length of the code
+  IRData receivedIRData;
+  // extensions for sendRaw
+  uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
+  uint8_t rawCodeLength; // The length of the code
 };
-
+#endif
 
 void infraredBegin(void){
 
@@ -27,8 +29,9 @@ void infraredBegin(void){
   
   Serial.print(F("at pin: "));
   Serial.println(PIN::InfraredReceiver::DATA);
-  //IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
-  IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
+  //IrSender.begin(); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
+  IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
+  //IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
 }
 
 void Receive_start(void){
@@ -120,12 +123,13 @@ storedIRDataStruct* storeCode(void) {
 }
 
 #pragma region Developing
-storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName){
+/*
+void ReceivingAndStoring(const char* profileName, const char* subProfileName){
 
   //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
   Receive_start();
 
-  if( Receive_check() ) return nullptr;
+  if( Receive_check() ) return;
   
   Keep_t Informacion = SubProfiles::convertIRData( storeCode() , subProfileName);
 
@@ -134,4 +138,5 @@ storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* sub
   SubProfiles::storeSubProfile(  Informacion, subProfileName );
 
 }
+*/
 #pragma endregion

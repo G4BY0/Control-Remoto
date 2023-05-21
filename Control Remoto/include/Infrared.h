@@ -12,7 +12,6 @@
 
 #include <Arduino.h>
 #include "PIN.h"
-#include "Profiles.hpp"
 
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS
@@ -26,8 +25,10 @@
 
 
 // Storage for the recorded code
+#ifndef storedIRDataStruct_type_declaration
+#define storedIRDataStruct_type_declaration
 struct storedIRDataStruct;
-
+#endif
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -68,7 +69,7 @@ storedIRDataStruct* storeCode(void);
     @returns Infrarrojo Recibido
     @note Usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
-void ReceivingAndStoring(const char* profileName, const char* subProfileName);
+//void ReceivingAndStoring(const char* profileName, const char* subProfileName);
 #pragma endregion
 
 #endif //Infrared_h

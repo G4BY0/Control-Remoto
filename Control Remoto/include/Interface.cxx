@@ -9,6 +9,9 @@
 
 #include "Interface.h"
 
+//Objeto para el manejo del Display OLED
+Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 
 void buttonsBegin(void){
 
@@ -82,6 +85,14 @@ void Interface::addProfile(void){
   if(subProfileName.c_str() == nullptr) return; // Failure
   
   Profiles::createProfile_(profileName.c_str());
+
+  display.clearDisplay();
+
+  Receive_start();
+  while(!Receive_check()){
+    display.setCursor(10,10);
+    display.print("Prepared to \n receive IR\n SIGNAL \n\n Waiting For \n Response...");
+  }
   SubProfiles::createSubProfile_(subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
@@ -250,13 +261,24 @@ void Interface::createSubProfile(void){
 
   CursorV2 cursor(namesProfile,&display);
 
-  const char* && selected = cursor.getSelectedOption();
+  const char* && profileSelected = cursor.getSelectedOption();
 
-  const char** && namesSubProfile = SubProfiles::showSubProfiles(selected);
+  WritterV2 writter(&display);
 
-  CursorV2 cursor2(namesProfile,&display); 
+  Receive_start();
+  while(!Receive_check()){
+    display.setCursor(10,10);
+    display.print("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel.");
+    if(buttonState(PIN::Buttons::BACK)      |
+       buttonState(PIN::Buttons::ENTER)     |
+       buttonState(PIN::Buttons::UP)        |
+       buttonState(PIN::Buttons::DOWN)      |
+       buttonState(PIN::Buttons::LEFT)      |
+       buttonState(PIN::Buttons::RIGHT))     return;
+  }
+  
+  SubProfiles::createSubProfile_(writter.stringFinished().c_str() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
-  const char* && selected = cursor2.getSelectedOption();
 
 }
 

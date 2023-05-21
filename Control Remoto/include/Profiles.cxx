@@ -6,11 +6,35 @@
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
+#include <IRremote.hpp>
 #include "Profiles.hpp"
 
-void SDBegin(void){
+//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
+#ifndef storedIRDataStruct_type_definition
+#define storedIRDataStruct_type_definition
+struct storedIRDataStruct {
+  IRData receivedIRData;
+  // extensions for sendRaw
+  uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
+  uint8_t rawCodeLength; // The length of the code
+};
+#endif
 
+//Estructura de almacenamiento de datos del infrarrojo (con el nombre del subperfil)
+#ifndef Keep_type_definition
+#define Keep_type_definition
+struct Keep_t : public storedIRDataStruct{
+
+  char nameSubProfile[20]; //Nombre del subperfil
+
+};
+#endif
+
+
+
+void SDBegin(void){
+  
+  Sd2Card card;
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
   // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
   if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
@@ -163,7 +187,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   
 }
 
-char** SubProfiles::showSubProfiles(char* profileName){
+char** SubProfiles::showSubProfiles(const char* profileName){
 
   File rootRead;
   char** subProfilesName = nullptr;
@@ -253,7 +277,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
 
     }
 
-    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == SUCCESS){
+    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == EXIT_SUCCESS){
       
       Keep_t IrStructFinded = retiredFromSD[structPerFile];
       delete[] retiredFromSD;
@@ -326,7 +350,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
       Serial.println("Unsuccessfull reading from File");
 
     }
-    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == SUCCESS){
+    else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == EXIT_SUCCESS){
 
       Keep_t IrStructFinded = retiredFromSD[structPerFile];
       delete[] retiredFromSD;
