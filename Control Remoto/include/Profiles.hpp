@@ -28,17 +28,7 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
-//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-#ifndef storedIRDataStruct_type_declaration
-#define storedIRDataStruct_type_declaration
-struct storedIRDataStruct;
-#endif
 
-//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
-#ifndef Keep_type_declaration
-#define Keep_type_declaration
-struct Keep_t;
-#endif
 
 //Dependiendo del sistema operativo, incluye o no la definicion.
 #ifndef _IOFBF
@@ -56,6 +46,21 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 */
+
+// Storage for the recorded code
+//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
+#ifndef storedIRDataStruct_type_declaration
+#define storedIRDataStruct_type_declaration
+struct storedIRDataStruct;
+#endif
+
+//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
+#ifndef Keep_type_declaration
+#define Keep_type_declaration
+struct Keep_t;
+#endif
+
+
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"

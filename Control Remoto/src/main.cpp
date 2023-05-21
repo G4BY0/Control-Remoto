@@ -3,10 +3,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "Interface.h"
-#include "Infrared.h"
-#include "Profiles.hpp"
 #include "Modes.hpp"
+
+using namespace MODE; // Implemento los modos
 
 
 void setup(){
@@ -55,9 +54,5 @@ void setup(){
     
 }
 
-
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){  MODE::hub__(); }
-
-
-
+void loop(){  hub__(); }

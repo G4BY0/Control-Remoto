@@ -19,18 +19,18 @@ void MODE::hub__(void){
 
 }
 
-inline void MODE::profiles__(void)        { Interface::profiles(); }
+void MODE::profiles__(void)        { Interface::profiles(); }
 
-inline void MODE::addProfile__(void)      { Interface::addProfile(); }
+void MODE::addProfile__(void)      { Interface::addProfile(); }
 
-inline void MODE::deleteProfile__(void)   { Interface::deleteProfile(); }
+void MODE::deleteProfile__(void)   { Interface::deleteProfile(); }
 
-inline void MODE::addSubProfile__(void)   { Interface::createSubProfile(); }
+void MODE::addSubProfile__(void)   { Interface::createSubProfile(); }
 
-inline void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile(); }
+void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile(); }
 
 #pragma region Developing-Future
-inline void MODE::help__(void){ }
+void MODE::help__(void){ }
 #pragma endregion
 
 #pragma region Shutdown

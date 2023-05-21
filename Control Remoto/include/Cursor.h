@@ -75,7 +75,7 @@ public:
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] CursorV2 {
+class CursorV2 {
   private:
     char** options;
     Adafruit_SH1106G* sh1106;
@@ -107,10 +107,8 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Cu
     char* getSelectedOption();
 };
 
-
-
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-class Writter{
+class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Writter{
 
   private:
   //Referencia al objeto del display
@@ -221,7 +219,7 @@ class WritterV2{
   void drawCursor(void);
   void drawText(void);
   void drawBlink(void);
-  inline String stringFinished(void);
+  String stringFinished(void);
 
 };
 

@@ -915,3 +915,11 @@ void WritterV2::drawBlink(void) {
     }
   }
 }//drawBlink
+
+String WritterV2::stringFinished(void){
+
+  while(true) atcLoop();
+
+  return msgToSend;
+
+}
