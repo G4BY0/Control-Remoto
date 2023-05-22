@@ -108,8 +108,6 @@ void Interface::deleteProfile(void){
 
   CursorV2 cursor(names,&display);
 
-  
-
   const char* && selected = cursor.getSelectedOption();
 
   Profiles::deleteProfile_(selected);
@@ -266,19 +264,9 @@ void Interface::createSubProfile(void){
   WritterV2 writter(&display);
 
   Receive_start();
-  while(!Receive_check()){
-    display.setCursor(10,10);
-    display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
-    if(buttonState(PIN::Buttons::BACK)      |
-       buttonState(PIN::Buttons::ENTER)     |
-       buttonState(PIN::Buttons::UP)        |
-       buttonState(PIN::Buttons::DOWN)      |
-       buttonState(PIN::Buttons::LEFT)      |
-       buttonState(PIN::Buttons::RIGHT))     return;
-  }
+  if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal
   
   SubProfiles::createSubProfile_(writter.stringFinished().c_str() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
-
 
 }
 
@@ -296,12 +284,33 @@ void Interface::deleteSubProfile(void){
 
   const char* && selectedProfile = cursor.getSelectedOption();
 
+  if(selectedProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de perfiles
+
   names = SubProfiles::showSubProfiles(selectedProfile);
   
   CursorV2 cursor2(names,&display); 
 
   const char* && selectedSubProfile = cursor2.getSelectedOption();
 
+  if(selectedSubProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de subperfiles
+
   SubProfiles::deleteSubProfile(selectedProfile, selectedSubProfile);
+
+}
+
+bool Interface::waitingForIR(void){
+
+  while(!Receive_check()){
+    display.setCursor(10,10);
+    display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
+    if(buttonState(PIN::Buttons::BACK)      |
+       buttonState(PIN::Buttons::ENTER)     |
+       buttonState(PIN::Buttons::UP)        |
+       buttonState(PIN::Buttons::DOWN)      |
+       buttonState(PIN::Buttons::LEFT)      |
+       buttonState(PIN::Buttons::RIGHT))     return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
 
 }

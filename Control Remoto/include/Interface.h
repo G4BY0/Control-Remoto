@@ -125,6 +125,13 @@ namespace Interface {
   void deleteSubProfile(void);
   //#pragma endregion // Fin de funciones agregadas para Pre-Alpha
 
+  /*! @brief    Interfaz del modo "Esperando Infrarrojo" 
+      @return   '1' Si el usuario canceló el modo.
+                '0' Si cumplió correctamente.
+      @note entra en bucle hasta vericar que el codigo recibido es correcto.
+  */
+  bool waitingForIR(void);
+
 };
 
 #endif //Interface_h
