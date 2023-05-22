@@ -43,31 +43,31 @@ namespace PIN{
   
   namespace Display{
 
-    const uint8_t SDA    = A4;
-    const uint8_t SDL    = A5;
+    const uint8_t SDA    = SDA;
+    const uint8_t SDL    = SDL;
 
   };
 
   namespace InfraredReceiver{
 
-    const uint8_t DATA   = 2;     
+    constexpr const uint8_t DATA   = 2;     
 
   };
 
   namespace InfraredTransmitter{
 
-    const uint8_t DATA   = 3;  
+    constexpr const uint8_t DATA   = 3;  
 
   };
 
   namespace Buttons{
 
-    const uint8_t UP     = 9;
-    const uint8_t DOWN   = 8;
-    const uint8_t LEFT   = 7;
-    const uint8_t RIGHT  = 6;
-    const uint8_t BACK   = 5;
-    const uint8_t ENTER  = 4;
+    constexpr const uint8_t UP     = 9;
+    constexpr const uint8_t DOWN   = 8;
+    constexpr const uint8_t LEFT   = 7;
+    constexpr const uint8_t RIGHT  = 6;
+    constexpr const uint8_t BACK   = 5;
+    constexpr const uint8_t ENTER  = 4;
 
   };
 
@@ -78,7 +78,7 @@ namespace PIN{
     // Adafruit SD shields and modules: pin 10
     // Sparkfun SD shield: pin 8
     // MKRZero SD: SDCARD_SS_PIN
-    const uint8_t chipSelect = 4;
+    constexpr const uint8_t chipSelect = 53;
     
 
   }
