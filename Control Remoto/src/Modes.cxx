@@ -1,49 +1,42 @@
-#include "Modes.hpp"
-#include "Interface.h"
 
-inline void MODE::hub__(void){
+#include "Modes.hpp"
+
+
+void MODE::hub__(void){
 
   switch (Interface::hub()){
 
-    case 0:     MODE::profiles__();         break;   
-    case 1:     MODE::addProfile__();       break;
-    case 2:     MODE::deleteProfile__();    break;
+    case 0:     profiles__();               break;   
+    case 1:     addProfile__();             break;
+    case 2:     deleteProfile__();          break;
     
     #pragma region Pre-Alpha Modes
-    case 3:     MODE::addSubProfile__();    break;
-    case 4:     MODE::deleteSubProfile__(); break;
+    case 3:     addSubProfile__();          break;
+    case 4:     deleteSubProfile__();       break;
     #pragma endregion
 
   }
 
 }
 
-inline void MODE::profiles__(void){
+void MODE::profiles__(void)        { Interface::profiles(); }
 
-  Interface::profiles();
+void MODE::addProfile__(void)      { Interface::addProfile(); }
 
-}
+void MODE::deleteProfile__(void)   { Interface::deleteProfile(); }
 
-inline void MODE::addProfile__(void){
+void MODE::addSubProfile__(void)   { Interface::createSubProfile(); }
 
-  Interface::addProfile();
+void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile(); }
 
-}
+#pragma region Developing-Future
+void MODE::help__(void){ }
+#pragma endregion
 
-inline void MODE::deleteProfile__(void){
+#pragma region Shutdown
+void Shutdown::displayService(void){ }
 
-  Interface::deleteProfile();
+void Shutdown::SDService(void){ }
 
-}
-
-inline void MODE::addSubProfile__(void){
-
-  Interface::createSubProfile();
-
-}
-
-inline void MODE::deleteSubProfile__(void){
-
-  Interface::deleteSubProfile();
-
-}
+void Shutdown::buttonsWaiting(void){ }
+#pragma endregion //Shutdown

@@ -11,10 +11,10 @@
 #define INFRARED_H
 
 #include <Arduino.h>
-#include <IRremote.hpp>
 #include "PIN.h"
-#include "Profiles.hpp"
 
+#define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
+#define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS
@@ -23,20 +23,18 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
-
-#define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
-#define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
-
 // Storage for the recorded code
-struct storedIRDataStruct {
-    IRData receivedIRData;
-    // extensions for sendRaw
-    uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
-    uint8_t rawCodeLength; // The length of the code
-};
+//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
+#ifndef storedIRDataStruct_type_declaration
+#define storedIRDataStruct_type_declaration
+struct storedIRDataStruct;
+#endif
 
-
-
+//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
+#ifndef Keep_type_declaration
+#define Keep_type_declaration
+struct Keep_t;
+#endif
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -45,7 +43,7 @@ void infraredBegin(void);
 /*! @brief Inicia el proceso para recibir señales infrarrojas
     @note Crea una estructura que almacena cadena binaria (guardada en hexadecimal), numero de bits, etc  
 */
-inline void Receive_start(void);
+void Receive_start(void);
 
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
@@ -56,7 +54,7 @@ bool Receive_check(void);
 /*! @brief Checkea si es correcta la cadena binaria recibida
     @note Compara con la escructura del objeto IrReceiver.decodedIRData
 */
-inline void Receive_stop(void);
+void Receive_stop(void);
 
 /*! @brief Envia señal infrarroja
     @param aIRDataToSend recibe estructura con la data de la señal
@@ -70,15 +68,14 @@ void sendCode(storedIRDataStruct* aIRDataToSend);
 */
 storedIRDataStruct* storeCode(void);
 
-#pragma region Desarrollo
+#pragma region Developing
 /*! @brief Conjunto de metodos de preparacion para recibir Infrarrojo
     @param profileName Nombre del perfil dado   
     @param subProfileName Nombre del subperfil dado
     @returns Infrarrojo Recibido
     @note Usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
 */
-storedIRDataStruct* ReceivingAndStoring(const char* profileName, const char* subProfileName);
-#endif
-
+//void ReceivingAndStoring(const char* profileName, const char* subProfileName);
+#pragma endregion
 
 #endif //Infrared_h
