@@ -9,6 +9,9 @@
 
 #include "Interface.h"
 
+//Objeto para el manejo del Display OLED
+Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 
 void buttonsBegin(void){
 
@@ -82,7 +85,15 @@ void Interface::addProfile(void){
   if(subProfileName.c_str() == nullptr) return; // Failure
   
   Profiles::createProfile_(profileName.c_str());
-  SubProfiles::createSubProfile_(subProfileName.c_str() , ReceivingAndStoring( profileName.c_str() , subProfileName.c_str() ) , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+
+  display.clearDisplay();
+
+  Receive_start();
+  while(!Receive_check()){
+    display.setCursor(10,10);
+    display.print(F("Prepared to \n receive IR\n SIGNAL \n\n Waiting For \n Response..."));
+  }
+  SubProfiles::createSubProfile_(subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 
@@ -125,17 +136,17 @@ void Interface::subProfiles(const char *profileName_){
 
 void Interface::nonProfiles(void){
 
-  Serial.println("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
+  Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
 
   display.setTextColor(SH110X_WHITE);
   display.setTextSize(1);
   display.setCursor(10,10);
-  display.println("No profiles stored");
+  display.println(F("No profiles stored"));
 
   display.setCursor(15,30);
-  display.println("Press any button");
+  display.println(F("Press any button"));
   display.setCursor(25,40);
-  display.println("to turn back");
+  display.println(F("to turn back"));
 
   display.display();
   
@@ -158,9 +169,9 @@ void Interface::nonProfiles(void){
       TimeForBlink = millis();
       AlternatingBlink = !AlternatingBlink;
       display.setCursor(15,30);
-      display.println("                ");
+      display.println(F("                "));
       display.setCursor(25,40);
-      display.println("            ");
+      display.println(F("            "));
       display.display();
 
     } else {
@@ -168,12 +179,12 @@ void Interface::nonProfiles(void){
       AlternatingBlink = !AlternatingBlink;
       TimeForBlink = millis();
       display.setCursor(10,10);
-      display.println("No profiles stored");
+      display.println(F("No profiles stored"));
 
       display.setCursor(15,30);
-      display.println("Press any button");
+      display.println(F("Press any button"));
       display.setCursor(25,40);
-      display.println("to turn back");
+      display.println(F("to turn back"));
 
     }
   }
@@ -183,17 +194,17 @@ void Interface::nonProfiles(void){
 
 void Interface::nonSubProfiles(void){
 
-  Serial.println("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo...");
+  Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
 
   display.setTextColor(SH110X_WHITE);
   display.setTextSize(1);
   display.setCursor(5,10);
-  display.println("No sub-profiles stored");
+  display.println(F("No sub-profiles stored"));
 
   display.setCursor(15,30);
-  display.println("Press any button");
+  display.println(F("Press any button"));
   display.setCursor(25,40);
-  display.println("to turn back");
+  display.println(F("to turn back"));
 
   display.display();
 
@@ -216,22 +227,21 @@ void Interface::nonSubProfiles(void){
       TimeForBlink = millis();
       AlternatingBlink = !AlternatingBlink;
       display.setCursor(15,30);
-      display.println("                ");
+      display.println(F("                "));
       display.setCursor(25,40);
-      display.println("            ");
+      display.println(F("            "));
       display.display();
 
     } else {
       TimeForBlink = millis();
       AlternatingBlink = !AlternatingBlink;
-      TimeForBlink = millis();
       display.setCursor(5,10);
-      display.println("No sub-profiles stored");
+      display.println(F("No sub-profiles stored"));
 
       display.setCursor(15,30);
-      display.println("Press any button");
+      display.println(F("Press any button"));
       display.setCursor(25,40);
-      display.println("to turn back");
+      display.println(F("to turn back"));
 
     }
   }
@@ -251,13 +261,24 @@ void Interface::createSubProfile(void){
 
   CursorV2 cursor(namesProfile,&display);
 
-  const char* && selected = cursor.getSelectedOption();
+  const char* && profileSelected = cursor.getSelectedOption();
 
-  const char** && namesSubProfile = SubProfiles::showSubProfiles(selected);
+  WritterV2 writter(&display);
 
-  CursorV2 cursor2(namesProfile,&display); 
+  Receive_start();
+  while(!Receive_check()){
+    display.setCursor(10,10);
+    display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
+    if(buttonState(PIN::Buttons::BACK)      |
+       buttonState(PIN::Buttons::ENTER)     |
+       buttonState(PIN::Buttons::UP)        |
+       buttonState(PIN::Buttons::DOWN)      |
+       buttonState(PIN::Buttons::LEFT)      |
+       buttonState(PIN::Buttons::RIGHT))     return;
+  }
+  
+  SubProfiles::createSubProfile_(writter.stringFinished().c_str() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
-  const char* && selected = cursor2.getSelectedOption();
 
 }
 
