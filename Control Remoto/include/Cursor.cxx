@@ -11,10 +11,11 @@
 
 #include "Cursor.h"
 
-Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G& displayObject){ 
-  this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
-  this->display = displayObject;
+Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__){ 
+  this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__; 
 }
+
+Cursor::Cursor(void){}
 
 const uint8_t Cursor::options(void){
   
@@ -22,10 +23,10 @@ const uint8_t Cursor::options(void){
   while(INFINITE_LOOPING){
 
     if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN) {
-      if(moving == AMOUNT_OF_OPTIONS) {
+      if(moving = AMOUNT_OF_OPTIONS) {
         moving = 1; // HACE OVERFLOW DE OPCIONES
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[3]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -35,7 +36,7 @@ const uint8_t Cursor::options(void){
         moving++;
         
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving-1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -44,13 +45,13 @@ const uint8_t Cursor::options(void){
     }
 
     else if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN) {
-      if(moving == AMOUNT_OF_OPTIONS) {
+      if(moving = AMOUNT_OF_OPTIONS) {
         moving = 1; // HACE OVERFLOW DE OPCIONES
       }
       else {
         moving--;
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving+1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -66,7 +67,33 @@ const uint8_t Cursor::options(void){
 }
 
 const char* Cursor::writer_ptr(void){
-  return nullptr;
+  /*
+  char* pointer;
+  while(pointer != '\0') {
+     DEVELOPING
+
+    if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN) {
+      if(moving = AMOUNT_OF_OPTIONS) {
+        moving = 1; // HACE OVERFLOW DE OPCIONES
+      }
+      else {
+        moving--;
+        display.setCursor(,); // POSICION DEL CURSOR UN INSTANTE ANTES
+        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+
+        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
+        display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
+        display.display(); // EXPULSO A RAM LAS INSTRUCCIONES DEL DISPLAY
+      }
+    }
+
+    
+    if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) { return ("ENTER"); }
+    if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN) { return ("BACK"); }
+    
+  }  
+  */  
+
 }
 
 CursorV2::CursorV2(char** menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
@@ -84,7 +111,7 @@ int CursorV2::getNumberOfOptions() {
 void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
-  sh1106->print(F("Seleccione una opcion:"));
+  sh1106->print("Seleccione una opcion:");
   for (int i = currentPage * 6; i < getNumberOfOptions() && i < (currentPage + 1) * 6; i++) {
     sh1106->setCursor(0, (i - currentPage * 6 + 1) * 10);
     if (i == currentIndex) {
@@ -160,7 +187,7 @@ void Writter::Graphics(void){
   display.setTextSize(1);            
   display.setTextColor(SH110X_BLACK);  
   display.setCursor(113,4); 
-  display.println(F("OK"));
+  display.println("OK");
   display.display();
   // Display Letter Board 3 rows 9 character in each row 
   display.setTextSize(2);            

@@ -12,23 +12,18 @@
 #ifndef PROFILES_H
 #define PROFILES_H
 
-#include <stdint.h>
-#include <Arduino.h>
-#include <SD.h>
 #include "PIN.h"
+#include <SD.h>
+#include "Interface.h" // INCHEQUEABLE, DESPUES AVERIGUAR
 #include "Infrared.h"
-
-
 #define TRANSFER_FILE_DIRANDNAME "/Transfer.db"
 
-#ifndef SUCCESS
-  #define SUCCESS EXIT_SUCCESS
-#endif
-#ifndef FAILURE
-  #define FAILURE EXIT_FAILURE
-#endif
+//Polimorfismo de la estructura de la DATA del infrarrojo que implementa el nombre dado por el usuario
+struct Keep_t : public storedIRDataStruct {
 
+    char nameSubProfile[20];
 
+};
 
 //Dependiendo del sistema operativo, incluye o no la definicion.
 #ifndef _IOFBF
@@ -41,11 +36,9 @@
 #define _IONBF            0x0004
 #endif
 
-/*
 Sd2Card card;
 SdVolume volume;
 SdFile root;
-*/
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
@@ -54,7 +47,7 @@ SdFile root;
 /*! @brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles' 
     @param string nombre de perfil a convertir en directorio
     @return puntero al string PATH*/
-#define profilePath(profileName) strcat( strcat(SLASH_WITH_EOF_STR, profileName) , extensionProfiles )
+#define profilePath(string) strcat(strcat(SLASH_WITH_EOF_STR, profileName),extensionProfiles)
 
 /*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
@@ -79,22 +72,15 @@ namespace Profiles{
 };
 
 namespace SubProfiles{
-
-    using ::storedIRDataStruct;
-    using ::Keep_t;
-
     /*! @brief Crea un tipo de estructura estatica que es = Irdata + Nombre del Subperfil (Tipo Char[20])
      *  @param storedIRData 
      *         Recibe estructura normalizada de la informacion del infrarrojo
-     *  @param subProfileName
-     *         Nombre de subperfil a añadir
      *  @note Recordar eliminar la memoria dinamica reservada luego de su uso
      *  @returns Tipo de estructura con el agregado mencionado
     */
-    Keep_t convertIRData(storedIRDataStruct* storedIRData, const char* subProfileName);
+    Keep_t convertIRData(storedIRDataStruct* storedIRData);
 
-    /*! \deprecated En desuso porque no se usara en la version Pre-Alpha
-        @brief Crea un subperfil para un perfil
+    /*! @brief Crea un subperfil para un perfil
      *  @param subProfilename
      *         Nombre del subperfil
      *  @param storedIRData
@@ -102,8 +88,9 @@ namespace SubProfiles{
      *  @param profileName
      *           Nombre del perfil en el que quiere guardar el subperfil
     */
-    void [[deprecated]] createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
- 
+    [[deprecated("En desuso porque no se usara en la version Pre-Alpha")]]
+    void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
+
     /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  @param name
      *         Nombre del perfil
@@ -119,9 +106,10 @@ namespace SubProfiles{
     */
     Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName);
 
+
     /*! @brief Guarda en el almacenamiento el subPerfil recibido
-     *  @param  storeIR estructura Normalizada con los datos a almacenar
-     *  @param profileName nombre del perfil en el que se almacenará el subperfil
+        @param  storeIR estructura Normalizada con los datos a almacenar
+        @param profileName nombre del perfil en el que se almacenará el subperfil
     */
     void storeSubProfile(Keep_t storeIR, const char* profileName);
 

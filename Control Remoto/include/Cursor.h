@@ -10,10 +10,9 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <Arduino.h>
+#include "Interface.h"
 #include <stdint.h>
 #include <Adafruit_SH110X.h>
-#include "Interface.h"
 
 //CursorV2 Macros
 #define UP_BUTTON_PIN PIN::Buttons::UP
@@ -50,22 +49,23 @@
     @note 1- Para desplazarse entre los menus del display
     @note 2- Para la creacion de strings que recibe del usuario
 */
-class [[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] Cursor {
+[[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] 
+class Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
   const char CURSOR_CHARACTER = '>';
   const char CURSOR_CHARACTER_DELETE = 'X';
+  
   uint8_t AMOUNT_OF_OPTIONS;
-  Adafruit_SH1106G &display;
 
 public:
   /*! @brief Constructor para uso de desplazamiento de opciones
       @param  AMOUNT_OF_OPTIONS__
       Cantidad de opciones que puede desplazarse el cursor  */
-  Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G &displayObject);
+  Cursor(const uint8_t AMOUNT_OF_OPTIONS__);
   /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
-  //Cursor(void);
+  Cursor(void);
   /*! @brief Cursor que responde en coorcondansia con la botonera
       @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
   const uint8_t options(void);
@@ -75,6 +75,7 @@ public:
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
+[[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] 
 class CursorV2 {
   private:
     char** options;
@@ -107,8 +108,10 @@ class CursorV2 {
     char* getSelectedOption();
 };
 
+
+
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Writter{
+class Writter{
 
   private:
   //Referencia al objeto del display
@@ -219,7 +222,7 @@ class WritterV2{
   void drawCursor(void);
   void drawText(void);
   void drawBlink(void);
-  String stringFinished(void);
+  inline String stringFinished(void);
 
 };
 

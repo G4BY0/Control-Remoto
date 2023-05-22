@@ -81,36 +81,36 @@ void WritterV2::drawMenu(void) {
     display.drawLine(105, 21, 105, 64, SH110X_WHITE);//(x1, y1, x2, y2) verticle
     display.drawLine(0, 21, 128, 21, SH110X_WHITE);//(x1, y1, x2, y2) horizontal
     display.setCursor(109, 25);
-    display.println(F("snd"));
+    display.println("snd");
     display.setCursor(109, 35);
-    display.println(F("ext"));
+    display.println("ext");
     display.setCursor(109, 45);
-    display.println(F("cap"));
+    display.println("cap");
     display.setCursor(109, 55);
-    display.println(F("del"));
+    display.println("del");
     if (letters == true && capitalize == false) {
       display.setCursor(1, 35);
-      display.println(F("a b c d e f g h i"));
+      display.println("a b c d e f g h i");
       display.setCursor(1, 45);
-      display.println(F("j k l m n o p q r"));
+      display.println("j k l m n o p q r");
       display.setCursor(1, 55);
-      display.println(F("s t u v w x y z _"));
+      display.println("s t u v w x y z _");
     }
     if (letters == true && capitalize == true) {
       display.setCursor(1, 35);
-      display.println(F("A B C D E F G H I"));
+      display.println("A B C D E F G H I");
       display.setCursor(1, 45);
-      display.println(F("J K L M N O P Q R"));
+      display.println("J K L M N O P Q R");
       display.setCursor(1, 55);
-      display.println(F("S T U V W X Y Z _"));
+      display.println("S T U V W X Y Z _");
     }
     if (letters == false) {
       display.setCursor(1, 35);
-      display.println(F("1 2 3 4 5 6 7 8 9"));
+      display.println("1 2 3 4 5 6 7 8 9");
       display.setCursor(1, 45);
-      display.println(F("0 # & % + - = / *"));
+      display.println("0 # & % + - = / *");
       display.setCursor(1, 55);
-      display.println(F(". , ? ! ' : ; ( )"));
+      display.println(". , ? ! ' : ; ( )");
     }
   }
 }//drawMenu
@@ -915,11 +915,3 @@ void WritterV2::drawBlink(void) {
     }
   }
 }//drawBlink
-
-String WritterV2::stringFinished(void){
-
-  while(true) atcLoop();
-
-  return msgToSend;
-
-}
