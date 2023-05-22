@@ -16,16 +16,12 @@
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
 
-
-
-
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS
 #endif
 #ifndef FAILURE
   #define FAILURE EXIT_FAILURE
 #endif
-
 
 // Storage for the recorded code
 //Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)

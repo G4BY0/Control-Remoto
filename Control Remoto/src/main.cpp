@@ -20,22 +20,22 @@ void setup(){
     
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
     #pragma region Compilador_Usado
-    Serial.println("Tipo de compilador Utilizado: ");
+    Serial.println(F("Tipo de compilador Utilizado: "));
 
     #if defined(__GNUC__)
-        Serial.println("GNU :)");
-        Serial.print("Version del compilador de GNU es: ");
+        Serial.println(F("GNU :)"));
+        Serial.print(F("Version del compilador de GNU es: "));
         Serial.println(__GNUC__);
     #elif defined(__clang__)
-        Serial.println("CLANG !!");
-        Serial.print("Version Principal del compilador de CLANG es: "); 
+        Serial.println(F("CLANG !!"));
+        Serial.print(F("Version Principal del compilador de CLANG es: ")); 
         Serial.println(__clang_major__);
-        Serial.print("Version Secundaria del compilador de CLANG es: ");
+        Serial.print(F("Version Secundaria del compilador de CLANG es: "));
         Serial.println(__clang_minor__);
-        Serial.print("Nivel de parche del compilador de CLANG: "); 
+        Serial.print(F("Nivel de parche del compilador de CLANG: ")); 
         Serial.println(__clang_patchlevel__);
     #else
-        Serial.println("Generico :((");
+        Serial.println(F("Generico :(("));
     #endif
     #pragma endregion
     

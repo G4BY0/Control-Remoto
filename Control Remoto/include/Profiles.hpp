@@ -47,21 +47,6 @@ SdVolume volume;
 SdFile root;
 */
 
-// Storage for the recorded code
-//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-#ifndef storedIRDataStruct_type_declaration
-#define storedIRDataStruct_type_declaration
-struct storedIRDataStruct;
-#endif
-
-//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
-#ifndef Keep_type_declaration
-#define Keep_type_declaration
-struct Keep_t;
-#endif
-
-
-
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
 #define extensionProfiles ".db"
@@ -69,7 +54,7 @@ struct Keep_t;
 /*! @brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles' 
     @param string nombre de perfil a convertir en directorio
     @return puntero al string PATH*/
-#define profilePath(string) strcat( strcat(SLASH_WITH_EOF_STR, profileName) , extensionProfiles )
+#define profilePath(profileName) strcat( strcat(SLASH_WITH_EOF_STR, profileName) , extensionProfiles )
 
 /*! @brief Inicializador de la SD
     @note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.

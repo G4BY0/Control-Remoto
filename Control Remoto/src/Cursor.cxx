@@ -25,7 +25,7 @@ const uint8_t Cursor::options(void){
       if(moving == AMOUNT_OF_OPTIONS) {
         moving = 1; // HACE OVERFLOW DE OPCIONES
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[3]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -35,7 +35,7 @@ const uint8_t Cursor::options(void){
         moving++;
         
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving-1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -50,7 +50,7 @@ const uint8_t Cursor::options(void){
       else {
         moving--;
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving+1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(" "); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
+        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
 
         display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
         display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
@@ -84,7 +84,7 @@ int CursorV2::getNumberOfOptions() {
 void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
-  sh1106->print("Seleccione una opcion:");
+  sh1106->print(F("Seleccione una opcion:"));
   for (int i = currentPage * 6; i < getNumberOfOptions() && i < (currentPage + 1) * 6; i++) {
     sh1106->setCursor(0, (i - currentPage * 6 + 1) * 10);
     if (i == currentIndex) {
@@ -160,7 +160,7 @@ void Writter::Graphics(void){
   display.setTextSize(1);            
   display.setTextColor(SH110X_BLACK);  
   display.setCursor(113,4); 
-  display.println("OK");
+  display.println(F("OK"));
   display.display();
   // Display Letter Board 3 rows 9 character in each row 
   display.setTextSize(2);            
