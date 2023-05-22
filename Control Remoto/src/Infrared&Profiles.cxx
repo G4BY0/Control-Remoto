@@ -134,25 +134,6 @@ storedIRDataStruct* storeCode(void) {
 
 }
 
-#pragma region Pincho
-/*
-void ReceivingAndStoring(const char* profileName, const char* subProfileName){
-
-  //Usa como objeto global IrReceiver (generado por la libreria incluida "IRremote.h/.hpp")
-  Receive_start();
-
-  if( Receive_check() ) return;
-  
-  Keep_t Informacion = SubProfiles::convertIRData( storeCode() , subProfileName);
-
-  Receive_stop();
-
-  SubProfiles::storeSubProfile(  Informacion, subProfileName );
-
-}
-*/
-#pragma endregion
-
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //Copyright Grupo 7, Inc. All Rights Reserved.

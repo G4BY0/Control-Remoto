@@ -68,14 +68,4 @@ void sendCode(storedIRDataStruct* aIRDataToSend);
 */
 storedIRDataStruct* storeCode(void);
 
-#pragma region Developing
-/*! @brief Conjunto de metodos de preparacion para recibir Infrarrojo
-    @param profileName Nombre del perfil dado   
-    @param subProfileName Nombre del subperfil dado
-    @returns Infrarrojo Recibido
-    @note Usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
-*/
-//void ReceivingAndStoring(const char* profileName, const char* subProfileName);
-#pragma endregion
-
 #endif //Infrared_h
