@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "Board.h"
+
 
 #include "Modes.hpp"
 

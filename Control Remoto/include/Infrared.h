@@ -11,6 +11,7 @@
 #define INFRARED_H
 
 #include <Arduino.h>
+#include "Board.h"
 #include "PIN.h"
 
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA

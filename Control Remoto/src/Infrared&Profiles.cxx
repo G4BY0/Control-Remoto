@@ -167,7 +167,6 @@ struct Keep_t : public storedIRDataStruct{
 #endif
 
 void SDBegin(void){
-  
   Sd2Card card;
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
   // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
@@ -297,8 +296,8 @@ Keep_t SubProfiles::convertIRData(storedIRDataStruct* storedIRData, const char* 
 
 void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
 
-
-  Keep_t* storedIRDataWithStr = (Keep_t*) &convertIRData(storedIRData, subProfileName);
+  Keep_t Object = convertIRData(storedIRData, subProfileName);
+  Keep_t* storedIRDataWithStr = &Object;
 
   File rootStoring;
   rootStoring = SD.open( profilePath(profileName) , FILE_WRITE | O_APPEND);
@@ -329,7 +328,7 @@ char** SubProfiles::showSubProfiles(const char* profileName){
   if(!rootRead.available()){
 
     Serial.println(F("The file cannot be open successfully"));
-    return;
+    return nullptr;
 
   }
 
@@ -343,7 +342,7 @@ char** SubProfiles::showSubProfiles(const char* profileName){
   if( ( sizeof(rootRead.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
-    return; //Failure
+    return nullptr; //Failure
 
   }
 
@@ -385,7 +384,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
     Serial.print(F("The file: "));
     Serial.print(profilePath(profileName));
     Serial.println(F("cannot be open successfully"));
-    return; //Failure
+    return nullptr; //Failure
 
   }
 
@@ -393,7 +392,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
   if( ( sizeof(rootForRead.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
-    return; //Failure
+    return nullptr; //Failure
 
   }
 

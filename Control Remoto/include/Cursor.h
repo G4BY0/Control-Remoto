@@ -114,7 +114,7 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Wr
   //Referencia al objeto del display
     Adafruit_SH1106G& display;
   //Potentiometer PIN A1
-    int Keyboard=A7;
+    int Keyboard= false;
   // Variables capturing current and newly calculated position on the letter board (9x3 - 27 postions)
     int New_X=0;
     int Old_X=0;

@@ -19,7 +19,12 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include <SD.h>
+#include "Board.h"
+#include "PIN.h"
+
+#ifndef NODEMCUESP8266_CONFIGURATION
+  #include <SD.h>
+#endif
 
 #include "PIN.h"
 #include "Cursor.h"

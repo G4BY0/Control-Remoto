@@ -11,10 +11,7 @@
 
 #include "Cursor.h"
 
-Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G& displayObject){ 
-  this->AMOUNT_OF_OPTIONS = AMOUNT_OF_OPTIONS__;
-  this->display = displayObject;
-}
+Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G& displayObject) : AMOUNT_OF_OPTIONS(AMOUNT_OF_OPTIONS__) , display(displayObject){ }
 
 const uint8_t Cursor::options(void){
   
