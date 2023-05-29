@@ -46,31 +46,31 @@ namespace PIN{
   
   namespace Display{
 
-    const uint8_t SDA    = SDA;
-    const uint8_t SDL    = SDL;
+    const uint8_t SDA    = 20;
+    const uint8_t SDL    = 21;
 
   };
 
   namespace InfraredReceiver{
 
-    constexpr const uint8_t DATA   = 2;     
+    constexpr const uint8_t DATA   = 2;
 
   };
 
   namespace InfraredTransmitter{
 
-    constexpr const uint8_t DATA   = 3;  
+    constexpr const uint8_t DATA   = 3;
 
   };
 
   namespace Buttons{
 
-    constexpr const uint8_t UP     = 9;
-    constexpr const uint8_t DOWN   = 8;
-    constexpr const uint8_t LEFT   = 7;
-    constexpr const uint8_t RIGHT  = 6;
-    constexpr const uint8_t BACK   = 5;
-    constexpr const uint8_t ENTER  = 4;
+    constexpr const uint8_t UP     = A0;
+    constexpr const uint8_t DOWN   = A3;
+    constexpr const uint8_t LEFT   = A1;
+    constexpr const uint8_t RIGHT  = A2;
+    constexpr const uint8_t BACK   = A4;
+    constexpr const uint8_t ENTER  = A5;
 
   };
 

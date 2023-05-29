@@ -167,7 +167,10 @@ struct Keep_t : public storedIRDataStruct{
 #endif
 
 void SDBegin(void){
+
+  #ifdef ARDUINOMEGA2560_CONFIGURATION
   Sd2Card card;
+  
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
   // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
   if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
@@ -196,6 +199,7 @@ void SDBegin(void){
     default:
     Serial.println(F("Unknown"));
   }
+  #endif
 
   // Archivo necesario para la necesidad de querer borrar subperfiles, espacio reservado para exclusivamente esa funcionalidad
   // Estaria bueno buscar otra forma de funcionamiento para optimizar el programa (bastantes recursos!)

@@ -14,13 +14,13 @@
 
 #include <stdint.h>
 #include <Arduino.h>
+#include <SPI.h>
+#include "Board.h"
 
-//Descomentar en el caso de usar la placa adecuada
-//#define ARDUINOMEGA2560_CONFIGURATION
-#define NODEMCUV2ESP8266_CONFIGURATION //Descomentado!
-
-
-#ifndef NODEMCUESP8266_CONFIGURATION
+#ifdef NODEMCUV2ESP8266_CONFIGURATION
+    #include <SD.h>
+#endif
+#ifdef ARDUINOMEGA2560_CONFIGURATION
     #include <SD.h>
 #endif
 
@@ -50,11 +50,11 @@
 #define _IONBF            0x0004
 #endif
 
-/*
-Sd2Card card;
-SdVolume volume;
-SdFile root;
-*/
+
+//  Sd2Card card;
+//  SdVolume volume;
+//  SdFile root;
+
 
 //String extensionProfiles = ".txt"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
