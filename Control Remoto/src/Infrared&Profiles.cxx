@@ -304,7 +304,10 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   Keep_t* storedIRDataWithStr = &Object;
 
   File rootStoring;
-  rootStoring = SD.open( profilePath(profileName) , FILE_WRITE | O_APPEND);
+  rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
+
+  //Voy hasta el final del archivo
+  rootStoring.seek(EOF);
 
   //Si el archivo no esta disponible...
   if(!rootStoring.available()){
@@ -433,7 +436,10 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
   File rootForWrite;
 
-  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE | O_APPEND);
+  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
+
+  //Voy hasta el final del archivo
+  rootForWrite.seek(EOF);
 
   if(!rootForWrite.available()){
 
