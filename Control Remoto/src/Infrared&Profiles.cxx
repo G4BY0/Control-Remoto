@@ -199,7 +199,16 @@ void SDBegin(void){
     default:
     Serial.println(F("Unknown"));
   }
+  #elif  defined(NODEMCUESP32S_CONFIGURATION)
+
+  // Inicializar la comunicación con la tarjeta SD
+  if (!SD.begin(PIN::SD_t::chipSelect)) {
+    Serial.println("Error al inicializar la tarjeta SD");
+    while (!SD.begin(PIN::SD_t::chipSelect));
+  }
+
   #endif
+
 
   // Archivo necesario para la necesidad de querer borrar subperfiles, espacio reservado para exclusivamente esa funcionalidad
   // Estaria bueno buscar otra forma de funcionamiento para optimizar el programa (bastantes recursos!)

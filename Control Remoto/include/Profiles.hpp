@@ -17,7 +17,7 @@
 #include <SPI.h>
 #include "Board.h"
 
-#ifdef NODEMCUV2ESP8266_CONFIGURATION
+#ifdef NODEMCUESP32S_CONFIGURATION 
     #include <SD.h>
 #endif
 #ifdef ARDUINOMEGA2560_CONFIGURATION

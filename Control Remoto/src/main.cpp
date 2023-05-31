@@ -13,16 +13,19 @@ using namespace MODE; // Implemento los modos
 
 void setup(){
     
-    Wire.begin();
+
     
-    Serial.begin(9600);
+    Serial.begin(115200);
+
+    while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+    }
 
     #if defined(__AVR_ATmega32U4__) || defined(SERIAL_PORT_USBVIRTUAL) || defined(SERIAL_USB) /*stm32duino*/|| defined(USBCON) /*STM32_stm32*/|| defined(SERIALUSB_PID) || defined(ARDUINO_attiny3217)
     delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
     #endif
     
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
-    #pragma region Compilador_Usado
     Serial.println(F("Tipo de compilador Utilizado: "));
 
     #if defined(__GNUC__)
@@ -40,21 +43,20 @@ void setup(){
     #else
         Serial.println(F("Generico :(("));
     #endif
-    #pragma endregion
-    
+
     //Inicializacion del sistema del display
     displayBegin();
-
+    Serial.println("Hasta aca llegue!1");
     //Inicializacion del sistema de botones
     buttonsBegin();
-
+    Serial.println("Hasta aca llegue!2");
     //Inicializacion del sistema de almacenamiento
     SDBegin();
-
+    Serial.println("Hasta aca llegue!3");
     //Inicializacion del sistema del infrarrojo
     infraredBegin();
 
-    
+    Serial.println("Hasta aca llegue!4");
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus

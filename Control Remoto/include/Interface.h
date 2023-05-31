@@ -22,7 +22,7 @@
 #include "Board.h"
 #include "PIN.h"
 
-#ifndef NODEMCUESP8266_CONFIGURATION
+#ifndef NODEMCUESP32S_CONFIGURATION 
   #include <SD.h>
 #endif
 
