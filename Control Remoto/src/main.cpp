@@ -13,8 +13,6 @@ using namespace MODE; // Implemento los modos
 
 void setup(){
     
-
-    
     Serial.begin(115200);
 
     while (!Serial) {
@@ -46,17 +44,25 @@ void setup(){
 
     //Inicializacion del sistema del display
     displayBegin();
+
     Serial.println("Hasta aca llegue!1");
+    delay(3000);
+
     //Inicializacion del sistema de botones
     buttonsBegin();
     Serial.println("Hasta aca llegue!2");
+    delay(3000);
+
     //Inicializacion del sistema de almacenamiento
-    SDBegin();
+    
     Serial.println("Hasta aca llegue!3");
+    delay(3000);
+
     //Inicializacion del sistema del infrarrojo
     infraredBegin();
 
     Serial.println("Hasta aca llegue!4");
+    delay(3000);
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus

@@ -51,7 +51,7 @@ uint8_t Interface::hub(void){
   for(uint8_t option; option < 5; option++){ if(strcmp( selected , optionsString[option] ) == 0) return option; }
 
 
-  return -1; //Si hay problemas retorna
+  return 15; //Si hay problemas retorna
   
 
 }

@@ -18,6 +18,7 @@
 #include "Board.h"
 
 #ifdef NODEMCUESP32S_CONFIGURATION 
+    #include <FS.h>
     #include <SD.h>
 #endif
 #ifdef ARDUINOMEGA2560_CONFIGURATION

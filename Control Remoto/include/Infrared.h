@@ -13,9 +13,22 @@
 #include <Arduino.h>
 #include "Board.h"
 #include "PIN.h"
+#include <IRremoteESP8266.h>
+#include <IRrecv.h>
+#include <IRac.h>
+#include <IRtext.h>
+#include <IRutils.h>
+#include <IRsend.h>
+
 
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
 #define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
+
+
+
+IRrecv IrReceiver(PIN::InfraredReceiver::DATA);
+IRsend IrSender(PIN::InfraredTransmitter::DATA);  // Set the GPIO to be used to sending the message.
+decode_results results;
 
 #ifndef SUCCESS
   #define SUCCESS EXIT_SUCCESS

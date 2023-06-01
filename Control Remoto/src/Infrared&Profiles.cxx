@@ -1,5 +1,5 @@
-#include <IRremote.hpp>
 #include "Infrared.h"
+//#include <IRremote.hpp>
 #include "Profiles.hpp"
 
 #define DELAY_BETWEEN_REPEAT 50
@@ -10,10 +10,7 @@
 #ifndef storedIRDataStruct_type_definition
 #define storedIRDataStruct_type_definition
 struct storedIRDataStruct {
-  IRData receivedIRData;
-  // extensions for sendRaw
-  uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
-  uint8_t rawCodeLength; // The length of the code
+ 
 };
 #endif
 
@@ -32,26 +29,16 @@ void infraredBegin(void){
   pinMode(PIN::InfraredReceiver::DATA, INPUT);
   pinMode(PIN::InfraredTransmitter::DATA, OUTPUT);
 
-  // Just to know which program is running on my Arduino
-  Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
-
-  // Start the receiver and if not 3. parameter specified, take LED_BUILTIN pin from the internal boards definition as default feedback LED
-  IrReceiver.begin(PIN::InfraredReceiver::DATA, DISABLE_LED_FEEDBACK, false);
-  Serial.print(F("Ready to receive IR signals of protocols: "));
-  printActiveIRProtocols(&Serial);
-  
-  Serial.print(F("at pin: "));
-  Serial.println(PIN::InfraredReceiver::DATA);
-  //IrSender.begin(); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
+  IrSender.begin(); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
   //IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
-  IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
+  //IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
 }
 
 void Receive_start(void){
 
   // Restart receiver too
   Serial.println(F("Start Receiving for infrared signals"));
-  IrReceiver.start();
+  IrReceiver.enableIRIn();  // Start the receiver
 
 }
 
