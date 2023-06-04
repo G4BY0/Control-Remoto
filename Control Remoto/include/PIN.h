@@ -87,10 +87,8 @@ namespace PIN{
   }
 
 };
-#endif
 
-
-#ifdef NODEMCUV2ESP8266_CONFIGURATION //Deprecated por falta de comunicacion I2C
+#elif defined(  NODEMCUV2ESP8266_CONFIGURATION ) //Deprecated por falta de comunicacion I2C
 #warning "Solamente Desarrollado Para Nodemcu Esp32s (ESP32-WROOM-32)"
 namespace PIN{
   
@@ -137,9 +135,8 @@ namespace PIN{
   }
 
 };
-#endif
 
-#ifdef NODEMCUESP32S_CONFIGURATION 
+#elif defined( NODEMCUESP32S_CONFIGURATION )
 
 namespace PIN{
   
@@ -187,9 +184,55 @@ namespace PIN{
 
 };
 
-#endif
+#elif defined(ARDUINOLEONARDO_CONFIGURATION)
 
-#ifdef STM32F103C8_GENERICBOARD_CONFIGURATION
+namespace PIN{
+  
+  namespace Display{
+
+    const uint8_t SDA    = 2;
+    const uint8_t SDL    = 3;
+
+  };
+
+  namespace InfraredReceiver{
+
+    const uint8_t DATA   = 4;     
+
+  };
+
+  namespace InfraredTransmitter{
+
+    const uint8_t DATA   = 5;  
+
+  };
+
+  namespace Buttons{
+
+    const uint8_t UP     = A0;
+    const uint8_t DOWN   = A1;
+    const uint8_t LEFT   = A2;
+    const uint8_t RIGHT  = A3;
+    const uint8_t BACK   = A5;
+    const uint8_t ENTER  = A4;
+
+  };
+
+  namespace SD_t{
+
+    // change this to match your SD shield or module;
+    // Arduino Ethernet shield: pin 4
+    // Adafruit SD shields and modules: pin 10
+    // Sparkfun SD shield: pin 8
+    // MKRZero SD: SDCARD_SS_PIN
+    const uint8_t chipSelect = 10;
+    
+
+  }
+
+};
+
+#elif defined( STM32F103C8_GENERICBOARD_CONFIGURATION )
 #warning "Solamente Desarrollado Para Nodemcu Esp32s (ESP32-WROOM-32)"
 #endif
 

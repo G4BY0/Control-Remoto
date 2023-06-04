@@ -5,13 +5,14 @@
 #include <Wire.h>
 #include "Board.h"
 
-
 #include "Modes.hpp"
 
 using namespace MODE; // Implemento los modos
 
 
 void setup(){
+    
+
     
     Serial.begin(115200);
 
@@ -43,27 +44,17 @@ void setup(){
     #endif
 
     //Inicializacion del sistema del display
-    displayBegin();
-
-    Serial.println("Hasta aca llegue!1");
-    delay(3000);
-
-    //Inicializacion del sistema de botones
-    buttonsBegin();
-    Serial.println("Hasta aca llegue!2");
-    delay(3000);
-
-    //Inicializacion del sistema de almacenamiento
+    displayBegin();     Serial.println(F("Display Inicializado"));
     
-    Serial.println("Hasta aca llegue!3");
-    delay(3000);
-
+    //Inicializacion del sistema de botones
+    buttonsBegin();     Serial.println(F("Botonera Inicializado"));
+    
+    //Inicializacion del sistema de almacenamiento
+    SDBegin();          Serial.println(F("Almacenamiento Inicializado"));
+    
     //Inicializacion del sistema del infrarrojo
-    infraredBegin();
-
-    Serial.println("Hasta aca llegue!4");
-    delay(3000);
+    infraredBegin();    Serial.println(F("Infrared Inicializado"));
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){  hub__(); }
+void loop(){  Serial.println("Hola mundo!") ;}

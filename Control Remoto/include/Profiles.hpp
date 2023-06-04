@@ -16,14 +16,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "Board.h"
-
-#ifdef NODEMCUESP32S_CONFIGURATION 
-    #include <FS.h>
-    #include <SD.h>
-#endif
-#ifdef ARDUINOMEGA2560_CONFIGURATION
-    #include <SD.h>
-#endif
+#include <SD.h>
 
 #include "PIN.h"
 #include "Infrared.h"

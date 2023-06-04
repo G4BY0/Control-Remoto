@@ -15,7 +15,6 @@ void MODE::hub__(void){
     case 4:     deleteSubProfile__();       break;
     #pragma endregion
 
-    default: Serial.print(F("error"));
   }
 
 }
