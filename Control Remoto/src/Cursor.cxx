@@ -68,7 +68,7 @@ const char* Cursor::writer_ptr(void){
 }
 
 CursorV2::CursorV2(char** menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
-  totalPages = (getNumberOfOptions() - 1) / 6 + 1; // calcular el número total de páginas
+  totalPages = (getNumberOfOptions() - 1) / 5 + 1; // calcular el número total de páginas
 }
 
 int CursorV2::getNumberOfOptions() {
@@ -83,8 +83,8 @@ void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
-  for (int i = currentPage * 6; i < getNumberOfOptions() && i < (currentPage + 1) * 6; i++) {
-    sh1106->setCursor(0, (i - currentPage * 6 + 1) * 10);
+  for (int i = currentPage * 5; i < getNumberOfOptions() && i < (currentPage + 1) * 5; i++) {
+    sh1106->setCursor(0, (i - currentPage * 5 + 1) * 10);
     if (i == currentIndex) {
       sh1106->print(">");
     }
@@ -93,7 +93,7 @@ void CursorV2::showCurrentPage() {
   sh1106->display();
 }
 
-char* CursorV2::getSelectedOption() {
+const char* CursorV2::getSelectedOption() {
   while (true) {
     showCurrentPage();
     if (digitalRead(UP_BUTTON_PIN) == LOW) {
@@ -101,7 +101,7 @@ char* CursorV2::getSelectedOption() {
       if (currentIndex < 0) {
         currentIndex = getNumberOfOptions() - 1;
       }
-      if (currentIndex < currentPage * 6) {
+      if (currentIndex < currentPage * 5) {
         currentPage--;
         if (currentPage < 0) {
           currentPage = totalPages - 1;
@@ -109,7 +109,7 @@ char* CursorV2::getSelectedOption() {
         showCurrentPage();
       } else {
         sh1106->clearDisplay();
-        sh1106->setCursor(0, (currentIndex - currentPage * 6 + 1) * 10);
+        sh1106->setCursor(0, (currentIndex - currentPage * 5 + 1) * 10);
         sh1106->print(">");
         sh1106->print(options[currentIndex]);
         sh1106->display();
@@ -121,7 +121,7 @@ char* CursorV2::getSelectedOption() {
       if (currentIndex >= getNumberOfOptions()) {
         currentIndex = 0;
       }
-      if (currentIndex >= (currentPage + 1) * 6) {
+      if (currentIndex >= (currentPage + 1) * 5) {
         currentPage++;
         if (currentPage >= totalPages) {
           currentPage = 0;
@@ -129,7 +129,7 @@ char* CursorV2::getSelectedOption() {
         showCurrentPage();
       } else {
         sh1106->clearDisplay();
-        sh1106->setCursor(0, (currentIndex - currentPage * 6 + 1) * 10);
+        sh1106->setCursor(0, (currentIndex - currentPage * 5 + 1) * 10);
         sh1106->print(">");
         sh1106->print(options[currentIndex]);
         sh1106->display();
@@ -140,7 +140,7 @@ char* CursorV2::getSelectedOption() {
       return options[currentIndex];
     }
     if (digitalRead(BACK_BUTTON_PIN) == LOW) {
-      return "ReturnedBack";
+      return nullptr;
     }
   }
 }

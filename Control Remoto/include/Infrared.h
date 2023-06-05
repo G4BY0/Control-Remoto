@@ -61,7 +61,7 @@ void Receive_stop(void);
     @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(storedIRDataStruct* aIRDataToSend);
+void sendCode(Keep_t* aIRDataToSend);
 
 /*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
     @returns Retorna la estructura normalizada de la copia de datos

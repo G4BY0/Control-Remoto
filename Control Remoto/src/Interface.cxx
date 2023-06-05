@@ -45,10 +45,13 @@ uint8_t Interface::hub(void){
   char** optionsString = strings;
 
   CursorV2 cursor(optionsString,&display);
-  
+  Serial.println(cursor.getSelectedOption());
   const char* && selected = cursor.getSelectedOption();
 
-  for(uint8_t option; option < 5; option++){ if(strcmp( selected , optionsString[option] ) == 0) return option; }
+  for(uint8_t option = 0 ; option < 5; option++){ 
+    if(strcmp( selected , optionsString[option] ) == 0) 
+    return option; 
+  }
 
 
   return 0; //Si hay problemas retorna
@@ -59,18 +62,19 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
   
 
-  char** names = Profiles::showProfiles_();
+  char** profiles_ptr = Profiles::showProfiles_();
 
-  if (names == nullptr) {
+  if ( profiles_ptr == nullptr) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
-  CursorV2 cursor(names,&display);
+  CursorV2 cursor( profiles_ptr , &display );
 
-  const char* && selected = cursor.getSelectedOption();
+  const char* profile_selected = cursor.getSelectedOption();
+  if(profile_selected == nullptr) return;
 
-  Interface::subProfiles(selected);
+  Interface::subProfiles( profile_selected );
   
 
 }
@@ -118,19 +122,28 @@ void Interface::deleteProfile(void){
 
 void Interface::subProfiles(const char *profileName_){
 
-  char** names = SubProfiles::showSubProfiles(profileName_);
+  char** subprofiles_ptr = SubProfiles::showSubProfiles(profileName_);
   
-  if (names == nullptr) {
+  if (subprofiles_ptr == nullptr) {
     Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
     
   }
 
-  CursorV2 cursor( names ,&display);
+  CursorV2 cursor( subprofiles_ptr ,&display);
 
-  const char* && selected = cursor.getSelectedOption();
-
+  const char* && subprofiles_selected = cursor.getSelectedOption();
+  if(subprofiles_selected == nullptr) return;
+  
   // Desarrollar a infrarrojo el subperfil solicitado
+  Keep_t* && IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected );
+
+  if(IRToSend == nullptr ){
+    Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
+    return;
+  }
+
+  sendCode(IRToSend);
 
 }
 
@@ -154,44 +167,8 @@ void Interface::nonProfiles(void){
   display.display();
   
   //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) );
-
-  #pragma region Blink_nonProfiles_PulseAnyBotton
-  //Descomentar para que sea para cualquier boton
-  for(  unsigned long TimeForBlink = millis()  ;
-        buttonState(PIN::Buttons::BACK)     |
-        buttonState(PIN::Buttons::ENTER)    |
-        buttonState(PIN::Buttons::UP)       |
-        buttonState(PIN::Buttons::DOWN)     |
-        buttonState(PIN::Buttons::LEFT)     |
-        buttonState(PIN::Buttons::RIGHT)    ;
-     )
-  {
-    bool AlternatingBlink;
-    if( (millis() - TimeForBlink) >= BLINK_TIME){
-      TimeForBlink = millis();
-      AlternatingBlink = !AlternatingBlink;
-      display.setCursor(15,30);
-      display.println(F("                "));
-      display.setCursor(25,40);
-      display.println(F("            "));
-      display.display();
-
-    } else {
-      TimeForBlink = millis();
-      AlternatingBlink = !AlternatingBlink;
-      TimeForBlink = millis();
-      display.setCursor(10,10);
-      display.println(F("No profiles stored"));
-
-      display.setCursor(15,30);
-      display.println(F("Press any button"));
-      display.setCursor(25,40);
-      display.println(F("to turn back"));
-
-    }
-  }
-  #pragma endregion // Blink_PulseAnyBotton
+  while( buttonState(PIN::Buttons::BACK) == LOW );
+  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
 }
 
@@ -215,43 +192,8 @@ void Interface::nonSubProfiles(void){
   display.display();
 
   //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) );
-
-  #pragma region Blink_nonSubProfiles_PulseAnyBotton
-  //Descomentar para que sea para cualquier boton
-  for(  unsigned long TimeForBlink = millis()  ;
-        buttonState(PIN::Buttons::BACK)     |
-        buttonState(PIN::Buttons::ENTER)    |
-        buttonState(PIN::Buttons::UP)       |
-        buttonState(PIN::Buttons::DOWN)     |
-        buttonState(PIN::Buttons::LEFT)     |
-        buttonState(PIN::Buttons::RIGHT)    ;
-     )
-  {
-    bool AlternatingBlink;
-    if( (millis() - TimeForBlink) >= BLINK_TIME){
-      TimeForBlink = millis();
-      AlternatingBlink = !AlternatingBlink;
-      display.setCursor(15,30);
-      display.println(F("                "));
-      display.setCursor(25,40);
-      display.println(F("            "));
-      display.display();
-
-    } else {
-      TimeForBlink = millis();
-      AlternatingBlink = !AlternatingBlink;
-      display.setCursor(5,10);
-      display.println(F("No sub-profiles stored"));
-
-      display.setCursor(15,30);
-      display.println(F("Press any button"));
-      display.setCursor(25,40);
-      display.println(F("to turn back"));
-
-    }
-  }
-  #pragma endregion // Blink_PulseAnyBotton
+  while( buttonState(PIN::Buttons::BACK) == LOW );
+  delay(DEBOUNCE_TIME); // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
 }
 

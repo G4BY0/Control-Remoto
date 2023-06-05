@@ -34,6 +34,7 @@
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
 
+#define DEBOUNCE_TIME 250
 #define MODE_HUB 0x0              /* LOBBY*/
 #define MODE_PROFILES 0x1         /*PERFILES*/
 #define MODE_ADDPROFILE 0x2       /*CREAR PERFILES*/

@@ -104,7 +104,7 @@ class CursorV2 {
         @returns
         @note Lo muestra en el screen Oled
     */
-    char* getSelectedOption();
+    const char* getSelectedOption();
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/

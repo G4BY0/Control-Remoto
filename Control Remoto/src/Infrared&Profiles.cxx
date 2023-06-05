@@ -90,7 +90,7 @@ void Receive_stop(void){
 
 }
 
-void sendCode(storedIRDataStruct *aIRDataToSend) {
+void sendCode(Keep_t *aIRDataToSend) {
 
   if (aIRDataToSend->receivedIRData.protocol == UNKNOWN /* i.e. raw */) {
     // Assume 38 KHz
