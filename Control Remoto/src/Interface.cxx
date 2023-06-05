@@ -84,7 +84,7 @@ void Interface::addProfile(void){
   String profileName = writter.stringFinished();
   if((profileName.c_str() == nullptr)  || profileName.c_str() == NULL) return; // Failure
   String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
-  if(subProfileName == nullptr || profileName == '\0' || profileName == NULL) return; // Failure
+  if(subProfileName == nullptr ) return; // Failure
   
   Profiles::createProfile_(profileName.c_str());
 
@@ -268,7 +268,7 @@ void Interface::createSubProfile(void){
   Receive_start();
   if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal
   
-  SubProfiles::createSubProfile_(writter.stringFinished().c_str() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+  SubProfiles::createSubProfile_(writter.stringFinished() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 

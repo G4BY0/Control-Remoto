@@ -144,7 +144,7 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Wr
 
   Writter(Adafruit_SH1106G* display);
 
-  String stringFinished(void);
+  const char* stringFinished(void);
 
 };
 
@@ -220,7 +220,7 @@ class WritterV2{
   void drawCursor(void);
   void drawText(void);
   void drawBlink(void);
-  String stringFinished(void);
+  const char* stringFinished(void);
 
 };
 

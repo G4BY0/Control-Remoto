@@ -243,10 +243,11 @@ void Writter::keyboard(void) {
 
 }
 
-String Writter::stringFinished(void){ 
+const char* Writter::stringFinished(void){ 
   Writter::Graphics();
 
   Writter::keyboard();
-  
-  return To_Transmit; 
+  if(To_Transmit.c_str() == "")
+    return nullptr;
+  return To_Transmit.c_str(); 
 } // Desarrollar para el loop

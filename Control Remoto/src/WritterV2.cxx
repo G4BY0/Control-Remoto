@@ -26,7 +26,7 @@ inline void WritterV2::loop(void) {
 ///////////////////////////
 
 void WritterV2::atcLoop(void) {
-  while( (buttonState(PIN::Buttons::BACK) == HIGH) || (booleanStringFinished == false) ){
+  while( booleanStringFinished == false ){
     display.clearDisplay();
     timeDelay();
     drawMenu();
@@ -97,9 +97,13 @@ void WritterV2::drawMenu(void) {
 void WritterV2::drawCursor(void) {
   if (buttonDelay >= 3 && show == true) {
     if(buttonState(PIN::Buttons::BACK) == HIGH){
-      msgToSend[0] = NULL;
-      buttonDelay = 0;
-      booleanStringFinished = true;
+      for( uint8_t iterator = 0 ; msgToSend[iterator] != '\0' ; iterator++)
+      msgToSend[iterator] = NULL;
+    index = 0;
+    msgToSend[30];
+    num = 0;
+    buttonDelay = 0;
+    booleanStringFinished = true;
     }
     if(buttonState(PIN::Buttons::UP) == HIGH) {
       y -= 10;
@@ -900,10 +904,12 @@ void WritterV2::drawBlink(void) {
   }
 }//drawBlink
 
-String WritterV2::stringFinished(void){
+const char* WritterV2::stringFinished(void){
 
   atcLoop();
+  if(booleanStringFinished == true)
+    return nullptr;
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend;
-
+  
 }
