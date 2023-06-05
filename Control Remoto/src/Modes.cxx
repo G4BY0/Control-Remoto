@@ -1,5 +1,5 @@
 
-#include "Modes.hpp"
+#include "Modes.h"
 
 
 void MODE::hub__(void){
@@ -30,8 +30,8 @@ void MODE::addSubProfile__(void)   { Interface::createSubProfile(); }
 void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile(); }
 
 #pragma region Developing-Future
-void MODE::help__(void){ }
-#pragma endregion
+void MODE::help__(void){ /*Apartado de Joaco*/ }
+#pragma endregion //Developing-Future (Opciones adicionales en un futuro)
 
 #pragma region Shutdown
 void Shutdown::displayService(void){ }

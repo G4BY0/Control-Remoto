@@ -29,7 +29,7 @@
     @param PIN_BUTTON 
            Pin de la placa de desarrollo
     @returns Estado logico del pin de la placa de desarrollo */
-  #define buttonState(PIN_BUTTON) digitalRead(PIN_BUTTON) 
+  #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
 #endif
 #define UP_BUTTON_PIN PIN::Buttons::UP
 #define DOWN_BUTTON_PIN PIN::Buttons::DOWN
@@ -114,15 +114,15 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Wr
   //Referencia al objeto del display
     Adafruit_SH1106G& display;
   //Potentiometer PIN A1
-    int Keyboard= false;
+
   // Variables capturing current and newly calculated position on the letter board (9x3 - 27 postions)
     int New_X=0;
     int Old_X=0;
     int New_Y=0;
     int Old_Y=0;
   // Variable capturing output from Keyboard pin (Values 0 1023)
-    int Key_read=0;
-    int Prev_Key_read=1023;
+
+
     boolean Key_pressed=false; 
   // String variable holding the text to transmit
     String To_Transmit="";
@@ -142,7 +142,7 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Wr
 
   public:
 
-  Writter(Adafruit_SH1106G& display);
+  Writter(Adafruit_SH1106G* display);
 
   String stringFinished(void);
 
@@ -191,6 +191,7 @@ class WritterV2{
   bool transmit = false;
 
   //drawText
+  #define MSGTOSEND_MAX 30
   int index = 0;
   char msgToSend[30];
   int num = 0;
@@ -200,6 +201,7 @@ class WritterV2{
   char convertedMsg[30];
   bool displayMsg = false;
   bool ringFlag = true;
+  bool booleanStringFinished = false;
 
   //drawBlink
   int xBlink = 0;
@@ -212,7 +214,6 @@ class WritterV2{
 
   inline void setup(void);
   inline void loop(void);
-  void atcSetup(void);
   void atcLoop(void);
   void timeDelay(void);
   void drawMenu(void);

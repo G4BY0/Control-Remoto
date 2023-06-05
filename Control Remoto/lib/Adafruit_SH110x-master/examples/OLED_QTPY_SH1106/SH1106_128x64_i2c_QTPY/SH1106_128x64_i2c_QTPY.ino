@@ -62,7 +62,7 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
 
 void setup()   {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // Show image buffer on the display hardware.
   // Since the buffer is intialized with an Adafruit splashscreen

@@ -15,12 +15,12 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
 
 void buttonsBegin(void){
 
-  pinMode(PIN::Buttons::UP,     INPUT);
-  pinMode(PIN::Buttons::DOWN,   INPUT);
-  pinMode(PIN::Buttons::LEFT ,  INPUT);
-  pinMode(PIN::Buttons::RIGHT , INPUT);
-  pinMode(PIN::Buttons::BACK ,  INPUT);
-  pinMode(PIN::Buttons::ENTER,  INPUT);  
+  pinMode(PIN::Buttons::UP,     INPUT_PULLUP);
+  pinMode(PIN::Buttons::DOWN,   INPUT_PULLUP);
+  pinMode(PIN::Buttons::LEFT ,  INPUT_PULLUP);
+  pinMode(PIN::Buttons::RIGHT , INPUT_PULLUP);
+  pinMode(PIN::Buttons::BACK ,  INPUT_PULLUP);
+  pinMode(PIN::Buttons::ENTER,  INPUT_PULLUP);  
 
 }
 
@@ -51,7 +51,7 @@ uint8_t Interface::hub(void){
   for(uint8_t option; option < 5; option++){ if(strcmp( selected , optionsString[option] ) == 0) return option; }
 
 
-  return -1; //Si hay problemas retorna
+  return 0; //Si hay problemas retorna
   
 
 }
@@ -78,11 +78,13 @@ void Interface::profiles(void){
 void Interface::addProfile(void){
   
   WritterV2 writter( &display );
-
+  #pragma region Debugging
+  Serial.println(F("Llegue hasta aca"));
+  #pragma endregion
   String profileName = writter.stringFinished();
-  if(profileName.c_str() == nullptr) return; // Failure
+  if((profileName.c_str() == nullptr)  || profileName.c_str() == NULL) return; // Failure
   String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
-  if(subProfileName.c_str() == nullptr) return; // Failure
+  if(subProfileName == nullptr || profileName == '\0' || profileName == NULL) return; // Failure
   
   Profiles::createProfile_(profileName.c_str());
 

@@ -149,7 +149,7 @@ namespace PIN{
 
   namespace InfraredReceiver{
 
-    const uint8_t DATA   = 2;     
+    const uint8_t DATA   = 15;     
 
   };
 
@@ -161,12 +161,12 @@ namespace PIN{
 
   namespace Buttons{
 
-    const uint8_t UP     = 34;
-    const uint8_t DOWN   = 35;
-    const uint8_t LEFT   = 32;
-    const uint8_t RIGHT  = 33;
-    const uint8_t BACK   = 25;
-    const uint8_t ENTER  = 26;
+    const uint8_t UP     = 13;
+    const uint8_t DOWN   = 12;
+    const uint8_t LEFT   = 14;
+    const uint8_t RIGHT  = 27;
+    const uint8_t BACK   = 26;
+    const uint8_t ENTER  = 25;
 
   };
 

@@ -51,7 +51,7 @@
     @param PIN_BUTTON 
            Pin de la placa de desarrollo
     @returns Estado logico del pin de la placa de desarrollo */
-  #define buttonState(PIN_BUTTON) digitalRead(PIN_BUTTON) 
+  #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
 #endif
 
 

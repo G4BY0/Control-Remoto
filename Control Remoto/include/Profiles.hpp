@@ -105,7 +105,7 @@ namespace SubProfiles{
      *  @param profileName
      *           Nombre del perfil en el que quiere guardar el subperfil
     */
-    void [[deprecated]] createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
+    void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
  
     /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  @param name

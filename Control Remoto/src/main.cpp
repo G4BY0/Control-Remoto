@@ -5,15 +5,13 @@
 #include <Wire.h>
 #include "Board.h"
 
-#include "Modes.hpp"
+#include "Modes.h"
 
 using namespace MODE; // Implemento los modos
 
 
 void setup(){
-    
 
-    
     Serial.begin(115200);
 
     while (!Serial) {
@@ -57,4 +55,4 @@ void setup(){
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){  Serial.println("Hola mundo!") ;}
+void loop(){  Interface::addProfile(); }

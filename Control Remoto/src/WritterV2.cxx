@@ -13,12 +13,6 @@
 
 WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayReference) {  }
 
-///////////////////////
-//      -SETUP-      //
-///////////////////////
-inline void WritterV2::setup(void) {
-  atcSetup();
-}//setup
 
 //////////////////////
 //      -LOOP-      //
@@ -30,32 +24,17 @@ inline void WritterV2::loop(void) {
 ///////////////////////////
 //      -FUNCTIONS-      //
 ///////////////////////////
-void WritterV2::atcSetup(void) {
-  //OLED Setup
-  //display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.begin(0x3C, true);
-  display.display();
-  delay(500);
-  display.clearDisplay();
-  //Pin Setup
-  pinMode(leftPin, INPUT_PULLUP);
-  pinMode(rightPin, INPUT_PULLUP);
-  pinMode(upPin, INPUT_PULLUP);
-  pinMode(downPin, INPUT_PULLUP);
-  pinMode(selectPin, INPUT_PULLUP);
-  pinMode(switchPin, INPUT_PULLUP);
-  //Begin Serial Communication
-  //Serial.begin(9600);
-}//atcSetup
 
 void WritterV2::atcLoop(void) {
-  display.clearDisplay();
-  timeDelay();
-  drawMenu();
-  drawCursor();
-  drawText();
-  drawBlink();
-  display.display();
+  while( (buttonState(PIN::Buttons::BACK) == HIGH) || (booleanStringFinished == false) ){
+    display.clearDisplay();
+    timeDelay();
+    drawMenu();
+    drawCursor();
+    drawText();
+    drawBlink();
+    display.display();
+  }
 }//atcLoop
 
 void WritterV2::timeDelay(void) {
@@ -117,22 +96,27 @@ void WritterV2::drawMenu(void) {
 
 void WritterV2::drawCursor(void) {
   if (buttonDelay >= 3 && show == true) {
-    if(digitalRead(upPin) == LOW) {
+    if(buttonState(PIN::Buttons::BACK) == HIGH){
+      msgToSend[0] = NULL;
+      buttonDelay = 0;
+      booleanStringFinished = true;
+    }
+    if(buttonState(PIN::Buttons::UP) == HIGH) {
       y -= 10;
       buttonDelay = 0;
       transmit = false;
     }
-    if(digitalRead(downPin) == LOW) {
+    if(buttonState(PIN::Buttons::DOWN) == HIGH) {
       y += 10;
       buttonDelay = 0;
       transmit = false;
     }
-    if(digitalRead(leftPin) == LOW) {
+    if(buttonState(PIN::Buttons::LEFT) == HIGH) {
       x -= 12;
       buttonDelay = 0;
       transmit = false;
     }
-    if(digitalRead(rightPin) == LOW) {
+    if(buttonState(PIN::Buttons::RIGHT) == HIGH) {
       x += 12;
       buttonDelay = 0;
       transmit = false;
@@ -171,7 +155,7 @@ void WritterV2::drawCursor(void) {
       width = 7;
     }
   }
-  if (selectDelay >= 3 && digitalRead(selectPin) == LOW) {
+  if (selectDelay >= 3 && buttonState(PIN::Buttons::ENTER) == HIGH) {
     selectDelay = 0;
     select = true;
     
@@ -918,8 +902,8 @@ void WritterV2::drawBlink(void) {
 
 String WritterV2::stringFinished(void){
 
-  while(true) atcLoop();
-
+  atcLoop();
+  booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend;
 
 }

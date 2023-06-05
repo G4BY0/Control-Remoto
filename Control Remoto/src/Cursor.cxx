@@ -145,7 +145,7 @@ char* CursorV2::getSelectedOption() {
   }
 }
 
-Writter::Writter(Adafruit_SH1106G& object) : display(object){}
+Writter::Writter(Adafruit_SH1106G* object) : display(*object){}
 
 void Writter::Graphics(void){
   // Clear the buffer
@@ -188,53 +188,65 @@ void Writter::Highlight_letter(int X, int X_Old, int Y, int Y_Old){
 }
 
 void Writter::keyboard(void) {
-  Key_read =analogRead(Keyboard);
   
-  Key_pressed=true;
-  if ((buttonState(LEFT_BUTTON_PIN) == LOW) and Old_X>0){ New_X=Old_X-1; delay(300);}
-  if ((buttonState(RIGHT_BUTTON_PIN) == LOW) and Old_X<9){ New_X=Old_X+1; delay(300);}
-  if ((buttonState(UP_BUTTON_PIN) == LOW) and Old_Y>-1){ New_Y=Old_Y-1; delay(300);}
-  if ((buttonState(DOWN_BUTTON_PIN) == LOW) and  Old_Y<2 ){ New_Y=Old_Y+1; delay(300);}
-  if (buttonState(RIGHT_BUTTON_PIN) == LOW) {
-  delay(300);
-   if (New_Y!=-1){
-     To_Transmit=To_Transmit + Letters[New_Y][New_X];
-     To_Transmit_Length++;
-     display.setTextSize(1);
-     display.setCursor(3,1);
-     display.setTextColor(SH110X_BLACK);
-     display.fillRect(0, 0, 100, 15, SH110X_WHITE);
-     display.println(To_Transmit);
-     display.display();
-   }
-   else{
-    for (int i=1;i<9;i++) {
-      display.fillRect(0, 0, 128, 15, SH110X_INVERSE);
-      delay(300);
+  while(INFINITE_LOOPING){
+    Key_pressed=true;
+    if ( buttonState(PIN::Buttons::BACK) ==  HIGH ) {To_Transmit = ""; break;}
+    if ((buttonState(PIN::Buttons::LEFT) ==  HIGH ) and Old_X>0){ New_X=Old_X-1; delay(300);}
+    if ((buttonState(PIN::Buttons::RIGHT) == HIGH ) and Old_X<9){ New_X=Old_X+1; delay(300);}
+    if ((buttonState(PIN::Buttons::UP) ==    HIGH ) and Old_Y>-1){ New_Y=Old_Y-1; delay(300);}
+    if ((buttonState(PIN::Buttons::DOWN) ==  HIGH ) and  Old_Y<2 ){ New_Y=Old_Y+1; delay(300);}
+    if (buttonState(PIN::Buttons::RIGHT) ==  HIGH ) {
+    delay(300);
+     if (New_Y!=-1){
+      To_Transmit=To_Transmit + Letters[New_Y][New_X];
+      To_Transmit_Length++;
+      display.setTextSize(1);
+      display.setCursor(3,1);
+      display.setTextColor(SH110X_BLACK);
+      display.fillRect(0, 0, 100, 15, SH110X_WHITE);
+      display.println(To_Transmit);
       display.display();
-    }
-   }
-  }     
-  if (New_Y==-1 and Old_Y==0){
+     }
+     else{
+      for (int i=1;i<9;i++) {
+        display.fillRect(0, 0, 128, 15, SH110X_INVERSE);
+        delay(300);
+        display.display();
+      }
+     }
+    }     
+    if (New_Y==-1 and Old_Y==0){
       display.fillRect(110, 2, 16, 12, SH110X_INVERSE); 
-      display.fillRect(Old_X*12+2*Old_X, Old_Y*16 +16, 12, 16, SH110X_INVERSE); 
-  }
-  if (New_Y==0 and Old_Y==-1){
+      display.fillRect(Old_X*12+2*Old_X, Old_Y*16 +16, 12, 16, SH110X_INVERSE);
+      //DEBUGGING
+      Serial.print(F("String Finished: ")); Serial.println(To_Transmit);
+      //----------
+    }
+    if (New_Y==0 and Old_Y==-1){
       display.fillRect(110, 2, 16, 12, SH110X_INVERSE); 
       display.fillRect(New_X*12+2*New_X, New_Y*16 +16, 12, 16, SH110X_INVERSE);
-      Prev_Key_read=Key_read;
       Old_X=New_X;
       Old_Y=New_Y;;
-  }
-  if ((Old_X!=New_X or Old_Y!=New_Y) and Old_Y!=-1 ){
+      //DEBUGGING
+      Serial.print(F("String Finished: ff")); Serial.println(To_Transmit);
+      //----------
+    }
+    if ((Old_X!=New_X or Old_Y!=New_Y) and Old_Y!=-1 ){
       if (New_Y!=-1 )Highlight_letter (New_X,Old_X,New_Y,Old_Y);
       Old_X=New_X;
       Old_Y=New_Y;
+    }
+
+    display.display();
   }
-  
-  display.display();
-  Prev_Key_read=Key_read; 
 
 }
 
-inline String Writter::stringFinished(void){ return To_Transmit; } // Desarrollar para el loop
+String Writter::stringFinished(void){ 
+  Writter::Graphics();
+
+  Writter::keyboard();
+  
+  return To_Transmit; 
+} // Desarrollar para el loop
