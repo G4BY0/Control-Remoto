@@ -7,12 +7,15 @@
 
 #include "Modes.h"
 
-using namespace MODE; // Implemento los modos
+SPIClass spi;
 
+using namespace MODE; // Implemento los modos
 
 void setup(){
 
     Serial.begin(115200);
+
+    spi=SPIClass(VSPI);
 
     while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -55,4 +58,4 @@ void setup(){
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){  Interface::addProfile(); }
+void loop(){  hub__(); }

@@ -136,6 +136,9 @@ void Interface::subProfiles(const char *profileName_){
 
 void Interface::nonProfiles(void){
 
+  display.clearDisplay();
+  display.display();
+
   Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
 
   display.setTextColor(SH110X_WHITE);
@@ -193,6 +196,9 @@ void Interface::nonProfiles(void){
 }
 
 void Interface::nonSubProfiles(void){
+
+  display.clearDisplay();
+  display.display();
 
   Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
 
