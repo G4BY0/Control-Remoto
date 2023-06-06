@@ -14,6 +14,7 @@ void MODE::hub__(void){
     case 3:     addSubProfile__();          break;
     case 4:     deleteSubProfile__();       break;
     #pragma endregion
+    default: break;
 
   }
 

@@ -55,6 +55,9 @@ void setup(){
     
     //Inicializacion del sistema del infrarrojo
     infraredBegin();    Serial.println(F("Infrared Inicializado"));
+
+    //Espero a que todos los procesos terminen para inicializar
+    yield();
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus

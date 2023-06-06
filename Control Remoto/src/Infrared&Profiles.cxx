@@ -228,35 +228,37 @@ char** Profiles::showProfiles_(void){
   uint16_t numberOfProfiles = 0;
 
   rootForRead = SD.open("/");
- 
-  do{
-    archivo = (rootForRead.openNextFile());
-    if(!archivo){
-      //Si no hay archivo siguiente
-      Serial.println(F("Doesn't find any other profile."));
-        
-    }else{
+  if(rootForRead.available()){
+    do{
+      archivo = (rootForRead.openNextFile());
+      if(!archivo){
+        //Si no hay archivo siguiente
+        Serial.println(F("Doesn't find any other profile."));
+
+      }else{
+
+        if (!archivo.isDirectory()){
+          //Si es un archivo 
+          Serial.print(F("Perfil: "));
+          Serial.println(archivo.name());  //Imprimo el nombre
+
+          profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
+          profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
+          profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
+
+        }
+
+        Serial.print('\n');
       
-      if (!archivo.isDirectory()){
-        //Si es un archivo 
-        Serial.print(F("Perfil: "));
-        Serial.println(archivo.name());  //Imprimo el nombre
-
-        profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
-        profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
-        profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
-
       }
-      Serial.print('\n');
-      
-    }
-  }while(archivo);
-
+    }while(archivo);
+  }
   rootForRead.close();
   
   return profilesName;
 
 }
+
 
 void Profiles::createProfile_(const char* name){
 
