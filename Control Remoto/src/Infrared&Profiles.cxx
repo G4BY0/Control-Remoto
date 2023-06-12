@@ -202,9 +202,9 @@ void SDBegin(void){
   #elif  defined(NODEMCUESP32S_CONFIGURATION)
 
   // Inicializar la comunicación con la tarjeta SD
-  if (!SD.begin(PIN::SD_t::chipSelect)) {
+  if (!SD.begin()) {
     Serial.println("Error al inicializar la tarjeta SD");
-    while (!SD.begin(PIN::SD_t::chipSelect));
+    while (!SD.begin());
   }
 
   #endif
@@ -228,31 +228,30 @@ char** Profiles::showProfiles_(void){
   uint16_t numberOfProfiles = 0;
 
   rootForRead = SD.open("/");
-  if(rootForRead.available()){
-    do{
-      archivo = (rootForRead.openNextFile());
-      if(!archivo){
-        //Si no hay archivo siguiente
-        Serial.println(F("Doesn't find any other profile."));
+  do{
+    archivo = (rootForRead.openNextFile());
+    if(!archivo){
+      //Si no hay archivo siguiente
+      Serial.println(F("Doesn't find any other profile."));
 
-      }else{
+    }else{
 
-        if (!archivo.isDirectory()){
-          //Si es un archivo 
-          Serial.print(F("Perfil: "));
-          Serial.println(archivo.name());  //Imprimo el nombre
+      if (!archivo.isDirectory()){
+        //Si es un archivo 
+        Serial.print(F("Perfil: "));
+        Serial.println(archivo.name());  //Imprimo el nombre
 
-          profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
-          profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
-          profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
+        profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
+        profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
+        profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
 
-        }
-
-        Serial.print('\n');
-      
       }
-    }while(archivo);
-  }
+
+      Serial.print('\n');
+      
+    }
+  }while(archivo);
+  
   rootForRead.close();
   
   return profilesName;

@@ -173,12 +173,14 @@ void WritterV2::drawCursor(void) {
 void WritterV2::drawText(void) {
   if (show == true) {
     if (capitalize == false && letters == true) {
+      
       switch (y) {
         case 23:
           if (select == true) {
             select = false;
             transmit = true;
             num++;
+            
           }
         case 33:
           switch (x) {
@@ -249,6 +251,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = false;
+                
               }
             break;
           }
@@ -323,6 +326,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 capitalize = true;
+
               }
             break;
           }
@@ -412,6 +416,7 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
+            
           }
         case 33:
           switch (x) {
@@ -482,6 +487,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = false;
+                
               }
             break;
           }
@@ -556,6 +562,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 capitalize = false;
+                
               }
             break;
           }
@@ -645,6 +652,11 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
+
+            Serial.println(F("snd was pressed... \n String Finished!"));
+            booleanStringFinished = false;
+            return;
+
           }
         case 33:
           switch (x) {
@@ -715,6 +727,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = true;
+                
               }
             break;
           }
@@ -789,6 +802,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 capitalize = true;
+                
               }
             break;
           }
@@ -907,7 +921,7 @@ void WritterV2::drawBlink(void) {
 const char* WritterV2::stringFinished(void){
 
   atcLoop();
-  if(booleanStringFinished == true)
+  if(msgToSend[0] == NULL)
     return nullptr;
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend;
