@@ -97,10 +97,8 @@ void WritterV2::drawMenu(void) {
 void WritterV2::drawCursor(void) {
   if (buttonDelay >= 3 && show == true) {
     if(buttonState(PIN::Buttons::BACK) == HIGH){
-      for( uint8_t iterator = 0 ; msgToSend[iterator] != '\0' ; iterator++)
-      msgToSend[iterator] = NULL;
+    msgToSend[0] = '\0';
     index = 0;
-    msgToSend[30];
     num = 0;
     buttonDelay = 0;
     booleanStringFinished = true;
@@ -921,7 +919,7 @@ void WritterV2::drawBlink(void) {
 const char* WritterV2::stringFinished(void){
 
   atcLoop();
-  if(msgToSend[0] == NULL)
+  if(msgToSend[0] == '\0')
     return nullptr;
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend;

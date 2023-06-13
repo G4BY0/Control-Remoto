@@ -224,7 +224,7 @@ char** Profiles::showProfiles_(void){
   File rootForRead;
   File archivo;
 
-  char** profilesName = nullptr;
+  char** takingProfilesName = nullptr;
   uint16_t numberOfProfiles = 0;
 
   rootForRead = SD.open("/");
@@ -241,9 +241,9 @@ char** Profiles::showProfiles_(void){
         Serial.print(F("Perfil: "));
         Serial.println(archivo.name());  //Imprimo el nombre
 
-        profilesName = (char**) realloc(profilesName, sizeof( char* ) * (++numberOfProfiles) );
-        profilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
-        profilesName[numberOfProfiles] = strcpy(profilesName[numberOfProfiles], archivo.name());
+        takingProfilesName = (char**) realloc(takingProfilesName, sizeof( char* ) * (++numberOfProfiles) );
+        takingProfilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
+        takingProfilesName[numberOfProfiles] = strcpy(takingProfilesName[numberOfProfiles], archivo.name());
 
       }
 
@@ -252,8 +252,9 @@ char** Profiles::showProfiles_(void){
     }
   }while(archivo);
   
+  archivo.close();
   rootForRead.close();
-  
+  char** profilesName = takingProfilesName;
   return profilesName;
 
 }

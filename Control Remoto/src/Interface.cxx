@@ -71,6 +71,8 @@ void Interface::profiles(void){
 
   CursorV2 cursor( profiles_ptr , &display );
 
+  //delete[] profiles_ptr; // Borro Los datos de los perfiles ya que estan guardados en el heap (memoria )
+
   const char* profile_selected = cursor.getSelectedOption();
   if(profile_selected == nullptr) return;
 

@@ -114,7 +114,7 @@ const char* CursorV2::getSelectedOption() {
         sh1106->print(options[currentIndex]);
         sh1106->display();
       }
-      delay(200);
+      delay(DEBOUNCE_TIME);
     }
     if (digitalRead(DOWN_BUTTON_PIN) == LOW) {
       currentIndex++;
@@ -134,12 +134,14 @@ const char* CursorV2::getSelectedOption() {
         sh1106->print(options[currentIndex]);
         sh1106->display();
       }
-      delay(200);
+      delay(DEBOUNCE_TIME);
     }
     if (digitalRead(ENTER_BUTTON_PIN) == LOW) {
+      delay(DEBOUNCE_TIME);
       return options[currentIndex];
     }
     if (digitalRead(BACK_BUTTON_PIN) == LOW) {
+      delay(DEBOUNCE_TIME);
       return nullptr;
     }
   }
