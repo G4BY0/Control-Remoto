@@ -71,24 +71,25 @@ CursorV2::CursorV2(char** menuOptions, Adafruit_SH1106G* display) : options(menu
   totalPages = (getNumberOfOptions() - 1) / 5 + 1; // calcular el número total de páginas
 }
 
-int CursorV2::getNumberOfOptions() {
-  int count = 0;
-  while(options[count] != nullptr) {
-    count++;
+const uint CursorV2::getNumberOfOptions() const {
+  const uint && amountOfOptions = sizeof(options) / sizeof(options[0]);
+  if(amountOfOptions == 1 && options[amountOfOptions] == nullptr){
+    return 0;
+  } else {
+    return amountOfOptions;
   }
-  return count;
 }
 
 void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
-  for (int i = currentPage * 5; i < getNumberOfOptions() && i < (currentPage + 1) * 5; i++) {
-    sh1106->setCursor(0, (i - currentPage * 5 + 1) * 10);
-    if (i == currentIndex) {
+  for (int iterator = currentPage * 5; iterator < getNumberOfOptions() && iterator < (currentPage + 1) * 5; iterator++) {
+    sh1106->setCursor(0, (iterator - currentPage * 5 + 1) * 10);
+    if (iterator == currentIndex) {
       sh1106->print(">");
     }
-    sh1106->print(options[i]);
+    sh1106->print(options[iterator]);
   }
   sh1106->display();
 }
@@ -96,7 +97,7 @@ void CursorV2::showCurrentPage() {
 const char* CursorV2::getSelectedOption() {
   while (true) {
     showCurrentPage();
-    if (digitalRead(UP_BUTTON_PIN) == LOW) {
+    if (buttonState(UP_BUTTON_PIN) == HIGH) {
       currentIndex--;
       if (currentIndex < 0) {
         currentIndex = getNumberOfOptions() - 1;
@@ -116,7 +117,7 @@ const char* CursorV2::getSelectedOption() {
       }
       delay(DEBOUNCE_TIME);
     }
-    if (digitalRead(DOWN_BUTTON_PIN) == LOW) {
+    if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
       currentIndex++;
       if (currentIndex >= getNumberOfOptions()) {
         currentIndex = 0;
@@ -136,11 +137,11 @@ const char* CursorV2::getSelectedOption() {
       }
       delay(DEBOUNCE_TIME);
     }
-    if (digitalRead(ENTER_BUTTON_PIN) == LOW) {
+    if (buttonState(ENTER_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
       return options[currentIndex];
     }
-    if (digitalRead(BACK_BUTTON_PIN) == LOW) {
+    if (buttonState(BACK_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
       return nullptr;
     }
@@ -193,13 +194,12 @@ void Writter::keyboard(void) {
   
   while(INFINITE_LOOPING){
     Key_pressed=true;
-    if ( buttonState(PIN::Buttons::BACK) ==  HIGH ) {To_Transmit = ""; break;}
-    if ((buttonState(PIN::Buttons::LEFT) ==  HIGH ) and Old_X>0){ New_X=Old_X-1; delay(300);}
-    if ((buttonState(PIN::Buttons::RIGHT) == HIGH ) and Old_X<9){ New_X=Old_X+1; delay(300);}
-    if ((buttonState(PIN::Buttons::UP) ==    HIGH ) and Old_Y>-1){ New_Y=Old_Y-1; delay(300);}
-    if ((buttonState(PIN::Buttons::DOWN) ==  HIGH ) and  Old_Y<2 ){ New_Y=Old_Y+1; delay(300);}
-    if (buttonState(PIN::Buttons::RIGHT) ==  HIGH ) {
-    delay(300);
+    if ( buttonState(PIN::Buttons::BACK)  == HIGH )               {To_Transmit = ""; break;}
+    if ((buttonState(PIN::Buttons::LEFT)  == HIGH ) and Old_X>0)  { New_X=Old_X-1; delay(DEBOUNCE_TIME);}
+    if ((buttonState(PIN::Buttons::RIGHT) == HIGH ) and Old_X<9)  { New_X=Old_X+1; delay(DEBOUNCE_TIME);}
+    if ((buttonState(PIN::Buttons::UP)    == HIGH ) and Old_Y>-1) { New_Y=Old_Y-1; delay(DEBOUNCE_TIME);}
+    if ((buttonState(PIN::Buttons::DOWN)  == HIGH ) and  Old_Y<2 ){ New_Y=Old_Y+1; delay(DEBOUNCE_TIME);}
+    if (buttonState(PIN::Buttons::RIGHT)  == HIGH ) {                              delay(DEBOUNCE_TIME);
      if (New_Y!=-1){
       To_Transmit=To_Transmit + Letters[New_Y][New_X];
       To_Transmit_Length++;
@@ -213,7 +213,7 @@ void Writter::keyboard(void) {
      else{
       for (int i=1;i<9;i++) {
         display.fillRect(0, 0, 128, 15, SH110X_INVERSE);
-        delay(300);
+        delay(DEBOUNCE_TIME);
         display.display();
       }
      }
@@ -221,18 +221,14 @@ void Writter::keyboard(void) {
     if (New_Y==-1 and Old_Y==0){
       display.fillRect(110, 2, 16, 12, SH110X_INVERSE); 
       display.fillRect(Old_X*12+2*Old_X, Old_Y*16 +16, 12, 16, SH110X_INVERSE);
-      //DEBUGGING
-      Serial.print(F("String Finished: ")); Serial.println(To_Transmit);
-      //----------
+      
     }
     if (New_Y==0 and Old_Y==-1){
       display.fillRect(110, 2, 16, 12, SH110X_INVERSE); 
       display.fillRect(New_X*12+2*New_X, New_Y*16 +16, 12, 16, SH110X_INVERSE);
       Old_X=New_X;
       Old_Y=New_Y;;
-      //DEBUGGING
-      Serial.print(F("String Finished: ff")); Serial.println(To_Transmit);
-      //----------
+      
     }
     if ((Old_X!=New_X or Old_Y!=New_Y) and Old_Y!=-1 ){
       if (New_Y!=-1 )Highlight_letter (New_X,Old_X,New_Y,Old_Y);

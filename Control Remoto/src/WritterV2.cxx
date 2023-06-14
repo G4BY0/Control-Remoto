@@ -919,9 +919,9 @@ void WritterV2::drawBlink(void) {
 const char* WritterV2::stringFinished(void){
 
   atcLoop();
+  booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   if(msgToSend[0] == '\0')
     return nullptr;
-  booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend;
   
 }

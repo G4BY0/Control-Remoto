@@ -31,26 +31,11 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
-
-
-//Dependiendo del sistema operativo, incluye o no la definicion.
-#ifndef _IOFBF
-#define _IOFBF            0x0000
-#endif
-#ifndef _IOLBF
-#define _IOLBF            0x0040
-#endif
-#ifndef _IONBF
-#define _IONBF            0x0004
-#endif
-
-
 //  Sd2Card card;
 //  SdVolume volume;
 //  SdFile root;
 
-
-//String extensionProfiles = ".txt"; <--- C++ WAY
+//String extensionProfiles = ".db"; <--- C++ WAY
 #define SLASH_WITH_EOF_STR "/"
 #define extensionProfiles ".db"
 

@@ -48,7 +48,9 @@ uint8_t Interface::hub(void){
   Serial.println(cursor.getSelectedOption());
   const char* && selected = cursor.getSelectedOption();
 
-  for(uint8_t option = 0 ; option < 5; option++){ 
+  const uint8_t && CantidadDeStrings = sizeof(strings) / sizeof(strings[0]); 
+
+  for(uint8_t option = 0 ; option < CantidadDeStrings ; option++){ 
     if(strcmp( selected , optionsString[option] ) == 0) 
     return option; 
   }
@@ -168,8 +170,12 @@ void Interface::nonProfiles(void){
 
   display.display();
   
-  //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) == LOW );
+  while(  buttonState(PIN::Buttons::BACK)  == HIGH  ||
+          buttonState(PIN::Buttons::UP)    == HIGH  ||
+          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
+          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
+          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+          buttonState(PIN::Buttons::ENTER) == HIGH    );
   delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
 }
@@ -193,18 +199,24 @@ void Interface::nonSubProfiles(void){
 
   display.display();
 
-  //Descomentar para que solo sea el boton BACK
-  while( buttonState(PIN::Buttons::BACK) == LOW );
+  while(  buttonState(PIN::Buttons::BACK)  == HIGH  ||
+          buttonState(PIN::Buttons::UP)    == HIGH  ||
+          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
+          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
+          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+          buttonState(PIN::Buttons::ENTER) == HIGH    );
+  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
   delay(DEBOUNCE_TIME); // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
 }
 
+//void Interface::createSubProfile(char** namesProfile = nullptr)
 void Interface::createSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
   char** namesProfile = Profiles::showProfiles_();
 
-  if (namesProfile == nullptr) {
+  if ( namesProfile == nullptr ) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
@@ -222,17 +234,18 @@ void Interface::createSubProfile(void){
 
 }
 
+//void Interface::createSubProfile(char** names = nullptr)
 void Interface::deleteSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
   char** names = Profiles::showProfiles_();
 
-  if (names == nullptr) {
+  if ( names == nullptr ) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
-  CursorV2 cursor(names,&display);
+  CursorV2 cursor( names ,&display);
 
   const char* && selectedProfile = cursor.getSelectedOption();
 
@@ -253,14 +266,26 @@ void Interface::deleteSubProfile(void){
 bool Interface::waitingForIR(void){
 
   while(!Receive_check()){
+
     display.setCursor(10,10);
     display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
-    if(buttonState(PIN::Buttons::BACK)      |
-       buttonState(PIN::Buttons::ENTER)     |
-       buttonState(PIN::Buttons::UP)        |
-       buttonState(PIN::Buttons::DOWN)      |
-       buttonState(PIN::Buttons::LEFT)      |
-       buttonState(PIN::Buttons::RIGHT))     return EXIT_FAILURE;
+
+    //Logica de si se llegara a presionar algun boton
+    if( buttonState(PIN::Buttons::BACK)   ||
+        buttonState(PIN::Buttons::UP)     ||
+        buttonState(PIN::Buttons::DOWN)   ||
+        buttonState(PIN::Buttons::LEFT)   ||
+        buttonState(PIN::Buttons::RIGHT)  ||
+        buttonState(PIN::Buttons::ENTER)    ) return EXIT_FAILURE;
+
+    Receive_start();
+
+    if(Receive_check()){
+      Receive_stop();
+      continue;
+    }
+
+    Receive_stop();
   }
 
   return EXIT_SUCCESS;

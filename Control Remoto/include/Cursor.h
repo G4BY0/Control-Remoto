@@ -10,10 +10,17 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <Arduino.h>
-#include <stdint.h>
-#include <Adafruit_SH110X.h>
-#include "Interface.h"
+#include <Arduino.h> //Arduino Framework
+#include <stdint.h> //Tipo de Enteros
+#include <Adafruit_SH110X.h> // Lib de display Oled
+#include "Interface.h" // Interfaz del usuario
+
+//Cursor
+#define MAX_LINE_OPTIONS_OUTPUT 3
+#define SPACE_FOR_PUSSYS '_'
+#define LINE_STRING_X 20
+const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
+
 
 //CursorV2 Macros
 #define UP_BUTTON_PIN PIN::Buttons::UP
@@ -50,7 +57,7 @@
     @note 1- Para desplazarse entre los menus del display
     @note 2- Para la creacion de strings que recibe del usuario
 */
-class [[deprecated("Se reemplazo por CursorV2, esta en desuso esta clase")]] Cursor {
+class [[deprecated("Se reemplazo por CursorV2, esta en desuso y quedo disabled de lo berreta que era")]] Cursor {
 
 private:
   const uint8_t LINE_CURSOR_X = 10;
@@ -79,9 +86,9 @@ class CursorV2 {
   private:
     char** options;
     Adafruit_SH1106G* sh1106;
-    int currentIndex;
-    int totalPages;
-    int currentPage;
+    uint currentIndex;
+    uint totalPages;
+    uint currentPage;
 
   public:
     /*! @brief Constructor
@@ -93,7 +100,7 @@ class CursorV2 {
     /*! @brief Obtiene el numero total strings
         @returns Numero total de punteros que hay dentro del array
     */
-    int getNumberOfOptions();
+    const uint getNumberOfOptions() const;
 
     /*! @brief Pagina/apartado en el que se encuentra el cursor
         @note Lo muestra en el screen Oled
@@ -108,7 +115,7 @@ class CursorV2 {
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-class [[deprecated("Se reemplazo por WritterV2, esta en desuso esta clase")]] Writter{
+class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")]] Writter{
 
   private:
   //Referencia al objeto del display
