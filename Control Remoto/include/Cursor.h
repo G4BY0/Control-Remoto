@@ -50,37 +50,6 @@ const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 // Mario's Ideas
 // Text input using OLED display an 5 Key Keyboard
 
-
-/*! \deprecated Cursor nuevo desarrollado llamado: CursorV2
-    @brief Cursor que se desplaza a traves del display
-    @note Posee de dos constructores
-    @note 1- Para desplazarse entre los menus del display
-    @note 2- Para la creacion de strings que recibe del usuario
-*/
-class [[deprecated("Se reemplazo por CursorV2, esta en desuso y quedo disabled de lo berreta que era")]] Cursor {
-
-private:
-  const uint8_t LINE_CURSOR_X = 10;
-  const char CURSOR_CHARACTER = '>';
-  const char CURSOR_CHARACTER_DELETE = 'X';
-  uint8_t AMOUNT_OF_OPTIONS;
-  Adafruit_SH1106G &display;
-
-public:
-  /*! @brief Constructor para uso de desplazamiento de opciones
-      @param  AMOUNT_OF_OPTIONS__
-      Cantidad de opciones que puede desplazarse el cursor  */
-  Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G &displayObject);
-  /*! @brief Constructor para uso de almacenamiento de strings del usuario  */
-  //Cursor(void);
-  /*! @brief Cursor que responde en coorcondansia con la botonera
-      @return El numero de la opcion seleccionada (en caso de presionar el boton BACK, retornara 0) */
-  const uint8_t options(void);
-
-  const char* writer_ptr(void);
-
-};
-
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
 class CursorV2 {
   private:
@@ -100,18 +69,18 @@ class CursorV2 {
     /*! @brief Obtiene el numero total strings
         @returns Numero total de punteros que hay dentro del array
     */
-    const uint getNumberOfOptions() const;
+    const uint getNumberOfOptions(void) const;
 
     /*! @brief Pagina/apartado en el que se encuentra el cursor
         @note Lo muestra en el screen Oled
     */
-    void showCurrentPage();
+    void showCurrentPage(void);
 
     /*! @brief Inicia bucle infinito 
         @returns
         @note Lo muestra en el screen Oled
     */
-    const char* getSelectedOption();
+    const char* getSelectedOption(void);
 };
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
@@ -219,7 +188,6 @@ class WritterV2{
 
   WritterV2(Adafruit_SH1106G* displayReference);
 
-  inline void setup(void);
   inline void loop(void);
   void atcLoop(void);
   void timeDelay(void);

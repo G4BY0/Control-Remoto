@@ -11,80 +11,24 @@
 
 #include "Cursor.h"
 
-
-Cursor::Cursor(const uint8_t AMOUNT_OF_OPTIONS__ , Adafruit_SH1106G& displayObject) : AMOUNT_OF_OPTIONS(AMOUNT_OF_OPTIONS__) , display(displayObject){ }
-
-const uint8_t Cursor::options(void){
-  
-  uint8_t moving = 0;
-  while(INFINITE_LOOPING){
-
-    if(buttonState(PIN::Buttons::DOWN) == TRUE_PULLDOWN) {
-      if(moving == AMOUNT_OF_OPTIONS) {
-        moving = 1; // HACE OVERFLOW DE OPCIONES
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[3]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
-
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
-        display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
-        display.display(); // EXPULSO A RAM LAS INSTRUCCIONES DEL DISPLAY
-      }
-      else {
-        moving++;
-        
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving-1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
-
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
-        display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
-        display.display(); // EXPULSO A RAM LAS INSTRUCCIONES DEL DISPLAY
-      }
-    }
-
-    else if(buttonState(PIN::Buttons::UP) == TRUE_PULLDOWN) {
-      if(moving == AMOUNT_OF_OPTIONS) {
-        moving = 1; // HACE OVERFLOW DE OPCIONES
-      }
-      else {
-        moving--;
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving+1]); // POSICION DEL CURSOR UN INSTANTE ANTES
-        display.print(F(" ")); // ESCRIBO UN ESPACIO PARA BORRAR EL CURSOR QUE ESTUVO UN INSTANTE ANTES
-
-        display.setCursor(LINE_CURSOR_X, LINE_STRING_Y[moving]); // POSICION DEL CURSOR
-        display.print(CURSOR_CHARACTER); // DIBUJO EN PANTALLA EL CURSOR
-        display.display(); // EXPULSO A RAM LAS INSTRUCCIONES DEL DISPLAY
-      }
-    }
-
-    else if(buttonState(PIN::Buttons::ENTER) == TRUE_PULLDOWN) { return(moving);              }
-    else if(buttonState(PIN::Buttons::BACK) == TRUE_PULLDOWN)  { return(BUTTON_PRESSED_BACK); }
-
-  }
-
-}
-
-const char* Cursor::writer_ptr(void){
-  return nullptr;
-}
-
 CursorV2::CursorV2(char** menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
   totalPages = (getNumberOfOptions() - 1) / 5 + 1; // calcular el número total de páginas
 }
 
 const uint CursorV2::getNumberOfOptions() const {
-  const uint && amountOfOptions = sizeof(options) / sizeof(options[0]);
-  if(amountOfOptions == 1 && options[amountOfOptions] == nullptr){
-    return 0;
-  } else {
-    return amountOfOptions;
+  int count = 0;
+  while(options[count] != nullptr) {
+    count++;
+  
   }
+  return count;
 }
 
 void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
-  for (int iterator = currentPage * 5; iterator < getNumberOfOptions() && iterator < (currentPage + 1) * 5; iterator++) {
+  for (int iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT); iterator++) {
     sh1106->setCursor(0, (iterator - currentPage * 5 + 1) * 10);
     if (iterator == currentIndex) {
       sh1106->print(">");
@@ -97,46 +41,39 @@ void CursorV2::showCurrentPage() {
 const char* CursorV2::getSelectedOption() {
   while (true) {
     showCurrentPage();
-    if (buttonState(UP_BUTTON_PIN) == HIGH) {
-      currentIndex--;
-      if (currentIndex < 0) {
-        currentIndex = getNumberOfOptions() - 1;
-      }
-      if (currentIndex < currentPage * 5) {
-        currentPage--;
-        if (currentPage < 0) {
-          currentPage = totalPages - 1;
-        }
-        showCurrentPage();
-      } else {
-        sh1106->clearDisplay();
-        sh1106->setCursor(0, (currentIndex - currentPage * 5 + 1) * 10);
-        sh1106->print(">");
-        sh1106->print(options[currentIndex]);
-        sh1106->display();
-      }
-      delay(DEBOUNCE_TIME);
+    // Ajuste en la función getSelectedOption()
+if (buttonState(UP_BUTTON_PIN) == HIGH) {
+  if (currentIndex == currentPage * MAX_LINE_OPTIONS_OUTPUT) {
+    if (currentPage == 0) {
+      currentPage = totalPages - 1;
+    } else {
+      currentPage--;
     }
-    if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
-      currentIndex++;
-      if (currentIndex >= getNumberOfOptions()) {
-        currentIndex = 0;
-      }
-      if (currentIndex >= (currentPage + 1) * 5) {
-        currentPage++;
-        if (currentPage >= totalPages) {
-          currentPage = 0;
-        }
-        showCurrentPage();
-      } else {
-        sh1106->clearDisplay();
-        sh1106->setCursor(0, (currentIndex - currentPage * 5 + 1) * 10);
-        sh1106->print(">");
-        sh1106->print(options[currentIndex]);
-        sh1106->display();
-      }
-      delay(DEBOUNCE_TIME);
+    currentIndex = min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) - 1;
+  } else {
+    currentIndex--;
+  }
+  delay(DEBOUNCE_TIME);
+  showCurrentPage();
+}
+
+if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
+  if (currentIndex == (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT - 1) {
+    if (currentPage == totalPages - 1) {
+      currentPage = 0;
+    } else {
+      currentPage++;
     }
+    currentIndex = currentPage * MAX_LINE_OPTIONS_OUTPUT;
+  } else {
+    currentIndex++;
+  }
+  delay(DEBOUNCE_TIME);
+  showCurrentPage();
+}
+
+
+
     if (buttonState(ENTER_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
       return options[currentIndex];
@@ -168,10 +105,10 @@ void Writter::Graphics(void){
   display.setTextColor(SH110X_WHITE);       
   for (int j=0; j<3;j++){
     for (int i=0; i<9;i++){
-       display.setCursor(i*12+2*i+1,j*16+17);           
-       display.println(Letters[j][i]);
-       delay(10);
-     display.display();
+      display.setCursor(i*12+2*i+1,j*16+17);           
+      display.println(Letters[j][i]);
+      delay(10);
+      display.display();
     }
   }
   // Highlight character A by displaying Inverse rect at first position
