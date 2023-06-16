@@ -264,30 +264,23 @@ void Interface::deleteSubProfile(void){
 }
 
 bool Interface::waitingForIR(void){
-
-  while(!Receive_check()){
-
-    display.setCursor(10,10);
-    display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
-
+  display.setCursor(10,10);
+  display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
+  display.display();
+  Receive_start();
+  //Mientras el codigo recibido sea invalido:
+  while(Receive_check()){
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
         buttonState(PIN::Buttons::UP)     ||
         buttonState(PIN::Buttons::DOWN)   ||
         buttonState(PIN::Buttons::LEFT)   ||
         buttonState(PIN::Buttons::RIGHT)  ||
-        buttonState(PIN::Buttons::ENTER)    ) return EXIT_FAILURE;
-
-    Receive_start();
-
-    if(Receive_check()){
-      Receive_stop();
-      continue;
-    }
-
-    Receive_stop();
+        buttonState(PIN::Buttons::ENTER)    ) return EXIT_FAILURE; //Failure
   }
+  Receive_stop();
 
-  return EXIT_SUCCESS;
+
+  return EXIT_SUCCESS; //Recibido Correctamente
 
 }
