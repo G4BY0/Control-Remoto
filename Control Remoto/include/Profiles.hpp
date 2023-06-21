@@ -17,6 +17,7 @@
 #include <SPI.h>
 #include "Board.h"
 #include <SD.h>
+#include <vector>
 
 #include "PIN.h"
 #include "Infrared.h"

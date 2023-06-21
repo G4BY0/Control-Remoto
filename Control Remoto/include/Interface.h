@@ -15,16 +15,14 @@
  
 #include <stdint.h>
 #include <Arduino.h>
-#include <SPI.h>
-#include <Wire.h>
+#include <SPI.h>  //SPI
+#include <Wire.h> //I2C
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 #include "Board.h"
 #include "PIN.h"
-
-#ifndef NODEMCUESP32S_CONFIGURATION 
-  #include <SD.h>
-#endif
+#include <SD.h>
+#include <vector>
 
 #include "PIN.h"
 #include "Cursor.h"
@@ -116,6 +114,10 @@ namespace Interface {
       @note entra en bucle hasta vericar que el codigo recibido es correcto.
   */
   bool waitingForIR(void);
+
+  /*! @brief    Muestra las instrucciones de como se usa el dispositivo */
+  void help();
+
 
 };
 

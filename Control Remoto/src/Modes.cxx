@@ -14,6 +14,7 @@ void MODE::hub__(void){
     case 3:     addSubProfile__();          break;
     case 4:     deleteSubProfile__();       break;
     #pragma endregion
+    case 5: help__();
     default: break;
 
   }
@@ -31,7 +32,7 @@ void MODE::addSubProfile__(void)   { Interface::createSubProfile(); }
 void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile(); }
 
 #pragma region Developing-Future
-void MODE::help__(void){ /*Apartado de Joaco*/ }
+void MODE::help__(void){ Interface::help();/*Apartado de Joaco*/ }
 #pragma endregion //Developing-Future (Opciones adicionales en un futuro)
 
 #pragma region Shutdown

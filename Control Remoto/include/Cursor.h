@@ -12,6 +12,7 @@
 
 #include <Arduino.h> //Arduino Framework
 #include <stdint.h> //Tipo de Enteros
+#include <inttypes.h> //Tipo de Enteros
 #include <Adafruit_SH110X.h> // Lib de display Oled
 #include "Interface.h" // Interfaz del usuario
 
@@ -49,6 +50,12 @@ const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 // Mario's Ideas
 // Text input using OLED display an 5 Key Keyboard
+
+namespace CursorUltimate{
+
+  const char* getOption( const char** Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
+
+}
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
 class CursorV2 {
