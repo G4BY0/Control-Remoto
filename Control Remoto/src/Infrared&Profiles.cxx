@@ -219,13 +219,12 @@ void SDBegin(void){
 
 }
 
-char** Profiles::showProfiles_(void){
+std::vector<std::string> Profiles::showProfiles_(void){
  
   File rootForRead;
   File archivo;
 
-  char** takingProfilesName = nullptr;
-  uint16_t numberOfProfiles = 0;
+  std::vector<std::string> takingProfilesName;
 
   rootForRead = SD.open("/");
   do{
@@ -241,9 +240,7 @@ char** Profiles::showProfiles_(void){
         Serial.print(F("Perfil: "));
         Serial.println(archivo.name());  //Imprimo el nombre
 
-        takingProfilesName = (char**) realloc(takingProfilesName, sizeof( char* ) * (++numberOfProfiles) );
-        takingProfilesName[numberOfProfiles] = new char[sizeof(archivo.name())];
-        takingProfilesName[numberOfProfiles] = strcpy(takingProfilesName[numberOfProfiles], archivo.name());
+        takingProfilesName.push_back(archivo.name());
 
       }
 
@@ -254,8 +251,7 @@ char** Profiles::showProfiles_(void){
   
   archivo.close();
   rootForRead.close();
-  char** profilesName = takingProfilesName;
-  return profilesName;
+  return takingProfilesName;
 
 }
 
@@ -335,10 +331,10 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   
 }
 
-char** SubProfiles::showSubProfiles(const char* profileName){
+std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   File rootRead;
-  char** subProfilesName = nullptr;
+  std::vector<std::string> subProfilesName;
   uint16_t numberOfSubProfiles = 0;
 
   rootRead = SD.open( profilePath(profileName) , FILE_READ );
@@ -346,7 +342,7 @@ char** SubProfiles::showSubProfiles(const char* profileName){
   if(!rootRead.available()){
 
     Serial.println(F("The file cannot be open successfully"));
-    return nullptr;
+    return subProfilesName;
 
   }
 
@@ -360,7 +356,7 @@ char** SubProfiles::showSubProfiles(const char* profileName){
   if( ( sizeof(rootRead.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
-    return nullptr; //Failure
+    return subProfilesName; //Failure
 
   }
 
@@ -380,21 +376,19 @@ char** SubProfiles::showSubProfiles(const char* profileName){
     //Imprimo en el Serial el nombre del subperfil
     Serial.println(retiredFromSD[iterator].nameSubProfile);
 
-    subProfilesName = (char**) realloc(subProfilesName, sizeof( char* ) * (iterator+1) );
-    subProfilesName[iterator+1] = new char[sizeof(retiredFromSD[iterator].nameSubProfile)];
-    strcpy( subProfilesName[iterator+1] , retiredFromSD[iterator].nameSubProfile );
+    subProfilesName.push_back(retiredFromSD[iterator].nameSubProfile);
 
   }
 
+  delete[] retiredFromSD;
   rootRead.close();
+  return subProfilesName;
 
 }
 
 Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
-  File rootForRead;
-
-  rootForRead = SD.open(profilePath(profileName), FILE_READ);
+  File rootForRead = SD.open(profilePath(profileName), FILE_READ);
 
   //Si el archivo no esta disponible...
   if(!rootForRead.available()){
@@ -435,7 +429,10 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
 
     }
 
-    return nullptr; // En caso de problemas
+    return nullptr; 
+    /*En caso de problemas, si hay algo que no va bien retorna "nullptr" para evitar errores futuros en caso de seguir leyendo el almacenamiento
+     *Haciendo eso evito problemas que podria generar el bajo nivel de energia de suplementacion de el almacenamiento
+    */
 
   }
 
@@ -455,11 +452,11 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
   if(!rootForWrite.available()){
 
     Serial.println(F("Unsuccessfull opened Profile"));
-    return;
+    return; //Failure, No se pudo abrir el archivo correctamente
 
   }
 
-  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) );
+  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) ); // Escribo en el perfil la estructura dada
   
   rootForWrite.close();
 
@@ -475,16 +472,19 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   
   if(!rootWriteOld.available()){
 
-    Serial.println(F("Unsuccessfull writting from File"));
-    return;
+    Serial.println(F("Unsuccessfull writting from File."));
+    return;//Failure, No se pudo abrir el archivo correctamente 
 
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
   if( ( sizeof(rootWriteOld.size()) % sizeof(Keep_t) ) != 0){ 
 
-    Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
-    return; //Failure
+    Serial.println(F("Profile has wrong data stored, doesn't match with normalized information."));
+    return;
+    /*En caso de problemas, si hay algo que no va bien retorna "nullptr" para evitar errores futuros en caso de seguir leyendo el almacenamiento
+     *Haciendo eso evito problemas que podria generar el bajo nivel de energia de suplementacion de el almacenamiento
+    */
 
   }
 

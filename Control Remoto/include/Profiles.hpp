@@ -54,7 +54,7 @@ namespace Profiles{
     /*! @brief Hace lectura del nombre de los perfiles dentro del almacenamiento  
         @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los perfiles)
      */
-    char** showProfiles_(void);
+    std::vector<std::string> showProfiles_(void);
     
     /*! @brief Crea un almacenamiento para un nuevo perfil
         @param name
@@ -98,7 +98,7 @@ namespace SubProfiles{
      *         Nombre del perfil
      *  @returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los subperfiles) 
     */
-    char** showSubProfiles(const char* profileName);
+    std::vector<std::string> showSubProfiles(const char* profileName);
 
     /*! @brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
      *  @param profileName nombre del perfil en el que se encontrara el subperfil

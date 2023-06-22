@@ -41,23 +41,21 @@ uint8_t Interface::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
-  const char* strings[] = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , nullptr};
+  std::vector<std::string> strings  = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP"};
+  //const char* strings[] = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , nullptr};
 
   //DEBUGGING CURSOR
-  //CursorV2 cursor(optionsString,&display);
+  CursorV2 cursor(strings,&display);
   //Serial.println(cursor.getSelectedOption());
   //const char* && selected = cursor.getSelectedOption();
-  const size_t CantidadDeStrings = sizeof(strings) / sizeof(strings[0]);
-  const char* selected = CursorUltimate::getOption( strings , CantidadDeStrings , &display );//cursor.getSelectedOption();
+  const char* selected = cursor.getSelectedOption();
 
-  for(uint8_t iterator = 0 ; iterator < CantidadDeStrings ; iterator++){ 
-    if(strcmp( selected , strings[iterator] ) == 0) 
+  for(uint8_t iterator = 0; iterator < strings.size(); iterator++ ){ 
+    if(strcmp( selected , strings[iterator].c_str() ) == 0) 
     return iterator; 
   }
 
-
-  return 0; //Si hay problemas retorna
-  
+  return NULL; //Si hay problemas retorna
 
 }
 //---------------------------------------------------
@@ -65,9 +63,9 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
   
 
-  char** profiles_ptr = Profiles::showProfiles_();
+  auto profiles_ptr = Profiles::showProfiles_();
 
-  if ( profiles_ptr == nullptr) {
+  if ( profiles_ptr.empty() == true) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
@@ -91,28 +89,38 @@ void Interface::addProfile(void){
   Serial.println(F("Llegue hasta aca"));
   #pragma endregion
   String profileName = writter.stringFinished();
-  if((profileName.c_str() == nullptr)  || profileName.c_str() == NULL) return; // Failure
+  if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
+
+  //Aqui agregar cuadro que diga si quiere el usuario agregar un subperfil en este momento
+  //0---------------------------------------------------------------------------------------
+
   String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
   if(subProfileName == nullptr ) return; // Failure
   
-  Profiles::createProfile_(profileName.c_str());
+  Profiles::createProfile_(profileName.c_str()); //Failure, el usuario habia cancelado la escritura del nombre 
 
   display.clearDisplay();
 
+
+  //Empieza la lectura del IR Receiver
   Receive_start();
+
+  //Mientras el codigo recibio sea invalido... (como no se recibio nada, serà invalido de primera)
   while(!Receive_check()){
     display.setCursor(10,10);
     display.print(F("Prepared to \n receive IR\n SIGNAL \n\n Waiting For \n Response..."));
   }
+  
+  //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
   SubProfiles::createSubProfile_(subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 
 void Interface::deleteProfile(void){
 
-  char** names = Profiles::showProfiles_();
+  auto names = Profiles::showProfiles_();
   
-  if (names == nullptr) {
+  if (names.empty() == true) {
     Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
   }
@@ -127,15 +135,15 @@ void Interface::deleteProfile(void){
 
 void Interface::subProfiles(const char *profileName_){
 
-  char** subprofiles_ptr = SubProfiles::showSubProfiles(profileName_);
+  auto subprofiles = SubProfiles::showSubProfiles(profileName_);
   
-  if (subprofiles_ptr == nullptr) {
+  if (subprofiles.empty() == true) {
     Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
     
   }
 
-  CursorV2 cursor( subprofiles_ptr ,&display);
+  CursorV2 cursor( subprofiles ,&display);
 
   const char* && subprofiles_selected = cursor.getSelectedOption();
   if(subprofiles_selected == nullptr) return;
@@ -215,9 +223,9 @@ void Interface::nonSubProfiles(void){
 void Interface::createSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
-  char** namesProfile = Profiles::showProfiles_();
-
-  if ( namesProfile == nullptr ) {
+  auto namesProfile = Profiles::showProfiles_();
+  
+  if ( namesProfile.empty() == true ) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
@@ -239,9 +247,9 @@ void Interface::createSubProfile(void){
 void Interface::deleteSubProfile(void){
 
   //Primero muestro en pantalla los perfiles
-  char** names = Profiles::showProfiles_();
+  auto names = Profiles::showProfiles_();
 
-  if ( names == nullptr ) {
+  if ( names.empty() == true ) {
     Interface::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }

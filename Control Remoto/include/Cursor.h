@@ -53,14 +53,14 @@ const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 
 namespace CursorUltimate{
 
-  const char* getOption( const char** Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
+  const char* getOption( std::vector<std::string> Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
 
 }
 
 /*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
 class CursorV2 {
   private:
-    char** options;
+    std::vector<std::string> options;
     Adafruit_SH1106G* sh1106;
     uint currentIndex;
     uint totalPages;
@@ -68,15 +68,15 @@ class CursorV2 {
 
   public:
     /*! @brief Constructor
-        @param menuOptions Doble puntero que apunta a array de punteros que apuntan a strings (las opciones)
+        @param menuOptions objeto de caracter std::vector<std::string> que contiene las opciones de trabajo para el cursor
         @param display Recibe referencia o puntero al objeto del display
     */
-    CursorV2(char** menuOptions, Adafruit_SH1106G* display);
+    CursorV2(std::vector<std::string> menuOptions, Adafruit_SH1106G* display);
 
     /*! @brief Obtiene el numero total strings
         @returns Numero total de punteros que hay dentro del array
     */
-    const uint getNumberOfOptions(void) const;
+    const size_t getNumberOfOptions(void) const;
 
     /*! @brief Pagina/apartado en el que se encuentra el cursor
         @note Lo muestra en el screen Oled

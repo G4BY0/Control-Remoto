@@ -11,7 +11,7 @@
 
 #include "Cursor.h"
 
-const char* CursorUltimate::getOption( const char* Strings[] , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr ){
+const char* CursorUltimate::getOption( std::vector<std::string> Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr ){
 
   Adafruit_SH1106G& Cout = *OLEDObject_ptr;
 
@@ -46,7 +46,7 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
   for( uint8_t iterator = 0 ; iterator < MAX_LINE_OPTIONS_OUTPUT ; iterator++ ){
 
     Cout.setCursor( lineUPStrings_X , lineUpStrings_Y[iterator] );
-    Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator] );
+    Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator].c_str() );
 
   }
   Cout.setCursor( lineUPcursorSymbol_X , lineUpStrings_Y[cursorString] ); 
@@ -67,7 +67,7 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
         for( uint8_t iterator = 0 ; iterator < MAX_LINE_OPTIONS_OUTPUT ; iterator++ ){
 
           Cout.setCursor( lineUPStrings_X , lineUpStrings_Y[iterator] );
-          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator] );
+          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator].c_str() );
 
         }
         Cout.setCursor( lineUPcursorSymbol_X , lineUpStrings_Y[cursorString] ); 
@@ -87,7 +87,7 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
         for( uint8_t iterator = 0 ; iterator < MAX_LINE_OPTIONS_OUTPUT ; iterator++ ){
 
           Cout.setCursor( lineUPStrings_X , lineUpStrings_Y[iterator] );
-          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator] );
+          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator].c_str() );
 
         }
         Cout.setCursor( lineUPcursorSymbol_X , lineUpStrings_Y[cursorString] ); 
@@ -124,7 +124,7 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
         for( uint8_t iterator = 0 ; iterator < MAX_LINE_OPTIONS_OUTPUT ; iterator++ ){
 
           Cout.setCursor( lineUPStrings_X , lineUpStrings_Y[iterator] );
-          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator] );
+          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator].c_str() );
 
         }
         Cout.setCursor( lineUPcursorSymbol_X , lineUpStrings_Y[cursorString] ); 
@@ -144,7 +144,7 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
         for( uint8_t iterator = 0 ; iterator < MAX_LINE_OPTIONS_OUTPUT ; iterator++ ){
 
           Cout.setCursor( lineUPStrings_X , lineUpStrings_Y[iterator] );
-          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator] );
+          Cout.println( Strings[(cursorPage * MAX_LINE_OPTIONS_OUTPUT) + iterator].c_str() );
 
         }
         Cout.setCursor( lineUPcursorSymbol_X , lineUpStrings_Y[cursorString] ); 
@@ -171,40 +171,36 @@ const char* CursorUltimate::getOption( const char* Strings[] , const size_t Cant
     //Si se presiona boton Enter
     if ( buttonState(PIN::Buttons::ENTER) == true ){
     delay(DEBOUNCE_TIME);
-    return Strings[ ( totalPages * MAX_LINE_OPTIONS_OUTPUT ) + cursorString ];
+    return Strings[ ( totalPages * MAX_LINE_OPTIONS_OUTPUT ) + cursorString ].c_str();
     }
     //Si se presiona el boton Back
     if ( buttonState(PIN::Buttons::BACK) == true ){
     delay(DEBOUNCE_TIME);
-    return nullptr;
+    return nullptr; //Se cancelo la seleccion
     }
   }
 
 }
 
-CursorV2::CursorV2(char** menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
+//Si recibo la cadena de strings en formato std::vector<std::string>
+CursorV2::CursorV2(std::vector<std::string> menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
   totalPages = (getNumberOfOptions() - 1) / MAX_LINE_OPTIONS_OUTPUT + 1; // calcular el número total de páginas
 }
 
-const uint CursorV2::getNumberOfOptions() const {
-  int count = 0;
-  while(options[count] != nullptr) {
-    count++;
-  
-  }
-  return count;
+const size_t CursorV2::getNumberOfOptions() const {
+  return options.size();
 }
 
 void CursorV2::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
-  for (int iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) && options[iterator] != nullptr; iterator++) {
+  for (uint8_t iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) && iterator < options.size(); iterator++) {
     sh1106->setCursor(0, (iterator - currentPage * MAX_LINE_OPTIONS_OUTPUT + 1) * 10);
     if (iterator == currentIndex) {
       sh1106->print(">");
     }
-    sh1106->print(options[iterator]);
+    sh1106->print(options[iterator].c_str());
   }
   sh1106->display();
 }
@@ -247,7 +243,7 @@ if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
 
     if (buttonState(ENTER_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
-      return options[currentIndex];
+      return options[currentIndex].c_str();;
     }
     if (buttonState(BACK_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
