@@ -42,7 +42,6 @@ uint8_t Interface::hub(void){
   display.setTextColor(SH110X_WHITE);
   
   std::vector<std::string> strings  = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP"};
-  //const char* strings[] = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , nullptr};
 
   //DEBUGGING CURSOR
   CursorV2 cursor(strings,&display);
@@ -55,7 +54,7 @@ uint8_t Interface::hub(void){
     return iterator; 
   }
 
-  return NULL; //Si hay problemas retorna
+  return 0; //Si hay problemas retorna
 
 }
 //---------------------------------------------------
@@ -71,12 +70,12 @@ void Interface::profiles(void){
   }
 
   CursorV2 cursor( profiles_ptr , &display );
-
-  //delete[] profiles_ptr; // Borro Los datos de los perfiles ya que estan guardados en el heap (memoria )
-
   const char* profile_selected = cursor.getSelectedOption();
+
+  //Si el usuario no selecciono nada o hubo algun problema
   if(profile_selected == nullptr) return;
 
+  //Muestro los subperfiles del perfil seleccionado por el usuario
   Interface::subProfiles( profile_selected );
   
 
@@ -84,50 +83,84 @@ void Interface::profiles(void){
 
 void Interface::addProfile(void){
   
+  //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
   WritterV2 writter( &display );
   #pragma region Debugging
   Serial.println(F("Llegue hasta aca"));
   #pragma endregion
   String profileName = writter.stringFinished();
+
+  //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
   if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
 
   //Aqui agregar cuadro que diga si quiere el usuario agregar un subperfil en este momento
-  //0---------------------------------------------------------------------------------------
+
+  //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
+  auto EmergenteMomentaneo = [&] () {
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SH110X_WHITE);
+
+    Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
+
+    display.setTextColor(SH110X_WHITE);
+    display.setTextSize(1);
+    display.setCursor(5,10);
+    display.println(F("Do you want to add \n a Subprofile Now?"));
+
+    display.setCursor(10,30);
+    display.println(F("Press Enter To Continue"));
+    display.setCursor(10,40);
+    display.println(F("Press any other to Cancel"));
+
+    display.display();
+  
+    while(buttonState(PIN::Buttons::BACK)  == HIGH  ||
+          buttonState(PIN::Buttons::UP)    == HIGH  ||
+          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
+          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
+          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+          buttonState(PIN::Buttons::ENTER) == HIGH    );
+    for(;;){
+      if(buttonState(PIN::Buttons::ENTER) == HIGH ) break;
+      else if (buttonState(PIN::Buttons::BACK)  == HIGH  ||
+               buttonState(PIN::Buttons::UP)    == HIGH  ||
+               buttonState(PIN::Buttons::DOWN)  == HIGH  ||
+               buttonState(PIN::Buttons::LEFT)  == HIGH  ||
+               buttonState(PIN::Buttons::RIGHT) == HIGH    ) return;
+    }
+    delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
+  };
 
   String subProfileName = writter.stringFinished(); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
-  if(subProfileName == nullptr ) return; // Failure
+  if(subProfileName.c_str() == nullptr ) return; // Failure
   
   Profiles::createProfile_(profileName.c_str()); //Failure, el usuario habia cancelado la escritura del nombre 
 
   display.clearDisplay();
 
-
-  //Empieza la lectura del IR Receiver
-  Receive_start();
-
-  //Mientras el codigo recibio sea invalido... (como no se recibio nada, serà invalido de primera)
-  while(!Receive_check()){
-    display.setCursor(10,10);
-    display.print(F("Prepared to \n receive IR\n SIGNAL \n\n Waiting For \n Response..."));
-  }
+  if(waitingForIR() == EXIT_FAILURE) return; //Failure, se cancelo o recibio un error al recibir la señal infrarroja
   
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
-  SubProfiles::createSubProfile_(subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+  SubProfiles::createSubProfile_(  subProfileName.c_str() , storeCode() , profileName.c_str() ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
 
 }
 
 void Interface::deleteProfile(void){
 
+  //Recibo del almacenamiento un vector de strings de los nombres de los perfiles
   auto names = Profiles::showProfiles_();
   
+  //Si recibo el vector vacio, hubo un problema
   if (names.empty() == true) {
     Interface::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
+  //Inicializo un Cursor para recibir del usuario el perfil seleccionado
   CursorV2 cursor(names,&display);
-
-  const char* && selected = cursor.getSelectedOption();
+  const char* selected = cursor.getSelectedOption();
 
   Profiles::deleteProfile_(selected);
 
@@ -149,7 +182,7 @@ void Interface::subProfiles(const char *profileName_){
   if(subprofiles_selected == nullptr) return;
   
   // Desarrollar a infrarrojo el subperfil solicitado
-  Keep_t* && IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected );
+  Keep_t* IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected );
 
   if(IRToSend == nullptr ){
     Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
@@ -158,11 +191,15 @@ void Interface::subProfiles(const char *profileName_){
 
   sendCode(IRToSend);
 
+  delete[] IRToSend;
+
 }
 
 void Interface::nonProfiles(void){
 
   display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
   display.display();
 
   Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
@@ -192,6 +229,8 @@ void Interface::nonProfiles(void){
 void Interface::nonSubProfiles(void){
 
   display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
   display.display();
 
   Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
@@ -273,6 +312,9 @@ void Interface::deleteSubProfile(void){
 }
 
 bool Interface::waitingForIR(void){
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
   display.setCursor(10,10);
   display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
   display.display();
@@ -289,7 +331,7 @@ bool Interface::waitingForIR(void){
   }
   Receive_stop();
 
-
+  delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
   return EXIT_SUCCESS; //Recibido Correctamente
 
 }
@@ -299,6 +341,7 @@ void Interface::help(void){
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
+  display.display();
   
   static const unsigned char PROGMEM QRCode[10846] = {
 

@@ -11,7 +11,9 @@
 
 #include "Cursor.h"
 
-WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayReference) {  }
+WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayReference) { 
+  for(uint8_t iterator = 0; iterator < sizeof(msgToSend) ; iterator++) msgToSend[iterator] = NULL;
+}
 
 
 //////////////////////
@@ -102,6 +104,7 @@ void WritterV2::drawCursor(void) {
     num = 0;
     buttonDelay = 0;
     booleanStringFinished = true;
+    return;
     }
     if(buttonState(PIN::Buttons::UP) == HIGH) {
       y -= 10;
@@ -652,7 +655,7 @@ void WritterV2::drawText(void) {
             num++;
 
             Serial.println(F("snd was pressed... \n String Finished!"));
-            booleanStringFinished = false;
+            booleanStringFinished = true;
             return;
 
           }

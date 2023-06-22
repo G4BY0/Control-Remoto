@@ -147,11 +147,11 @@ class WritterV2{
   dataPackage data;
 
   //Pins
-  const int leftPin = 2;
-  const int rightPin = 3;
-  const int upPin = 4;
-  const int downPin = 5;
-  const int selectPin = 6;
+  const int leftPin = PIN::Buttons::LEFT;
+  const int rightPin = PIN::Buttons::RIGHT;
+  const int upPin = PIN::Buttons::UP;
+  const int downPin = PIN::Buttons::DOWN;
+  const int selectPin = PIN::Buttons::ENTER;
   const int switchPin = 7;
 
   //timeDelay
@@ -174,7 +174,6 @@ class WritterV2{
   bool transmit = false;
 
   //drawText
-  #define MSGTOSEND_MAX 30
   int index = 0;
   char msgToSend[30];
   int num = 0;
