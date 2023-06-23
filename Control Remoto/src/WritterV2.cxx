@@ -15,14 +15,6 @@ WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayRe
   for(uint8_t iterator = 0; iterator < sizeof(msgToSend) ; iterator++) msgToSend[iterator] = NULL;
 }
 
-
-//////////////////////
-//      -LOOP-      //
-//////////////////////
-inline void WritterV2::loop(void) {
-  atcLoop();
-}//loop
-
 ///////////////////////////
 //      -FUNCTIONS-      //
 ///////////////////////////
@@ -921,7 +913,15 @@ void WritterV2::drawBlink(void) {
 
 const char* WritterV2::stringFinished(void){
 
-  atcLoop();
+  while( booleanStringFinished == false ){
+    display.clearDisplay();
+    timeDelay();
+    drawMenu();
+    drawCursor();
+    drawText();
+    drawBlink();
+    display.display();
+  }
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   if(msgToSend[0] == '\0')
     return nullptr;

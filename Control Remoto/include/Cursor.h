@@ -194,13 +194,28 @@ class WritterV2{
 
   WritterV2(Adafruit_SH1106G* displayReference);
 
-  inline void loop(void);
+  /*! @brief Hace en conjunto la interfaz del Writter para el usuario */
   void atcLoop(void);
+
+  /*! @brief Logica de calculo para el rebote de los pulsadores
+      @note NO USA PARADAS DEL PROCESADOR!!! */
   void timeDelay(void);
+
+  /*! @brief Dibuja en pantalla el comodo teclado virtual para el usuario */
   void drawMenu(void);
+
+  /*! @brief Dibuja en pantalla el cursor dentro del teclado virtual */
   void drawCursor(void);
+
+  /*! @brief Dibuja en pantalla el texto que se esta escribiendo */
   void drawText(void);
+
+  /*! @brief dibuja en pantalla el blink de donde se deberia escribir la siguiente letra */
   void drawBlink(void);
+
+  /*! @brief Proceso de seleccion para el usuario
+      @return String seleccionado
+      @note Si se cancela la seleccion, retorna 'nullptr' */
   const char* stringFinished(void);
 
 };

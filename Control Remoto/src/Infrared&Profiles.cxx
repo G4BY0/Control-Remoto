@@ -56,7 +56,7 @@ void Receive_start(void){
 }
 
 bool Receive_check(void){
-
+  //Logica de checkeo si la informacion recibida es correcta o incorrecta...
   if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
     Serial.print(F("Ignore data with rawlen="));
     Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
@@ -78,15 +78,14 @@ bool Receive_check(void){
     
     return SUCCESS;
   }
-
-  return FAILURE;
+  else{ return FAILURE; }
 }
 
 void Receive_stop(void){
   
   Serial.println(F("Stop receiving"));
   IrReceiver.resume(); //Resume receiver
-  IrReceiver.stop();
+  IrReceiver.stop(); //Libero la carga al procesador que produce la lectura de infrarrojos.
 
 }
 
@@ -199,7 +198,7 @@ void SDBegin(void){
     default:
     Serial.println(F("Unknown"));
   }
-  #elif  defined(NODEMCUESP32S_CONFIGURATION)
+  #elif defined(NODEMCUESP32S_CONFIGURATION)
 
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
@@ -221,12 +220,10 @@ void SDBegin(void){
 
 std::vector<std::string> Profiles::showProfiles_(void){
  
-  File rootForRead;
-  File archivo;
-
   std::vector<std::string> takingProfilesName;
 
-  rootForRead = SD.open("/");
+  File rootForRead = SD.open("/");
+  File archivo;
   do{
     archivo = (rootForRead.openNextFile());
     if(!archivo){
@@ -258,8 +255,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
 
 void Profiles::createProfile_(const char* name){
 
-  File rootForWrite;
-  rootForWrite = SD.open(profilePath(name), FILE_WRITE);
+  File rootForWrite = SD.open(profilePath(name), FILE_WRITE);
   rootForWrite.available()
     ? Serial.println(F("Successfully created."))
     : Serial.println(F("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile."));
@@ -276,8 +272,8 @@ void Profiles::deleteProfile_(const char* name){
 
   }
 
-  char* && profilePath = strcat(SLASH_WITH_EOF_STR, name); 
-  profilePath = strcat( profilePath , extensionProfiles );
+  //Direccion del archivo a eliminar
+  const char* profilePath = profilePath(name);
 
   //Elimina archivo
   SD.remove(profilePath) == true 
@@ -310,8 +306,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   Keep_t Object = convertIRData(storedIRData, subProfileName);
   Keep_t* storedIRDataWithStr = &Object;
 
-  File rootStoring;
-  rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
+  File rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
 
   //Voy hasta el final del archivo
   rootStoring.seek(EOF);
@@ -324,7 +319,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
 
   }
 
-  //Escritura de datos en el archivo
+  //Escritura de la informacion en el archivo
   rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
 
   rootStoring.close();
@@ -346,13 +341,12 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   }
 
-  //Si es un archivo
+  //Si es un archivo...
   Serial.print(F("Perfil: "));
   Serial.println(rootRead.name());  //Imprimo el nombre
   
   Serial.println(F("Subperfiles:"));
-
-  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
+  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras o hubo un error inesperado
   if( ( sizeof(rootRead.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
@@ -360,12 +354,14 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   }
 
+  //Cantidad de perfiles que se encuentran almacenados
   uint16_t && structPerFile = sizeof(rootRead.size()) / sizeof(Keep_t);
 
+  //Reservo memoria para el movimiento de la informacion
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
-
+    //Luego eliminar este If cuando se permita que el nombre del subperfil sea variable. Esto puede causar problemas...
     if(rootRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
 
       Serial.println(F("Unsuccessfull reading subProfile"));
@@ -374,8 +370,8 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
     }
     
     //Imprimo en el Serial el nombre del subperfil
+    Serial.print(F("Nombre del subperfil extraido del almacenamiento: "));
     Serial.println(retiredFromSD[iterator].nameSubProfile);
-
     subProfilesName.push_back(retiredFromSD[iterator].nameSubProfile);
 
   }
@@ -388,6 +384,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
 Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
+  //Abro el archivo del perfil dado en modo Lectura
   File rootForRead = SD.open(profilePath(profileName), FILE_READ);
 
   //Si el archivo no esta disponible...
@@ -411,6 +408,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
   //Numero de subperfiles que se encuentran en el archivo
   uint16_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
 
+  //Reservo memoria para la inforamacion retirada del almacenamiento
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
@@ -442,13 +440,13 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
 
 void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
-  File rootForWrite;
-
-  rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
+  //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
+  File rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
 
   //Voy hasta el final del archivo
   rootForWrite.seek(EOF);
 
+  //Si el flujo del archivo no esta disponible...
   if(!rootForWrite.available()){
 
     Serial.println(F("Unsuccessfull opened Profile"));
@@ -456,7 +454,8 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
   }
 
-  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) ); // Escribo en el perfil la estructura dada
+  //Escribo en el perfil la informacion dada
+  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) ); 
   
   rootForWrite.close();
 
@@ -464,11 +463,9 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
 
 void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfileName){
 
-  File rootReplacing;
-  File rootWriteOld;
- 
-  rootWriteOld = SD.open( profilePath(profileName) , FILE_READ);
-  rootReplacing = SD.open( TRANSFER_FILE_DIRANDNAME , FILE_WRITE);
+  //Abro los siguientes archivos para el trabajo de desplazamiento de informacion entre archivos
+  File rootWriteOld = SD.open( profilePath(profileName) , FILE_READ);
+  File rootReplacing = SD.open( TRANSFER_FILE_DIRANDNAME , FILE_WRITE);
   
   if(!rootWriteOld.available()){
 
@@ -488,8 +485,10 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
   }
 
-  size_t && structPerFile = sizeof(rootWriteOld.size()) / sizeof(Keep_t);
+  //Numero total de subperfiles almacenados
+  size_t structPerFile = sizeof(rootWriteOld.size()) / sizeof(Keep_t);
 
+  //Reservo Memoria para buscar la informacion a eliminar
   Keep_t* retiredFromSD = new ( Keep_t[structPerFile] ); 
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
@@ -521,12 +520,11 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
       Serial.print(F("Unsuccessfull reading from: "));
       Serial.println(TRANSFER_FILE_DIRANDNAME);
+      Serial.print(F(" (Memoria reservada para el movimiento de informacion para la exterminacion del subperfil dado)"));
 
     }
     else if(strcmp( retiredFromSD[structPerFile].nameSubProfile , subProfileName ) == EXIT_SUCCESS){ }
-    else{ 
-      rootReplacing.write( (uint8_t *) &retiredFromSD[structPerFile] , sizeof(retiredFromSD[structPerFile]) ); 
-    }
+    else{  rootReplacing.write( (uint8_t *) &retiredFromSD[structPerFile] , sizeof(retiredFromSD[structPerFile]) ); }
 
   }
 
