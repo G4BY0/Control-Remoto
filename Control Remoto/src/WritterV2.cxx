@@ -168,12 +168,16 @@ void WritterV2::drawText(void) {
     if (capitalize == false && letters == true) {
       
       switch (y) {
+        //Si se presiona la opcion "snd"
         case 23:
           if (select == true) {
             select = false;
             transmit = true;
             num++;
-            
+            Serial.println(F("snd was pressed... \n String Finished!"));
+            booleanStringFinished = true;
+            return;
+
           }
         case 33:
           switch (x) {
@@ -244,7 +248,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = false;
-                
+                Serial.println(F("snd gregergrtsgfh32423565hjy56... \n 3423String F4345234inigergdtsrshed!"));
               }
             break;
           }
@@ -319,7 +323,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 capitalize = true;
-
+                
               }
             break;
           }
@@ -645,11 +649,6 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
-
-            Serial.println(F("snd was pressed... \n String Finished!"));
-            booleanStringFinished = true;
-            return;
-
           }
         case 33:
           switch (x) {
@@ -720,7 +719,6 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = true;
-                
               }
             break;
           }
@@ -795,7 +793,6 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 capitalize = true;
-                
               }
             break;
           }

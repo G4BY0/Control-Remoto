@@ -127,6 +127,9 @@ void Interface::addProfile(void){
     }
     
   };
+
+  EmergenteMomentaneo();
+  
   display.clearDisplay();
   display.display();
 
@@ -247,7 +250,7 @@ void Interface::nonSubProfiles(void){
           buttonState(PIN::Buttons::UP)    == HIGH  ||
           buttonState(PIN::Buttons::DOWN)  == HIGH  ||
           buttonState(PIN::Buttons::LEFT)  == HIGH  ||
-          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+          buttonState(PIN::Buttons::RIGHT) == HIGH  ||
           buttonState(PIN::Buttons::ENTER) == HIGH    );
   delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
@@ -263,20 +266,20 @@ void Interface::createSubProfile(void){
     return; 
   }
 
+  //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
   CursorV2 cursor(namesProfile,&display);
-
   const char* && profileSelected = cursor.getSelectedOption();
 
-  WritterV2 writter(&display);
-
-  Receive_start();
+  //Pido la informacion a la entrada
   if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
-  
-  SubProfiles::createSubProfile_(writter.stringFinished() , storeCode() , profileSelected ); //Agregado para que luego de haber creado un perfil, vaya dentro de este a crear un subperfil
+
+  //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
+  WritterV2 writter(&display);
+  //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
+  SubProfiles::createSubProfile_(writter.stringFinished() , storeCode() , profileSelected );
 
 }
 
-//void Interface::createSubProfile(char** names = nullptr)
 void Interface::deleteSubProfile(void){
 
   //Recibo del almacenamiento el nombre de los perfiles
@@ -316,16 +319,21 @@ bool Interface::waitingForIR(void){
   display.setCursor(10,10);
   display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
   display.display();
+
+  //Inicializo la entrada para recibir la informacion
   Receive_start();
   //Mientras el codigo recibido sea invalido:
-  while(Receive_check()){
+  while( Receive_check() ){
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
         buttonState(PIN::Buttons::UP)     ||
         buttonState(PIN::Buttons::DOWN)   ||
         buttonState(PIN::Buttons::LEFT)   ||
         buttonState(PIN::Buttons::RIGHT)  ||
-        buttonState(PIN::Buttons::ENTER)    ) return EXIT_FAILURE; //Failure
+        buttonState(PIN::Buttons::ENTER)    ) {
+      Receive_stop();
+      return EXIT_FAILURE; //Failure
+      }
   }
   Receive_stop();
 
@@ -533,8 +541,8 @@ void Interface::help(void){
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf8
   };
 
-  display.display();
   display.drawBitmap( 0 , 0 , QRCode , 51 ,  51, SH110X_WHITE);
+  display.display();
   //A partir de X=0, Y=0
   //126 De alto y 51 de ancho el bitmap
 

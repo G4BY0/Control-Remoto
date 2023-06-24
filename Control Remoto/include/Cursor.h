@@ -17,7 +17,7 @@
 #include "Interface.h" // Interfaz del usuario
 
 //Cursor
-#define MAX_LINE_OPTIONS_OUTPUT 3
+#define MAX_LINE_OPTIONS_OUTPUT 5
 #define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
 const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};

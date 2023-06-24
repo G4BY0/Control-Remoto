@@ -52,45 +52,46 @@ void Receive_start(void){
   // Restart receiver too
   Serial.println(F("Start Receiving for infrared signals"));
   IrReceiver.start();
+  IrReceiver.resume(); //Resume receiver
 
 }
 
 bool Receive_check(void){
   //Logica de checkeo si la informacion recibida es correcta o incorrecta...
-  if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
-    Serial.print(F("Ignore data with rawlen="));
-    Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
-    return FAILURE;
-   }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
-    Serial.println(F("Ignore repeat"));
-    return FAILURE;
-  }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_AUTO_REPEAT) {
-    Serial.println(F("Ignore autorepeat"));
-    return FAILURE;
-  }
-  if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_PARITY_FAILED) {
-    Serial.println(F("Ignore parity error"));
-    return FAILURE;
-  }
-  if (IrReceiver.decode()) {
+  if( IrReceiver.decode() ){
+    /*
+    if (IrReceiver.decodedIRData.rawDataPtr->rawlen < 4) {
+      Serial.print(F("Ignore data with rawlen="));
+      Serial.println(IrReceiver.decodedIRData.rawDataPtr->rawlen);
+      return FAILURE;
+     }
+    */
+    if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
+      Serial.println(F("Ignore repeat"));
+      return FAILURE;
+    }
+    if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_AUTO_REPEAT) {
+      Serial.println(F("Ignore autorepeat"));
+      return FAILURE;
+    }
+    if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_PARITY_FAILED) {
+      Serial.println(F("Ignore parity error"));
+      return FAILURE;
+    }
     
-    return SUCCESS;
+    return SUCCESS; 
   }
-  else{ return FAILURE; }
 }
 
 void Receive_stop(void){
   
   Serial.println(F("Stop receiving"));
-  IrReceiver.resume(); //Resume receiver
   IrReceiver.stop(); //Libero la carga al procesador que produce la lectura de infrarrojos.
 
 }
 
 void sendCode(Keep_t *aIRDataToSend) {
-
+  Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
   if (aIRDataToSend->receivedIRData.protocol == UNKNOWN /* i.e. raw */) {
     // Assume 38 KHz
     IrSender.sendRaw(aIRDataToSend->rawCode, aIRDataToSend->rawCodeLength, 38);
@@ -107,7 +108,7 @@ void sendCode(Keep_t *aIRDataToSend) {
 
 // Stores the code for later playback
 storedIRDataStruct* storeCode(void) {
-  
+    
   storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
 
   //Copy decoded data
@@ -212,7 +213,7 @@ void SDBegin(void){
   // Archivo necesario para la necesidad de querer borrar subperfiles, espacio reservado para exclusivamente esa funcionalidad
   // Estaria bueno buscar otra forma de funcionamiento para optimizar el programa (bastantes recursos!)
   if(!SD.exists(TRANSFER_FILE_DIRANDNAME)){
-  File transferFile = SD.open(TRANSFER_FILE_DIRANDNAME);
+  File transferFile = SD.open(TRANSFER_FILE_DIRANDNAME , FILE_WRITE);
   transferFile.close();
   }
 
@@ -322,7 +323,9 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   //Escritura de la informacion en el archivo
   rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
 
+  delete[] storedIRData;
   rootStoring.close();
+
   
 }
 
