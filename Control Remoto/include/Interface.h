@@ -116,7 +116,7 @@ namespace Interface {
   bool waitingForIR(void);
 
   /*! @brief    Muestra las instrucciones de como se usa el dispositivo */
-  void help();
+  void help(void);
 
 
 };

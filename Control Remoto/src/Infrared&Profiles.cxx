@@ -244,7 +244,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
           const size_t position = name.find( '.' );
           
           if (position != std::string::npos) { // std::string::npos es devuelto por el metodo find() si es que no se llegara a encontrar el caracter dado
-          return name.substr(0, position); // Retorna la cadena hasta '.'
+          return name.substr(0U, position); // Retorna la cadena hasta '.'
           }
           return name;
 
@@ -276,18 +276,8 @@ void Profiles::createProfile_(const char* name){
 
 void Profiles::deleteProfile_(const char* name){
   
-  if(name == nullptr){
-    
-    Serial.println(F("nullptr Received, exit from deleProfile()"));
-    return;
-
-  }
-
-  //Direccion del archivo a eliminar
-  const char* profilePath = profilePath(name);
-
   //Elimina archivo
-  SD.remove(profilePath) == true 
+  SD.remove(profilePath(name)) == true 
     ? Serial.println(F("Successfully eliminated."))
     : Serial.println(F("Unsuccessfully eliminated, check out if already doesn't exists..."));
 
@@ -301,7 +291,7 @@ std::shared_ptr<Keep_t> SubProfiles::convertIRData(std::shared_ptr<storedIRDataS
   storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData; // Copio estructura de datos
 
   const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
-  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
+  for( size_t iterator = 0U ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
     storedIRDataWithStr->rawCode[iterator] = storedIRData->rawCode[iterator];
   storedIRDataWithStr->rawCodeLength = storedIRData->rawCodeLength;
 
@@ -336,7 +326,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, std::shared_ptr<
 std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   std::vector<std::string> subProfilesName;
-  uint16_t numberOfSubProfiles = 0;
+  uint16_t numberOfSubProfiles = 0U;
 
   File rootRead = SD.open( profilePath(profileName) , FILE_READ );
 
@@ -364,9 +354,9 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   const size_t && structPerFile = sizeof(rootRead.size()) / sizeof(Keep_t);
 
   //Reservo memoria para el movimiento de la informacion
-  Keep_t* retiredFromSD = new Keep_t[structPerFile] ; 
+  Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
 
-  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
+  for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
     //Luego eliminar este If cuando se permita que el nombre del subperfil sea variable. Esto puede causar problemas...
     if(rootRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
 
@@ -385,7 +375,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   delete[] retiredFromSD;
   rootRead.close();
   return subProfilesName;
-
+ 
 }
 
 std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
@@ -417,7 +407,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
   //Reservo memoria para la inforamacion retirada del almacenamiento
   std::shared_ptr<Keep_t[]> retiredFromSD ( new Keep_t[structPerFile] );
 
-  for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
+  for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
 
     if(rootForRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
       
@@ -444,7 +434,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
 }
 
 void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName){
-
+  Serial.println("LLeggue hasta acaaaaaa");
   //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
   File rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
 
@@ -491,7 +481,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   }
 
   //Numero total de subperfiles almacenados
-  size_t structPerFile = sizeof( rootWriteOld.size() ) / sizeof(Keep_t);
+  const size_t structPerFile = sizeof( rootWriteOld.size() ) / sizeof(Keep_t);
 
   //Reservo Memoria para buscar la informacion a eliminar
   Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
