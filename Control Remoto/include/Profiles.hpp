@@ -76,24 +76,24 @@ namespace SubProfiles{
 
     /*! @brief Crea un tipo de estructura estatica que es = Irdata + Nombre del Subperfil (Tipo Char[20])
      *  @param storedIRData 
-     *         Recibe estructura normalizada de la informacion del infrarrojo
+     *         Recibe puntero inteligente de la informacion recibida
      *  @param subProfileName
      *         Nombre de subperfil a añadir
      *  @note Recordar eliminar la memoria dinamica reservada luego de su uso
      *  @returns Tipo de estructura con el agregado mencionado
     */
-    Keep_t convertIRData(storedIRDataStruct* storedIRData, const char* subProfileName);
+    std::shared_ptr<Keep_t> convertIRData(std::shared_ptr<storedIRDataStruct> storedIRData, const char* subProfileName);
 
     /*! \deprecated En desuso porque no se usara en la version Pre-Alpha
         @brief Crea un subperfil para un perfil
      *  @param subProfilename
      *         Nombre del subperfil
      *  @param storedIRData
-     *          Estructura con la DATA del infrarrojo
+     *          Portador de la informacion de la señal
      *  @param profileName
      *           Nombre del perfil en el que quiere guardar el subperfil
     */
-    void createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName);
+    void createSubProfile_(const char* subProfileName, std::shared_ptr<storedIRDataStruct> storedIRData, const char* profileName);
  
     /*! @brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  @param name
@@ -108,13 +108,13 @@ namespace SubProfiles{
      *  @note usara la estructura recibida para almacenarla en la SD como subperfil de perfil anteriormente creado
      *  @returns Puntero Estatico de la estructura de datos del subperfil solicitado
     */
-    Keep_t* ReturnSubProfile(const char* profileName, const char* subProfileName);
+    std::shared_ptr<Keep_t> ReturnSubProfile(const char* profileName, const char* subProfileName);
 
     /*! @brief Guarda en el almacenamiento el subPerfil recibido
      *  @param  storeIR estructura Normalizada con los datos a almacenar
      *  @param profileName nombre del perfil en el que se almacenará el subperfil
     */
-    void storeSubProfile(Keep_t storeIR, const char* profileName);
+    void storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName);
 
     /*! @brief  Elimina en el almacenamiento el subPerfil recibido
      *   @param profileName nombre del perfil en el que se encontrara el subperfil

@@ -11,6 +11,8 @@
 #define INFRARED_H
 
 #include <Arduino.h>
+#include <stdint.h>
+#include <memory>
 #include "Board.h"
 #include "PIN.h"
 
@@ -61,12 +63,12 @@ void Receive_stop(void);
     @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(Keep_t* aIRDataToSend);
+void sendCode(std::shared_ptr<Keep_t> aIRDataToSend);
 
 /*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
-    @returns Retorna la estructura normalizada de la copia de datos
+    @returns Retorna puntero inteligente de accesso unico del objeto de la informacion recibida
     @note Retorna la copia de datos almacenado en un espacio de la memoria Heap (tipo estatico)
 */
-storedIRDataStruct* storeCode(void);
+std::shared_ptr<storedIRDataStruct> storeCode(void);
 
 #endif //Infrared_h

@@ -179,7 +179,7 @@ void Interface::subProfiles(const char *profileName_){
   if(subprofiles_selected == nullptr) return; // Si no se selecciono ninguno...
   
   // Informacion a enviar a la salida
-  Keep_t* IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
+  auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
 
   if(IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
     Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
@@ -187,8 +187,6 @@ void Interface::subProfiles(const char *profileName_){
   }
 
   sendCode(IRToSend);//Envio la señal a la salida con la informacion dada 
-
-  delete[] IRToSend;
 
 }
 
@@ -270,12 +268,12 @@ void Interface::createSubProfile(void){
 
   //Pido la informacion a la entrada
   if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
-
+  Serial.println("LLeggue hasta acaaaaaa");
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::createSubProfile_(writter.stringFinished() , storeCode() , profileSelected );
-
+  SubProfiles::storeSubProfile( SubProfiles::convertIRData( storeCode() , writter.stringFinished() ) , profileSelected );
+  
 }
 
 void Interface::deleteSubProfile(void){

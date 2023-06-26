@@ -88,7 +88,7 @@ void Receive_stop(void){
 
 }
 
-void sendCode(Keep_t *aIRDataToSend) {
+void sendCode(std::shared_ptr<Keep_t> aIRDataToSend) {
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
   if (aIRDataToSend->receivedIRData.protocol == UNKNOWN /* i.e. raw */) {
     // Assume 38 KHz
@@ -105,9 +105,9 @@ void sendCode(Keep_t *aIRDataToSend) {
 }
 
 // Stores the code for later playback
-storedIRDataStruct* storeCode(void) {
-  //auto std::unique_ptr<storedIRDataStruct> sStoredIRDataf( new storedIRDataStruct )
-  storedIRDataStruct* sStoredIRData = new storedIRDataStruct;
+std::shared_ptr<storedIRDataStruct> storeCode(void) {
+
+  std::shared_ptr<storedIRDataStruct> sStoredIRData( new storedIRDataStruct );
 
   //Copy decoded data
   sStoredIRData->receivedIRData = IrReceiver.decodedIRData;
@@ -293,29 +293,27 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-Keep_t SubProfiles::convertIRData(storedIRDataStruct* storedIRData, const char* subProfileName){
+std::shared_ptr<Keep_t> SubProfiles::convertIRData(std::shared_ptr<storedIRDataStruct> storedIRData, const char* subProfileName){
 
-  Keep_t storedIRDataWithStr;
+  std::shared_ptr<Keep_t> storedIRDataWithStr;
 
   //Logica de copiado de una estructura a otra sumandole el nombre del subperfil
-  storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData; // Copio estructura de datos
+  storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData; // Copio estructura de datos
 
   const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
-  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr.receivedIRData = storedIRData->receivedIRData) )
-    storedIRDataWithStr.rawCode[iterator] = storedIRData->rawCode[iterator];
-  storedIRDataWithStr.rawCodeLength = storedIRData->rawCodeLength;
+  for( size_t iterator = 0 ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
+    storedIRDataWithStr->rawCode[iterator] = storedIRData->rawCode[iterator];
+  storedIRDataWithStr->rawCodeLength = storedIRData->rawCodeLength;
 
-  strcpy( storedIRDataWithStr.nameSubProfile , subProfileName ); //Copio string, nombre del subperfil (char[20])
+  strcpy( storedIRDataWithStr->nameSubProfile , subProfileName ); //Copio string, nombre del subperfil
 
-  delete[] storedIRData; // Lo borro porque no se usara mas
   return storedIRDataWithStr;
   
 }
 
-void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStruct* storedIRData, const char* profileName){
+void SubProfiles::createSubProfile_(const char* subProfileName, std::shared_ptr<storedIRDataStruct> storedIRData, const char* profileName){
 
-  Keep_t Object = convertIRData(storedIRData, subProfileName);
-  Keep_t* storedIRDataWithStr = &Object;
+  auto storedIRDataWithStr = convertIRData(storedIRData, subProfileName);
 
   File rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
 
@@ -331,7 +329,6 @@ void SubProfiles::createSubProfile_(const char* subProfileName, storedIRDataStru
   //Escritura de la informacion en el archivo
   rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
 
-  delete[] storedIRData;
   rootStoring.close();
 
 }
@@ -391,7 +388,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
 }
 
-Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
+std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   //Abro el archivo del perfil dado en modo Lectura
   File rootForRead = SD.open(profilePath(profileName), FILE_READ);
@@ -418,7 +415,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
   const size_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
 
   //Reservo memoria para la inforamacion retirada del almacenamiento
-  Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
+  std::shared_ptr<Keep_t[]> retiredFromSD ( new Keep_t[structPerFile] );
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
 
@@ -430,10 +427,9 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
 
     else if(strcmp( retiredFromSD[iterator].nameSubProfile , subProfileName ) == EXIT_SUCCESS){
       
-      Keep_t IrStructFinded = retiredFromSD[iterator];
-      delete[] retiredFromSD;
-      return &IrStructFinded; //Success
-
+      std::shared_ptr<Keep_t> catchIt (&retiredFromSD[iterator]);
+      
+      return catchIt; //Success
     }
 
     return nullptr; 
@@ -447,7 +443,7 @@ Keep_t* SubProfiles::ReturnSubProfile(const char* profileName, const char* subPr
 
 }
 
-void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
+void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName){
 
   //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
   File rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
@@ -464,7 +460,7 @@ void SubProfiles::storeSubProfile(Keep_t storeIR, const char* profileName){
   }
 
   //Escribo en el perfil la informacion dada
-  rootForWrite.write( (uint8_t*) &storeIR , sizeof(Keep_t) ); 
+  rootForWrite.write( (uint8_t*) storeIR.get() , sizeof(Keep_t) ); 
   
   rootForWrite.close();
 
