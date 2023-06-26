@@ -175,7 +175,7 @@ class WritterV2{
 
   //drawText
   int index = 0;
-  char msgToSend[30];
+  char msgToSend[26] = {'\0'};
   int num = 0;
 
   //receiveText

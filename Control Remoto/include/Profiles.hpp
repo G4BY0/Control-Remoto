@@ -12,13 +12,15 @@
 #ifndef PROFILES_H
 #define PROFILES_H
 
-#include <stdint.h>
+#include <cstdint>
+#include <vector>
+#include <memory>
+
 #include <Arduino.h>
 #include <SPI.h>
-#include "Board.h"
 #include <SD.h>
-#include <vector>
 
+#include "Board.h"
 #include "PIN.h"
 #include "Infrared.h"
 

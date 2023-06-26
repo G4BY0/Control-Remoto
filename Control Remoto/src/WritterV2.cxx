@@ -12,7 +12,7 @@
 #include "Cursor.h"
 
 WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayReference) { 
-  for(uint8_t iterator = 0; iterator < sizeof(msgToSend) ; iterator++) msgToSend[iterator] = NULL;
+
 }
 
 ///////////////////////////
@@ -248,7 +248,7 @@ void WritterV2::drawText(void) {
               if (select == true) {
                 select = false;
                 letters = false;
-                Serial.println(F("snd gregergrtsgfh32423565hjy56... \n 3423String F4345234inigergdtsrshed!"));
+                
               }
             break;
           }
@@ -909,7 +909,6 @@ void WritterV2::drawBlink(void) {
 }//drawBlink
 
 const char* WritterV2::stringFinished(void){
-
   while( booleanStringFinished == false ){
     display.clearDisplay();
     timeDelay();
@@ -920,8 +919,6 @@ const char* WritterV2::stringFinished(void){
     display.display();
   }
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
-  if(msgToSend[0] == '\0')
-    return nullptr;
-  return msgToSend;
+  return msgToSend[0] != '\0' ? msgToSend : nullptr;
   
 }

@@ -96,7 +96,7 @@ void Interface::addProfile(void){
   //Aqui agregar cuadro que diga si quiere el usuario agregar un subperfil en este momento
 
   //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
-  auto EmergenteMomentaneo = [&] () {
+  [&] () {
 
     display.clearDisplay();
     display.setTextColor(SH110X_WHITE);
@@ -126,9 +126,7 @@ void Interface::addProfile(void){
         } return;
     }
     
-  };
-
-  EmergenteMomentaneo();
+  }();
   
   display.clearDisplay();
   display.display();
@@ -321,8 +319,9 @@ bool Interface::waitingForIR(void){
   display.display();
 
   //Inicializo la entrada para recibir la informacion
+  Serial.println(F("Start Receiving for infrared signals."));
   Receive_start();
-  //Mientras el codigo recibido sea invalido:
+  //Mientras el codigo recibido sea invalido...
   while( Receive_check() ){
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
@@ -332,11 +331,11 @@ bool Interface::waitingForIR(void){
         buttonState(PIN::Buttons::RIGHT)  ||
         buttonState(PIN::Buttons::ENTER)    ) {
       Receive_stop();
-      return EXIT_FAILURE; //Failure
+      delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
+      return EXIT_FAILURE; //Failure, se cancelo
       }
   }
   Receive_stop();
-
   delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
   return EXIT_SUCCESS; //Recibido Correctamente
 
