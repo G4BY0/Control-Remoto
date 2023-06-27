@@ -63,59 +63,60 @@
     @note Arduino por defecto establece como entrada los pines digitales*/
 void buttonsBegin(void);
 
-/*! @brief Inicializacion de display  */
+/*! \brief Inicializacion de display  */
 void displayBegin(void);
 
-//! @brief Manejo de la Interfaz de Usuario en cada modo
+//! \brief Manejo de la Interfaz de Usuario en cada modo
 namespace Interface {
 
-  /*! @brief   Interfaz del lobby a la salida del display
-      @returns Numero normalizado que indica el modo seleccionado*/
+  /*! \brief   Interfaz del lobby a la salida del display
+      \returns Numero normalizado que indica el modo seleccionado*/
   uint8_t hub(void);
 
-  /*! @brief    Interfaz del modo "profiles" a la salida del display 
+  /*! \brief    Interfaz del modo "profiles" a la salida del display 
   */
   void profiles(void);
 
-  /*! @brief    Interfaz del modo "addProfile" a la salida del display
+  /*! \brief    Interfaz del modo "addProfile" a la salida del display
   */
   void addProfile(void);
 
-  /*! @brief    Interfaz del modo "deleteProfile" a la salida del display
+  /*! \brief    Interfaz del modo "deleteProfile" a la salida del display
   */
   void deleteProfile(void);
 
-  /*! @brief    Interfaz del modo "sub-profiles" a la salida del display
-      @param    profileName_ Nombre del perfil (tipo String)
+  /*! \brief    Interfaz del modo "sub-profiles" a la salida del display
+      \param    profileName_ Nombre del perfil (tipo String)
   */
   void subProfiles(const char *profileName_);
 
-  /*! @brief    Interfaz del modo "No hay perfiles almacenados" a la salida del display
+  /*! \brief    Interfaz del modo "No hay perfiles almacenados" a la salida del display
   */
   void nonProfiles(void);
 
-  /*! @brief    Interfaz del modo "No hay sub-perfiles almacenados" a la salida del display
+  /*! \brief    Interfaz del modo "No hay sub-perfiles almacenados" a la salida del display
   */
   void nonSubProfiles(void);
 
   
-  /*! @brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
+  /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
   void createSubProfile(void);
 
-  /*! @brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
+  /*! \brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
   */
   void deleteSubProfile(void);
   
 
-  /*! @brief    Interfaz del modo "Esperando Infrarrojo" 
-      @return   '1' Si el usuario canceló el modo.
+  /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
+      \return   '1' Si el usuario canceló el modo.
                 '0' Si cumplió correctamente.
-      @note entra en bucle hasta vericar que el codigo recibido es correcto.
+      \note entra en bucle hasta vericar que el codigo recibido es correcto.
   */
   bool waitingForIR(void);
 
-  /*! @brief    Muestra las instrucciones de como se usa el dispositivo */
+  /*! \brief    Muestra las instrucciones de como se usa el dispositivo 
+      \note   El usuario debe scanear un QR que lo regirira a una web */
   void help(void);
 
 

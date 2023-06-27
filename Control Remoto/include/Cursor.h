@@ -18,9 +18,8 @@
 
 //Cursor
 #define MAX_LINE_OPTIONS_OUTPUT 5
-#define SPACE_FOR_PUSSYS '_'
 #define LINE_STRING_X 20
-const uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
+constexpr uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
 
 
 //CursorV2 Macros
@@ -57,8 +56,8 @@ namespace CursorUltimate{
 
 }
 
-/*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
-class CursorV2 {
+/*! @brief Cursor que se desplaza a traves del display*/
+class Cursor {
   private:
     std::vector<std::string> options;
     Adafruit_SH1106G* sh1106;
@@ -71,7 +70,7 @@ class CursorV2 {
         @param menuOptions objeto de caracter std::vector<std::string> que contiene las opciones de trabajo para el cursor
         @param display Recibe referencia o puntero al objeto del display
     */
-    CursorV2(std::vector<std::string> menuOptions, Adafruit_SH1106G* display);
+    Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display);
 
     /*! @brief Obtiene el numero total strings
         @returns Numero total de punteros que hay dentro del array
@@ -90,7 +89,9 @@ class CursorV2 {
     const char* getSelectedOption(void);
 };
 
-/*! @brief Cursor que se desplaza a traves del display (desarrollado v2)*/
+/*! @brief Escritor de Strings Virual en pantalla para el usuario
+    \deprecated Se reemplazo por WritterV2, esta en desuso y tiene algunos bugs + errores
+    \note Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs */
 class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")]] Writter{
 
   private:
@@ -131,6 +132,9 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")
 
 };
 
+/*! \brief Escritor de Strings Virual en pantalla para el usuario
+    \note Reemplaza al Anterior Escritor de Strings ya que es mas estetico y tiene menos bugs.
+    Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs*/
 class WritterV2{
 
   private:

@@ -12,7 +12,6 @@
 //Objeto para el manejo del Display OLED
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-
 void buttonsBegin(void){
 
   pinMode(PIN::Buttons::UP,     INPUT_PULLUP);
@@ -44,7 +43,7 @@ uint8_t Interface::hub(void){
   std::vector<std::string> strings  = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP"};
 
   //DEBUGGING CURSOR
-  CursorV2 cursor(strings,&display);
+  Cursor cursor(strings,&display);
   //Serial.println(cursor.getSelectedOption());
   //const char* && selected = cursor.getSelectedOption();
   const char* selected = cursor.getSelectedOption();
@@ -69,7 +68,7 @@ void Interface::profiles(void){
     return; // El puntero es nulo, salir de la función
   }
 
-  CursorV2 cursor( profiles_ptr , &display );
+  Cursor cursor( profiles_ptr , &display );
   const char* profile_selected = cursor.getSelectedOption();
 
   //Si el usuario no selecciono nada o hubo algun problema
@@ -85,9 +84,7 @@ void Interface::addProfile(void){
   
   //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
   WritterV2 writter( &display );
-  #pragma region Debugging
-  Serial.println(F("Llegue hasta aca"));
-  #pragma endregion
+
   String profileName = writter.stringFinished();
 
   //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
@@ -153,7 +150,7 @@ void Interface::deleteProfile(void){
   }
 
   //Inicializo un Cursor para recibir del usuario el perfil seleccionado
-  CursorV2 cursor(names,&display);
+  Cursor cursor(names,&display);
   const char* selected = cursor.getSelectedOption();
 
   //Pido al almacenamiento eliminar el perfil dado
@@ -174,7 +171,7 @@ void Interface::subProfiles(const char *profileName_){
   }
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
-  CursorV2 cursor( subprofiles ,&display); 
+  Cursor cursor( subprofiles ,&display); 
   const char* subprofiles_selected = cursor.getSelectedOption();
   if(subprofiles_selected == nullptr) return; // Si no se selecciono ninguno...
   
@@ -263,14 +260,15 @@ void Interface::createSubProfile(void){
   }
 
   //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
-  CursorV2 cursor(namesProfile,&display);
+  Cursor cursor(namesProfile,&display);
   const char* && profileSelected = cursor.getSelectedOption();
 
   //Pido la informacion a la entrada
   if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
-  Serial.println("LLeggue hasta acaaaaaa");
+
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
+
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
   SubProfiles::storeSubProfile( SubProfiles::convertIRData( storeCode() , writter.stringFinished() ) , profileSelected );
   
@@ -287,7 +285,7 @@ void Interface::deleteSubProfile(void){
   }
 
   //Inicializo un cursor para pedirle al usuario que perfil desea
-  CursorV2 cursor( names ,&display);
+  Cursor cursor( names ,&display);
   const char* && selectedProfile = cursor.getSelectedOption();
 
   //Si no recibo ningun nombre...
@@ -297,7 +295,7 @@ void Interface::deleteSubProfile(void){
   names = SubProfiles::showSubProfiles(selectedProfile);
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
-  CursorV2 cursor2(names,&display); 
+  Cursor cursor2(names,&display); 
   const char* && selectedSubProfile = cursor2.getSelectedOption();
 
   //Si no recibo ningun Subperfil...
@@ -346,8 +344,8 @@ void Interface::help(void){
   display.setTextColor(SH110X_WHITE);
   display.display();
   
-  //Bitmap del QR generado
-  static const unsigned char PROGMEM QRCode[10846] = {
+  //Bitmap del QR generado, Se desarrollara Luego para guardar en la SD debido a que es bastante PESADO!!
+  static constexpr unsigned char PROGMEM QRCode[10846] = {
 
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf8, 
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf8, 
@@ -538,10 +536,11 @@ void Interface::help(void){
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf8
   };
 
+  //126 De alto y 51 de ancho el bitmap
   display.drawBitmap( 0 , 0 , QRCode , 51 ,  51, SH110X_WHITE);
   display.display();
   //A partir de X=0, Y=0
-  //126 De alto y 51 de ancho el bitmap
+  
 
   //Si se presiona cualquier boton...
   while(  buttonState(PIN::Buttons::BACK)  == HIGH  ||

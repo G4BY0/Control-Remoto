@@ -41,7 +41,7 @@ void setup(){
         Serial.print(F("Nivel de parche del compilador de CLANG: ")); 
         Serial.println(__clang_patchlevel__);
     #else
-        Serial.println(F("Generico :(("));
+        Serial.println(F("Generico"));
     #endif
 
     //Inicializacion del sistema del display
@@ -61,4 +61,4 @@ void setup(){
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){  hub__(); }
+void loop(){ hub__(); }

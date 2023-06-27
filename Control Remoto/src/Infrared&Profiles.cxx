@@ -1,6 +1,24 @@
+//Copyright Grupo 11, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * \file
+ * It is a fusion of 2 old Files, Infrarred.cxx & Profiles.cxx Because It causes a lot of errors when IRremote.hpp is linked
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * Source code of members of Infrared.h
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #include <IRremote.hpp>
 #include "Infrared.h"
 #include "Profiles.hpp"
+
 
 /* ELIMINADO DEL CODIGO PORQUE DABA ERRORES CON LOS TIMERS, NOSE PORQUE PERO CALCULO QUE SERA EL QUE HABLA DE LEDFEEDBACK
 #define DELAY_BETWEEN_REPEAT 50
@@ -134,11 +152,11 @@ std::shared_ptr<storedIRDataStruct> storeCode(void) {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
- * \file
- * Source code of members of Profiles.hpp
+ * 
+ * Source code of members of Infrared.h
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
@@ -166,7 +184,15 @@ struct Keep_t : public storedIRDataStruct{
 
 void SDBegin(void){
 
-  #ifdef ARDUINOMEGA2560_CONFIGURATION
+  #if defined(ESP32)
+
+  // Inicializar la comunicación con la tarjeta SD
+  if (!SD.begin()) {
+    Serial.println("Error al inicializar la tarjeta SD");
+    while (!SD.begin());
+  }
+
+  #elif defined(__AVR__)
   Sd2Card card;
   
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
@@ -197,7 +223,8 @@ void SDBegin(void){
     default:
     Serial.println(F("Unknown"));
   }
-  #elif defined(NODEMCUESP32S_CONFIGURATION)
+
+  #elif defined(ESP32)
 
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
@@ -373,7 +400,9 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   }
 
   delete[] retiredFromSD;
+
   rootRead.close();
+
   return subProfilesName;
  
 }
@@ -438,16 +467,14 @@ void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* p
   //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
   File rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
 
-  //Voy hasta el final del archivo
-  rootForWrite.seek(EOF);
-
   //Si el flujo del archivo no esta disponible...
   if(!rootForWrite.available()){
-
     Serial.println(F("Unsuccessfull opened Profile"));
     return; //Failure, No se pudo abrir el archivo correctamente
-
   }
+
+  //Voy hasta el final del archivo
+  rootForWrite.seek(EOF);
 
   //Escribo en el perfil la informacion dada
   rootForWrite.write( (uint8_t*) storeIR.get() , sizeof(Keep_t) ); 
@@ -463,21 +490,17 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   File rootReplacing = SD.open( TRANSFER_FILE_DIRANDNAME , FILE_WRITE);
   
   if(!rootWriteOld.available()){
-
     Serial.println(F("Unsuccessfull writting from File."));
     return;//Failure, No se pudo abrir el archivo correctamente 
-
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
   if( ( sizeof(rootWriteOld.size()) % sizeof(Keep_t) ) != 0){ 
-
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information."));
     return;
     /*En caso de problemas, si hay algo que no va bien retorna "nullptr" para evitar errores futuros en caso de seguir leyendo el almacenamiento
      *Haciendo eso evito problemas que podria generar el bajo nivel de energia de suplementacion de el almacenamiento
     */
-
   }
 
   //Numero total de subperfiles almacenados
@@ -495,10 +518,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
     }
     else if(strcmp( retiredFromSD[iterator].nameSubProfile , subProfileName ) == EXIT_SUCCESS){ }
-    else{
-
-    rootReplacing.write( (uint8_t *) &retiredFromSD[iterator] , sizeof(retiredFromSD[structPerFile]) );
-
+    else{ rootReplacing.write( (uint8_t *) &retiredFromSD[iterator] , sizeof(retiredFromSD[structPerFile]) );
     }
 
   }
@@ -526,7 +546,5 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   delete[] retiredFromSD;
   rootReplacing.close();
   rootWriteOld.close();
-
-  
 
 }

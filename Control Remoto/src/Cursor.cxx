@@ -183,15 +183,15 @@ const char* CursorUltimate::getOption( std::vector<std::string> Strings , const 
 }
 
 //Si recibo la cadena de strings en formato std::vector<std::string>
-CursorV2::CursorV2(std::vector<std::string> menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
+Cursor::Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display) : options(menuOptions), sh1106(display), currentIndex(0), currentPage(0) {
   totalPages = (getNumberOfOptions() - 1) / MAX_LINE_OPTIONS_OUTPUT + 1; // calcular el número total de páginas
 }
 
-const size_t CursorV2::getNumberOfOptions() const {
+const size_t Cursor::getNumberOfOptions() const {
   return options.size();
 }
 
-void CursorV2::showCurrentPage() {
+void Cursor::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
@@ -205,7 +205,7 @@ void CursorV2::showCurrentPage() {
   sh1106->display();
 }
 
-const char* CursorV2::getSelectedOption() {
+const char* Cursor::getSelectedOption() {
   while (true) {
     showCurrentPage();
     // Ajuste en la función getSelectedOption()
@@ -255,6 +255,7 @@ if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
 Writter::Writter(Adafruit_SH1106G* object) : display(*object){}
 
 void Writter::Graphics(void){
+  
   // Clear the buffer
   display.clearDisplay();
   display.display();
