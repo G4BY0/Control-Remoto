@@ -25,8 +25,12 @@ void buttonsBegin(void){
 
 void displayBegin(void){
 
+  //Inicializacion del display con la comunicacion I2C
   display.begin(I2C_ADDRESS, true);
+
   display.display();
+
+  //Limpio la pantalla porque al inicio mete una imagen el buffer de entrada
   display.clearDisplay();
   display.display();
 
@@ -40,12 +44,11 @@ uint8_t Interface::hub(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
+  //Opciones del menu Principal/Hub
   std::vector<std::string> strings  = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP"};
 
-  //DEBUGGING CURSOR
+
   Cursor cursor(strings,&display);
-  //Serial.println(cursor.getSelectedOption());
-  //const char* && selected = cursor.getSelectedOption();
   const char* selected = cursor.getSelectedOption();
 
   for(uint8_t iterator = 0; iterator < strings.size(); iterator++ ){ 
@@ -53,14 +56,14 @@ uint8_t Interface::hub(void){
     return iterator; 
   }
 
-  return 0; //Si hay problemas retorna
+  return 255U; //Si hay problemas retorna
 
 }
 //---------------------------------------------------
 
 void Interface::profiles(void){
   
-
+  //Recibo Vector de Strings con el nombre de cada perfil cada uno (Ignorando el archivo reservado "Transfer.db")
   auto profiles_ptr = Profiles::showProfiles_();
 
   if ( profiles_ptr.empty() == true) {
@@ -76,7 +79,6 @@ void Interface::profiles(void){
 
   //Muestro los subperfiles del perfil seleccionado por el usuario
   Interface::subProfiles( profile_selected );
-  
 
 }
 
@@ -99,6 +101,7 @@ void Interface::addProfile(void){
     display.setTextColor(SH110X_WHITE);
     display.setTextSize(1);
 
+    //Le digo al usuario por pantalla si desea agregar un Subperfil en este momento
     display.setCursor(5,10);
     display.println(F("Do you want to add \n a Subprofile Now?"));
 
@@ -108,7 +111,11 @@ void Interface::addProfile(void){
     display.println(F("Press any other to Cancel"));
 
     display.display();
-    Profiles::createProfile_(profileName.c_str()); //Creo el perfil en el almacenamiento con el nombre dado
+
+    //Creo el perfil en el almacenamiento con el nombre dado
+    Profiles::createProfile_(profileName.c_str());
+
+    //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
     for(;;){
       if(buttonState(PIN::Buttons::ENTER) == HIGH ){
         delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
@@ -128,6 +135,9 @@ void Interface::addProfile(void){
   display.clearDisplay();
   display.display();
 
+
+
+  //Recbido del usuario (A traves del writter) el nombre del nuevo subperfil
   String subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
   if(subProfileName.c_str() == nullptr ) return; // SI no recibo ningun nombre...
 
@@ -307,11 +317,13 @@ void Interface::deleteSubProfile(void){
 }
 
 bool Interface::waitingForIR(void){
+
+  //Le hago saber al usuario por pantalla de que se esta esperando respuesta de la informacion
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   display.setCursor(10,10);
-  display.print(F("Prepared to \n Receive IR\n SIGNAL. \n\n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
+  display.print(F("Prepared to \n Receive IR\n SIGNAL. \n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
   display.display();
 
   //Inicializo la entrada para recibir la informacion
@@ -339,6 +351,7 @@ bool Interface::waitingForIR(void){
 
 void Interface::help(void){
 
+  //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);

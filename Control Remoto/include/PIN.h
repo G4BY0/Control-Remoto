@@ -1,9 +1,9 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /*************************************************************
- * \file Header de PinOut del Atmel Atmega328p
+ * \file Establecimiento de pines de la placa a Utilizar
  * #####PROBLEMA####, AL ESTAR DESARROLLANDO SOLAMENTE CON EL NODEMCU ESP32S, NO SE SABE SI EL RESTO DE LAS PLACAS LO SOPORTAN!
-
-! @brief Agrupacion de los pines a utilizar dependiendo la placa
+ * 
+ * @brief Agrupacion de los pines a utilizar dependiendo la placa
 *************************************************************/
 
 
@@ -11,37 +11,36 @@
 #define PIN_H
 
 #include <stdint.h>
-#include "Board.h"
 
-//Placa actualmente en uso y usada para el debugging del proyecto
+
 #if defined ( ESP32 ) 
-
+//Placa actualmente en uso y usada para el debugging del proyecto
 namespace PIN{
   
   namespace Display{
-    const uint8_t SDA    = 21;
-    const uint8_t SDL    = 22;
+    const uint8_t SDA    = 21U;
+    const uint8_t SDL    = 22U;
   };
 
   namespace InfraredReceiver{
-    const uint8_t DATA   = 15;     
+    const uint8_t DATA   = 15U;     
   };
 
   namespace InfraredTransmitter{
-    const uint8_t DATA   = 4;  
+    const uint8_t DATA   = 4U;  
   };
 
   namespace Buttons{
-    constexpr uint8_t UP     = 13;
-    constexpr uint8_t DOWN   = 12;
-    constexpr uint8_t LEFT   = 14;
-    constexpr uint8_t RIGHT  = 27;
-    constexpr uint8_t BACK   = 26;
-    constexpr uint8_t ENTER  = 25;
+    constexpr uint8_t UP     = 13U;
+    constexpr uint8_t DOWN   = 12U;
+    constexpr uint8_t LEFT   = 14U;
+    constexpr uint8_t RIGHT  = 27U;
+    constexpr uint8_t BACK   = 26U;
+    constexpr uint8_t ENTER  = 25U;
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 5;
+    constexpr uint8_t chipSelect = 5U;
   }
 
 };
@@ -51,12 +50,12 @@ namespace PIN{
 namespace PIN{
   
   namespace Display{
-    constexpr uint8_t SDA    = 2;
-    constexpr uint8_t SDL    = 1;
+    constexpr uint8_t SDA    = 2U;
+    constexpr uint8_t SDL    = 1U;
   };
 
   namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 0;     
+    constexpr uint8_t DATA   = 0U;     
   };
 
   namespace InfraredTransmitter{
@@ -64,16 +63,16 @@ namespace PIN{
   };
 
   namespace Buttons{
-    constexpr uint8_t UP     = 6;
-    constexpr uint8_t DOWN   = 5;
-    constexpr uint8_t LEFT   = 4;
-    constexpr uint8_t RIGHT  = 3;
-    constexpr uint8_t BACK   = 2;
-    constexpr uint8_t ENTER  = 1;
+    constexpr uint8_t UP     = 6U;
+    constexpr uint8_t DOWN   = 5U;
+    constexpr uint8_t LEFT   = 4U;
+    constexpr uint8_t RIGHT  = 3U;
+    constexpr uint8_t BACK   = 2U;
+    constexpr uint8_t ENTER  = 1U;
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 15;  
+    constexpr uint8_t chipSelect = 15U;  
   }
 
 };
@@ -83,16 +82,16 @@ namespace PIN{
 namespace PIN{
   
   namespace Display{
-    constexpr uint8_t SDA    = 20;
-    constexpr uint8_t SDL    = 21;
+    constexpr uint8_t SDA    = 20U;
+    constexpr uint8_t SDL    = 21U;
   };
 
   namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 2;
+    constexpr uint8_t DATA   = 2U;
   };
 
   namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = 3;
+    constexpr uint8_t DATA   = 3U;
   };
 
   namespace Buttons{
@@ -105,7 +104,7 @@ namespace PIN{
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 53;
+    constexpr uint8_t chipSelect = 53U;
   }
 
 };
@@ -115,16 +114,16 @@ namespace PIN{
 namespace PIN{
   
   namespace Display{
-    constexpr uint8_t SDA    = 2;
-    constexpr uint8_t SDL    = 3;
+    constexpr uint8_t SDA    = 2U;
+    constexpr uint8_t SDL    = 3U;
   };
 
   namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 4;     
+    constexpr uint8_t DATA   = 4U;     
   };
 
   namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = 5;  
+    constexpr uint8_t DATA   = 5U;  
   };
 
   namespace Buttons{
@@ -137,7 +136,7 @@ namespace PIN{
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 10;
+    constexpr uint8_t chipSelect = 10U;
   }
 
 };

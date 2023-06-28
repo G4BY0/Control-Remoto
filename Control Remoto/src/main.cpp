@@ -1,9 +1,7 @@
 #warning "Project is in developing, it's not already yet!"
-#warning "Joaco estuvo aqui..."
 
 #include <Arduino.h>
 #include <Wire.h>
-#include "Board.h"
 
 #include "Modes.h"
 

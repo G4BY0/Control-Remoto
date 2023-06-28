@@ -19,7 +19,6 @@
 #include <Wire.h> //I2C
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include "Board.h"
 #include "PIN.h"
 #include <SD.h>
 #include <vector>

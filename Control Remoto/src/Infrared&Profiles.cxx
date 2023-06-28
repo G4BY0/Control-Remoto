@@ -55,15 +55,14 @@ void infraredBegin(void){
   // Just to know which program is running on my Arduino
   Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
 
-  // Start the receiver and if not 3. parameter specified, take LED_BUILTIN pin from the internal boards definition as default feedback LED
+  // Inicializacion del IRReceiver
   IrReceiver.begin(PIN::InfraredReceiver::DATA, DISABLE_LED_FEEDBACK, false);
   Serial.print(F("Ready to receive IR signals of protocols: "));
   printActiveIRProtocols(&Serial);
   
+  // Inicializacion del IRSender
   Serial.print(F("at pin: "));
   Serial.println(PIN::InfraredReceiver::DATA);
-  //IrSender.begin(); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
-  //IrSender.begin(PIN::InfraredTransmitter::DATA); // Start with IR_SEND_PIN as send pin and enable feedback LED at default feedback LED pin
   IrSender.begin(PIN::InfraredTransmitter::DATA, DISABLE_LED_FEEDBACK, false); // si no funciona, chequear la de arriba
   
 }
@@ -184,7 +183,7 @@ struct Keep_t : public storedIRDataStruct{
 
 void SDBegin(void){
 
-  #if defined(ESP32)
+  #if defined(ESP32) || defined(ESP8266)
 
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
@@ -222,14 +221,6 @@ void SDBegin(void){
         break;
     default:
     Serial.println(F("Unknown"));
-  }
-
-  #elif defined(ESP32)
-
-  // Inicializar la comunicación con la tarjeta SD
-  if (!SD.begin()) {
-    Serial.println("Error al inicializar la tarjeta SD");
-    while (!SD.begin());
   }
 
   #endif
