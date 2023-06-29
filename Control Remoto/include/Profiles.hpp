@@ -1,4 +1,4 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
@@ -8,7 +8,6 @@
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
 #ifndef PROFILES_H
 #define PROFILES_H
 

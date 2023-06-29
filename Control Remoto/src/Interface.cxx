@@ -1,4 +1,4 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
@@ -6,20 +6,25 @@
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
 #include "Interface.h"
 
-//Objeto para el manejo del Display OLED
+//Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void buttonsBegin(void){
 
-  pinMode(PIN::Buttons::UP,     INPUT_PULLUP);
-  pinMode(PIN::Buttons::DOWN,   INPUT_PULLUP);
-  pinMode(PIN::Buttons::LEFT ,  INPUT_PULLUP);
-  pinMode(PIN::Buttons::RIGHT , INPUT_PULLUP);
-  pinMode(PIN::Buttons::BACK ,  INPUT_PULLUP);
-  pinMode(PIN::Buttons::ENTER,  INPUT_PULLUP);  
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::UP,     INPUT_PULLUP);  //Boton UP
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::DOWN,   INPUT_PULLUP);  //Boton DOWN
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::LEFT ,  INPUT_PULLUP);  //Boton LEFT
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::RIGHT , INPUT_PULLUP);  //Boton RIGHT
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::BACK ,  INPUT_PULLUP);  //Boton BACK
+  //Configuracion PULLUP
+  pinMode(PIN::Buttons::ENTER,  INPUT_PULLUP);  //Boton ENTER
 
 }
 
@@ -28,6 +33,7 @@ void displayBegin(void){
   //Inicializacion del display con la comunicacion I2C
   display.begin(I2C_ADDRESS, true);
 
+  //Expulso de la RAM hacia el display las instrucciones guardadas
   display.display();
 
   //Limpio la pantalla porque al inicio mete una imagen el buffer de entrada
@@ -39,8 +45,8 @@ void displayBegin(void){
 //DEBUGGING CURSOR
 uint8_t Interface::hub(void){
 
+  //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
-
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   
@@ -97,6 +103,7 @@ void Interface::addProfile(void){
   //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
   [&] () {
 
+    //Establezco los parametros a utilizar para la muestra a la salida del display
     display.clearDisplay();
     display.setTextColor(SH110X_WHITE);
     display.setTextSize(1);
@@ -193,12 +200,13 @@ void Interface::subProfiles(const char *profileName_){
     return;
   }
 
-  sendCode(IRToSend);//Envio la señal a la salida con la informacion dada 
+  sendCode(IRToSend); //Envio la señal a la salida con la informacion dada 
 
 }
 
 void Interface::nonProfiles(void){
 
+  //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
@@ -230,6 +238,7 @@ void Interface::nonProfiles(void){
 
 void Interface::nonSubProfiles(void){
 
+  //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
@@ -319,9 +328,12 @@ void Interface::deleteSubProfile(void){
 bool Interface::waitingForIR(void){
 
   //Le hago saber al usuario por pantalla de que se esta esperando respuesta de la informacion
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
+
   display.setCursor(10,10);
   display.print(F("Prepared to \n Receive IR\n SIGNAL. \n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
   display.display();

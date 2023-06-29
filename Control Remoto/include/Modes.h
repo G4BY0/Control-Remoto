@@ -3,10 +3,10 @@
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
  * Manejo de modos para el usuario
- * 
+ *  - Interfaz De Usuario ----> (EN DESARROLLO) MODO "HELP"
+ *  - (EN DESARROLLO) Modo "Sleeping"
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
 #ifndef MODES_H
 #define MODES_H
 
@@ -15,7 +15,7 @@
 namespace MODE{
 
     /*! @brief Seleccion de Modos (Hub, Principal) */
-    inline void hub__(void);
+    void hub__(void);
 
     /*! @brief Seleccion de Perfiles */
     inline void profiles__(void);
@@ -42,13 +42,16 @@ namespace MODE{
 #pragma region Shutdown
 namespace Shutdown{
 
-    /*! @brief Stoppea el servicio visual*/
+    /*! @brief Stoppea el servicio visual
+        @note Aun no Desarrollado */
     inline void displayService(void);
 
-    /*! @brief Stoppea el servicio de almacenamiento*/
+    /*! @brief Stoppea el servicio de almacenamiento
+        @note Aun no Desarrollado */
     inline void SDService(void);
 
-    /*! @brief Prepara los botones en espera hasta alguna respuesta (presionando)*/
+    /*! @brief Prepara los botones en espera hasta alguna respuesta (presionando rompe el loop)
+        @note Aun no Desarrollado */
     inline void buttonsWaiting(void);
 
 };

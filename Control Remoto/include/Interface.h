@@ -1,4 +1,4 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
@@ -9,7 +9,6 @@
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
 #ifndef INTERFACE_H 
 #define INTERFACE_H
  
@@ -19,7 +18,6 @@
 #include <Wire.h> //I2C
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include "PIN.h"
 #include <SD.h>
 #include <vector>
 
@@ -42,21 +40,20 @@
 #define BLINK_TIME 500 //Exclusivo para hacer parpadear un texto
 
 //Pulsadores
-#ifndef buttonState_function_Macro
-  #define buttonState_function_Macro
-  /*! @brief Estado logico del pin de la placa de desarrollo
-    @param PIN_BUTTON 
-           Pin de la placa de desarrollo
-    @returns Estado logico del pin de la placa de desarrollo */
-  #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) // Exclamacion porque los pulsadores se utilizaran en configuracion PULLUP
-#endif
+
+
+#define buttonState_function_Macro
+/*! \brief Estado logico de la botonera
+  \param PIN_BUTTON 
+  \note Instalacion PullUP
+  \returns Si esta presionado 'true', sino 'false' */
+#define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
+
 #define DEBOUNCE_TIME 250 //Tiempo de seguridad por el rebote mecanico de los pulsadores
 #define TRUE_PULLUP 0x0
 #define TRUE_PULLDOWN 0x1
 #define FALSE_PULLUP 0x1
 #define FALSE_PULLDOWN 0x0
-#define BUTTON_PRESSED_ENTER 0x0
-#define BUTTON_PRESSED_BACK 0x1
 
 /*! @brief Inicializacion de botonera
     @note Arduino por defecto establece como entrada los pines digitales*/

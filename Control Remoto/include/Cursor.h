@@ -1,12 +1,14 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
- * Cursor de desplazamiento de los menus 
- * 
+ *  ### Cursor.h ### (de desplazamiento de los menus) & Writter (Teclado Virtual Para la escritura de Strings)
+ *  - Cursor         ( (BUGS) En Uso, Con un bug de que no se puede ir desde la ultima posicion hacia la primera, Pulsando el boton DOWN)
+ *  - CursorUltimate ( (BUGS) En desarrollo y desuso, se penso su uso por problemas que tenia el CursorV2 pero fueron resueltos)
+ *  - WritterV2      ( (BUGS) En Uso, bastante estetico pero aun tiene algunos bugs que son como el boton snd que solo funciona cuando el teclado esta en minuscula)
+ *  - Writter        ( (BUGS) deprecated)
  * * * * * * * * * * * * * * * * * * * * * * * *
-***********************************************/
-
+************************************************/
 #ifndef CURSOR_H
 #define CURSOR_H
 
@@ -18,43 +20,24 @@
 
 //Cursor
 #define MAX_LINE_OPTIONS_OUTPUT 5
-#define LINE_STRING_X 20
-constexpr uint8_t LINE_STRING_Y[MAX_LINE_OPTIONS_OUTPUT] = {10,20,50};
-
-
-//CursorV2 Macros
 #define UP_BUTTON_PIN PIN::Buttons::UP
 #define DOWN_BUTTON_PIN PIN::Buttons::DOWN
 #define ENTER_BUTTON_PIN PIN::Buttons::ENTER
 #define BACK_BUTTON_PIN PIN::Buttons::BACK
 
-
 //Writter Macros
-#ifndef buttonState_function_Macro
-  #define buttonState_function_Macro
-  /*! @brief Estado logico del pin de la placa de desarrollo
-    @param PIN_BUTTON 
-           Pin de la placa de desarrollo
-    @returns Estado logico del pin de la placa de desarrollo */
-  #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
-#endif
 #define UP_BUTTON_PIN PIN::Buttons::UP
 #define DOWN_BUTTON_PIN PIN::Buttons::DOWN
 #define LEFT_BUTTON_PIN PIN::Buttons::LEFT
 #define RIGHT_BUTTON_PIN PIN::Buttons::RIGHT
 #define ENTER_BUTTON_PIN PIN::Buttons::ENTER
 #define BACK_BUTTON_PIN PIN::Buttons::BACK
+
 // Oled display size
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 // Mario's Ideas
 // Text input using OLED display an 5 Key Keyboard
-
-namespace CursorUltimate{
-
-  const char* getOption( std::vector<std::string> Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
-
-}
 
 /*! @brief Cursor que se desplaza a traves del display*/
 class Cursor {
@@ -91,7 +74,10 @@ class Cursor {
 
 /*! @brief Escritor de Strings Virual en pantalla para el usuario
     \deprecated Se reemplazo por WritterV2, esta en desuso y tiene algunos bugs + errores
-    \note Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs */
+    \note Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs
+    - Tiene el problema de que cuando le das por terminado no termina
+    - Cuando mantenes el pulsador hacia la derecha se van seleccionando las letras como si hubiera tocado al mismo tiempo ENTER
+    - Hay veces que el resaltado se bugea y resalta mas de una letra */
 class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")]] Writter{
 
   private:
@@ -119,15 +105,24 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")
                        "JKLMNOPQR",
                        "STUVWXYZ_" };
   
+  //! \brief Muestra en pantalla el teclado virtual
   void Graphics(void);
+
+  //! \brief Resalta como un cuadrado en la letra que se encuentra el usuario
   void Highlight_letter(int X, int X_Old, int Y, int Y_Old);
+
+  //! \brief Hace el control de la logica de los pulsadores
   void keyboard(void);
 
 
   public:
 
+  //! \brief Constructor
   Writter(Adafruit_SH1106G* display);
 
+  /*! \brief Entra en el sistema del Writter y hasta que el usuario no termine el String entra en Loop
+      \returns String terminado
+      \note Si el usuario CANCELA o se produce algun problema. Retorna 'nullptr' */
   const char* stringFinished(void);
 
 };
@@ -180,9 +175,11 @@ class WritterV2{
 
   //drawText
   int index = 0;
-  char msgToSend[26] = {'\0'};
+  //Vector de longitud fija en el que el usuario escribira el String pedido
+  char msgToSend[26] = {'\0'}; //Inicializa todos los miembros como EOF
   int num = 0;
 
+  // - Creo que esto se podria eliminar porque no tiene uso alguno
   //receiveText
   int msgFlag = 0;
   char convertedMsg[30];
@@ -190,39 +187,52 @@ class WritterV2{
   bool ringFlag = true;
   bool booleanStringFinished = false;
 
-  //drawBlink
+  //drawBlink (Parpadeo de la letra a continuacion del String)
   int xBlink = 0;
   int yBlink1 = 0;
   int yBlink2 = 0;
 
   public:
 
+  //! \brief Constructor
   WritterV2(Adafruit_SH1106G* displayReference);
 
-  /*! @brief Hace en conjunto la interfaz del Writter para el usuario */
+  /*! \brief Hace en conjunto la interfaz del Writter para el usuario */
   void atcLoop(void);
 
-  /*! @brief Logica de calculo para el rebote de los pulsadores
-      @note NO USA PARADAS DEL PROCESADOR!!! */
+  /*! \brief Logica de calculo para el rebote de los pulsadores
+      \note NO USA PARADAS DEL PROCESADOR!!! */
   void timeDelay(void);
 
-  /*! @brief Dibuja en pantalla el comodo teclado virtual para el usuario */
+  /*! \brief Dibuja en pantalla el comodo teclado virtual para el usuario */
   void drawMenu(void);
 
-  /*! @brief Dibuja en pantalla el cursor dentro del teclado virtual */
+  /*! \brief Dibuja en pantalla el cursor dentro del teclado virtual */
   void drawCursor(void);
 
-  /*! @brief Dibuja en pantalla el texto que se esta escribiendo */
+  /*! \brief Dibuja en pantalla el texto que se esta escribiendo */
   void drawText(void);
 
-  /*! @brief dibuja en pantalla el blink de donde se deberia escribir la siguiente letra */
+  /*! \brief dibuja en pantalla el blink de donde se deberia escribir la siguiente letra */
   void drawBlink(void);
 
-  /*! @brief Proceso de seleccion para el usuario
-      @return String seleccionado
-      @note Si se cancela la seleccion, retorna 'nullptr' */
+  /*! \brief Proceso de seleccion para el usuario
+      \return String seleccionado
+      \note Si se cancela la seleccion, retorna 'nullptr' */
   const char* stringFinished(void);
 
 };
+
+/*! \brief Cursor que Se planteaba usar y quedo en desuso
+    \deprecated Reemplazado por "Cursor" */
+namespace CursorUltimate{
+
+  /*! \brief Proceso de seleccion para el usuario
+      \return String seleccionado
+      \note Si se cancela la seleccion, retorna 'nullptr'
+      \deprecated Reemplazado por "Cursor" */
+  const char* [[deprecated("Se reemplazo por Cursor, esta en desuso, no esta terminado y tiene errores")]] getOption( std::vector<std::string> Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
+
+}
 
 #endif //Cursor_h

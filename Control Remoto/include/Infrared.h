@@ -1,4 +1,4 @@
-//Copyright Grupo 7, Inc. All Rights Reserved.
+//Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
@@ -6,7 +6,6 @@
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
 #ifndef INFRARED_H
 #define INFRARED_H
 

@@ -2,10 +2,13 @@
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
- * It is a fusion of 2 old Files, Infrarred.cxx & Profiles.cxx Because It causes a lot of errors when IRremote.hpp is linked
+ * (BUG) It is a fusion of 2 Files, Infrarred.cxx & Profiles.cxx. They are like this Because It causes a lot of errors when IRremote.hpp is linked...
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
+#include <IRremote.hpp>
+#include "Infrared.h"
+#include "Profiles.hpp"
 
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
@@ -15,37 +18,28 @@
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
 
-#include <IRremote.hpp>
-#include "Infrared.h"
-#include "Profiles.hpp"
-
-
-/* ELIMINADO DEL CODIGO PORQUE DABA ERRORES CON LOS TIMERS, NOSE PORQUE PERO CALCULO QUE SERA EL QUE HABLA DE LEDFEEDBACK
+/* (BUG) ELIMINADO DEL CODIGO PORQUE DABA ERRORES CON LOS TIMERS, NOSE PORQUE PERO CALCULO QUE SERA EL QUE HABLA DE LEDFEEDBACK
 #define DELAY_BETWEEN_REPEAT 50
 #define DISABLE_LEDFEEDBACK false // false
 #define ENABLE_LEDFEEDBACK true  // true
 */
 
 //Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-#ifndef storedIRDataStruct_type_definition
-#define storedIRDataStruct_type_definition
 struct storedIRDataStruct {
   IRData receivedIRData;
   // extensions for sendRaw
   uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
   uint8_t rawCodeLength; // The length of the code
 };
-#endif
+
 
 //Estructura de almacenamiento de datos del infrarrojo (con el nombre del subperfil)
-#ifndef Keep_type_definition
-#define Keep_type_definition
 struct Keep_t : public storedIRDataStruct{
 
   char nameSubProfile[30]; //Nombre del subperfil
 
 };
-#endif
+
 
 void infraredBegin(void){
 
@@ -149,8 +143,6 @@ std::shared_ptr<storedIRDataStruct> storeCode(void) {
 
 }
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 //Copyright Grupo 11, Inc. All Rights Reserved.
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
@@ -159,27 +151,6 @@ std::shared_ptr<storedIRDataStruct> storeCode(void) {
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
-
-//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-#ifndef storedIRDataStruct_type_definition
-#define storedIRDataStruct_type_definition
-struct storedIRDataStruct {
-  IRData receivedIRData;
-  // extensions for sendRaw
-  uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
-  uint8_t rawCodeLength; // The length of the code
-};
-#endif
-
-//Estructura de almacenamiento de datos del infrarrojo (con el nombre del subperfil)
-#ifndef Keep_type_definition
-#define Keep_type_definition
-struct Keep_t : public storedIRDataStruct{
-
-  char nameSubProfile[30]; //Nombre del subperfil
-
-};
-#endif
 
 void SDBegin(void){
 

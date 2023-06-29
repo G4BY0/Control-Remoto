@@ -1,7 +1,9 @@
 //Copyright Grupo 11, Inc. All Rights Reserved.
 /*************************************************************
  * \file Establecimiento de pines de la placa a Utilizar
- * #####PROBLEMA####, AL ESTAR DESARROLLANDO SOLAMENTE CON EL NODEMCU ESP32S, NO SE SABE SI EL RESTO DE LAS PLACAS LO SOPORTAN!
+ * 
+ * #####PROBLEMA##### 
+ * AL ESTAR DESARROLLANDO SOLAMENTE CON EL NODEMCU ESP32S, NO SE SABE SI EL RESTO DE LAS PLACAS LO SOPORTAN!
  * 
  * @brief Agrupacion de los pines a utilizar dependiendo la placa
 *************************************************************/
