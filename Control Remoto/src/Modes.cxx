@@ -27,18 +27,18 @@ void MODE::hub__(void){
 
 }
 
-inline void MODE::profiles__(void)        { Interface::profiles();          }
-inline void MODE::addProfile__(void)      { Interface::addProfile();        }
-inline void MODE::deleteProfile__(void)   { Interface::deleteProfile();     }
-inline void MODE::addSubProfile__(void)   { Interface::createSubProfile();  }
-inline void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile();  }
+void MODE::profiles__(void)        { Interface::profiles();          }
+void MODE::addProfile__(void)      { Interface::addProfile();        }
+void MODE::deleteProfile__(void)   { Interface::deleteProfile();     }
+void MODE::addSubProfile__(void)   { Interface::createSubProfile();  }
+void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile();  }
 
 #pragma region Developing-Future
-inline void MODE::help__(void)            { Interface::help(); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
+void MODE::help__(void)            { Interface::help(); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
 #pragma endregion //Developing-Future (Opciones adicionales en un futuro)
 
 #pragma region Shutdown
-inline void Shutdown::displayService(void){ /*Aun no Desarrollado*/ }
-inline void Shutdown::SDService(void)     { /*Aun no Desarrollado*/ }
-inline void Shutdown::buttonsWaiting(void){ /*Aun no Desarrollado*/ }
+void Shutdown::displayService(void){ /*Aun no Desarrollado*/ }
+void Shutdown::SDService(void)     { /*Aun no Desarrollado*/ }
+void Shutdown::buttonsWaiting(void){ /*Aun no Desarrollado*/ }
 #pragma endregion //Shutdown

@@ -9,7 +9,21 @@
 #include <IRremote.hpp>
 #include "Infrared.h"
 #include "Profiles.hpp"
+//String extensionProfiles = ".db"; <--- C++ WAY
+#define SLASH_WITH_EOF_STR "/"
+#define extensionProfiles ".db"
 
+/*! \brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles'
+    \param string nombre de perfil a convertir en directorio
+    \return puntero al string PATH*/
+const char* profilePath(const char* profileName);
+const char* profilePath(const char* profileName) {
+
+    std::string dirProfileName (SLASH_WITH_EOF_STR); 
+    dirProfileName.append(profileName);
+    dirProfileName.append(extensionProfiles);
+    return dirProfileName.c_str();
+}
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * 

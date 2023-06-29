@@ -12,6 +12,7 @@
 #define PROFILES_H
 
 #include <cstdint>
+#include <string>
 #include <vector>
 #include <memory>
 
@@ -36,14 +37,6 @@
 //  SdVolume volume;
 //  SdFile root;
 
-//String extensionProfiles = ".db"; <--- C++ WAY
-#define SLASH_WITH_EOF_STR "/"
-#define extensionProfiles ".db"
-
-/*! \brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles' 
-    \param string nombre de perfil a convertir en directorio
-    \return puntero al string PATH*/
-#define profilePath(profileName) strcat( strcat(SLASH_WITH_EOF_STR, profileName) , extensionProfiles )
 
 /*! \brief Inicializador de la SD
     \note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.
