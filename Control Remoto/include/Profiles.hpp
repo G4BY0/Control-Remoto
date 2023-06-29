@@ -20,7 +20,6 @@
 #include <SPI.h>
 #include <SD.h>
 
-#include "Board.h"
 #include "PIN.h"
 #include "Infrared.h"
 

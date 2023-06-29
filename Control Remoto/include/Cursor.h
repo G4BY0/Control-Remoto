@@ -134,7 +134,8 @@ class [[deprecated("Se reemplazo por WritterV2, esta en desuso y tiene errores")
 
 /*! \brief Escritor de Strings Virual en pantalla para el usuario
     \note Reemplaza al Anterior Escritor de Strings ya que es mas estetico y tiene menos bugs.
-    Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs*/
+    Al ser extraido de otra persona este desarrollo y el codigo es bastante inentendible, se hace complicado la optimizacion y correccion de bugs
+    Agradecemos de corazon a Mebowfen por el desarrollo! https://github.com/mebowfen/mebowfen_arduino_creations, Video En Youtube: https://www.youtube.com/watch?v=AeB6luzTVfg */
 class WritterV2{
 
   private:

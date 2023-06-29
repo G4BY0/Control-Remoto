@@ -19,6 +19,7 @@ void setup(){
     ; // wait for serial port to connect. Needed for native USB port only
     }
 
+    //Problemas con el monitor Serial para las placas mencionadas
     #if defined(__AVR_ATmega32U4__) || defined(SERIAL_PORT_USBVIRTUAL) || defined(SERIAL_USB) /*stm32duino*/|| defined(USBCON) /*STM32_stm32*/|| defined(SERIALUSB_PID) || defined(ARDUINO_attiny3217)
     delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
     #endif
@@ -46,7 +47,7 @@ void setup(){
     displayBegin();     Serial.println(F("Display Inicializado"));
     
     //Inicializacion del sistema de botones
-    buttonsBegin();     Serial.println(F("Botonera Inicializado"));
+    buttonsBegin();     Serial.println(F("Botonera Inicializada"));
     
     //Inicializacion del sistema de almacenamiento
     SDBegin();          Serial.println(F("Almacenamiento Inicializado"));

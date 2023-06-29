@@ -2,9 +2,10 @@
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
  * \file
- * Definicion de metodos de las Clases: Cursor
- *                                      CursorV2
- *                                      Writter
+ * Definicion de metodos de las Clases: CursorUltimate (En desarrollo y desuso, se penso su uso por problemas que tenia el CursorV2 pero fueron resueltos)
+ *                                      Cursor (en Uso, Con un bug de que no se puede ir desde la ultima posicion hacia la primera, Pulsando el boton DOWN)
+ *                                      Writter (deprecated)
+ *                                      WritterV2 (en Uso, bastante estetico pero aun tiene algunos bugs que son como el boton snd que solo funciona cuando el teclado esta en minuscula)
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
@@ -31,6 +32,7 @@ const char* CursorUltimate::getOption( std::vector<std::string> Strings , const 
   #define CURSOR_SYMBOL '>'
 
   const uint8_t && totalNumberOfOptions = sizeof(Strings) / sizeof(Strings[0U]); //Total De Opciones
+
   //Debugging
   Serial.println(sizeof(Strings) / sizeof(Strings[0U]));
   const uint8_t && totalPages = ceil ((totalNumberOfOptions % MAX_LINE_OPTIONS_OUTPUT)); //Total de paginas
@@ -209,42 +211,42 @@ const char* Cursor::getSelectedOption() {
   while (true) {
     showCurrentPage();
     // Ajuste en la función getSelectedOption()
-if (buttonState(UP_BUTTON_PIN) == HIGH) {
-  if (currentIndex == currentPage * MAX_LINE_OPTIONS_OUTPUT) {
-    if (currentPage == 0) {
-      currentPage = totalPages - 1;
-    } else {
-      currentPage--;
+    if (buttonState(UP_BUTTON_PIN) == HIGH) {
+      if (currentIndex == currentPage * MAX_LINE_OPTIONS_OUTPUT) {
+        if (currentPage == 0) {
+        currentPage = totalPages - 1;
+        } else {
+        currentPage--;
+        }
+        currentIndex = min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) - 1;
+      } else {
+        currentIndex--;
+      }
+      delay(DEBOUNCE_TIME);
+      showCurrentPage();
     }
-    currentIndex = min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) - 1;
-  } else {
-    currentIndex--;
-  }
-  delay(DEBOUNCE_TIME);
-  showCurrentPage();
-}
-
-if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
-  if (currentIndex == (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT - 1) {
-    if (currentPage == totalPages - 1) {
-      currentPage = 0;
-    } else {
-      currentPage++;
+    //Boton DOWN
+    if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
+      if (currentIndex == (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT - 1) {
+        if (currentPage == totalPages - 1) {
+          currentPage = 0;
+        } else {
+          currentPage++;
+        }
+        currentIndex = currentPage * MAX_LINE_OPTIONS_OUTPUT;
+      } else {
+        currentIndex++;
+      }
+      delay(DEBOUNCE_TIME);
+      showCurrentPage();
     }
-    currentIndex = currentPage * MAX_LINE_OPTIONS_OUTPUT;
-  } else {
-    currentIndex++;
-  }
-  delay(DEBOUNCE_TIME);
-  showCurrentPage();
-}
 
-
-
+    //Boton ENTER
     if (buttonState(ENTER_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
       return options[currentIndex].c_str();;
     }
+    //Boton BACK
     if (buttonState(BACK_BUTTON_PIN) == HIGH) {
       delay(DEBOUNCE_TIME);
       return nullptr;
@@ -285,6 +287,7 @@ void Writter::Graphics(void){
 }
 
 void Writter::Highlight_letter(int X, int X_Old, int Y, int Y_Old){
+
   // When position changes 
   // Draw the inverse rect in the Old_pos to deactivate  the highlight in the old spot
   // Draw the inverse rect to Highlite the new spot
@@ -293,11 +296,13 @@ void Writter::Highlight_letter(int X, int X_Old, int Y, int Y_Old){
   // Displaying Inverse rect in the old positon to unhighlight
   display.fillRect(X_Old*12+2*X_Old, Y_Old*16 +16, 12, 16, SH110X_INVERSE);
   display.display();
+
 }
 
 void Writter::keyboard(void) {
   
   while(INFINITE_LOOPING){
+
     Key_pressed=true;
     if ( buttonState(PIN::Buttons::BACK)  == HIGH )               {To_Transmit = ""; break;}
     if ((buttonState(PIN::Buttons::LEFT)  == HIGH ) and Old_X>0)  { New_X=Old_X-1; delay(DEBOUNCE_TIME);}
@@ -348,9 +353,8 @@ void Writter::keyboard(void) {
 
 const char* Writter::stringFinished(void){ 
   Writter::Graphics();
-
   Writter::keyboard();
   if(To_Transmit.c_str() == "")
     return nullptr;
   return To_Transmit.c_str(); 
-} // Desarrollar para el loop
+}

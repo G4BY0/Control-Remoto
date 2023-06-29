@@ -13,7 +13,6 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <memory>
-#include "Board.h"
 #include "PIN.h"
 
 #define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
