@@ -176,7 +176,7 @@ class WritterV2{
   //drawText
   int index = 0;
   //Vector de longitud fija en el que el usuario escribira el String pedido
-  char msgToSend[26] = {'\0'}; //Inicializa todos los miembros como EOF
+  char msgToSend[8] = {'\0'}; //Inicializa todos los miembros como EOF
   int num = 0;
 
   // - Creo que esto se podria eliminar porque no tiene uso alguno

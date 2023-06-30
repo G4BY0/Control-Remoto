@@ -49,9 +49,7 @@ struct storedIRDataStruct {
 
 //Estructura de almacenamiento de datos del infrarrojo (con el nombre del subperfil)
 struct Keep_t : public storedIRDataStruct{
-
   char nameSubProfile[30]; //Nombre del subperfil
-
 };
 
 
