@@ -44,12 +44,12 @@
 
 #define buttonState_function_Macro
 /*! \brief Estado logico de la botonera
-  \param PIN_BUTTON 
+  \param PIN_BUTTON PIN de la placa conectada al boton
   \note Instalacion PullUP
   \returns Si esta presionado 'true', sino 'false' */
 #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
 
-#define DEBOUNCE_TIME 250 //Tiempo de seguridad por el rebote mecanico de los pulsadores
+#define DEBOUNCE_TIME 500 //Tiempo de seguridad por el rebote mecanico de los pulsadores
 #define TRUE_PULLUP 0x0
 #define TRUE_PULLDOWN 0x1
 #define FALSE_PULLUP 0x1
@@ -107,7 +107,7 @@ namespace Interface {
   /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
       \return   '1' Si el usuario canceló el modo.
                 '0' Si cumplió correctamente.
-      \note entra en bucle hasta vericar que el codigo recibido es correcto.
+      \note Entra en bucle hasta vericar que el codigo recibido es correcto.
   */
   bool waitingForIR(void);
 

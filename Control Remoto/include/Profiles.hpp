@@ -69,18 +69,15 @@ namespace SubProfiles{
      *  \note Recordar eliminar la memoria dinamica reservada luego de su uso
      *  \returns Tipo de estructura con el agregado mencionado
     */
-    std::shared_ptr<Keep_t> convertIRData(std::shared_ptr<storedIRDataStruct> storedIRData, const char* subProfileName);
+    std::shared_ptr<Keep_t> convertIRData(storedIRDataStruct storedIRData, const char* subProfileName);
 
     /*! \deprecated En desuso porque no se usara en la version Pre-Alpha
      *  \brief Crea un subperfil para un perfil
-     *  \param subProfilename
-     *         Nombre del subperfil
-     *  \param storedIRData
-     *         Portador de la informacion de la señal
-     *  \param profileName
-     *         Nombre del perfil en el que quiere guardar el subperfil
+     *  \param subProfilename Nombre del subperfil
+     *  \param storedIRData Portador de la informacion de la señal
+     *  \param profileName Nombre del perfil en el que quiere guardar el subperfil
     */
-    void createSubProfile_(const char* subProfileName, std::shared_ptr<storedIRDataStruct> storedIRData, const char* profileName);
+    void createSubProfile_(const char* subProfileName, const char* typeProtocolSignal, const char* profileName);
  
     /*! \brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  \param name Nombre del perfil
@@ -90,8 +87,8 @@ namespace SubProfiles{
     std::vector<std::string> showSubProfiles(const char* profileName);
 
     /*! \brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
-     *  \param profileName nombre del perfil en el que se encontrara el subperfil
-     *  \param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+     *  \param profileName Nombre del perfil en el que se encontrara el subperfil
+     *  \param subProfileName Nombre del subperfil que representara la DATA de la señal infrarroja
      *  \returns Puntero inteligente de la estructura de datos del subperfil solicitado
      *  \note Si hay un problema o no lo encuentra, el puntero apuntara 'nullptr'
     */
@@ -104,8 +101,8 @@ namespace SubProfiles{
     void storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName);
 
     /*! \brief  Elimina en el almacenamiento el subPerfil recibido
-     *  \param profileName nombre del perfil en el que se encontrara el subperfil
-     *  \param subProfileName nombre del subperfil que representara la DATA de la señal infrarroja
+     *  \param profileName Nombre del perfil en el que se encontrara el subperfil
+     *  \param subProfileName Nombre del subperfil que representara la DATA de la señal infrarroja
      *  \note Borra la estructura que almacena la informacion del subperfil.
     */
     void deleteSubProfile(const char* profileName, const char* subProfileName);

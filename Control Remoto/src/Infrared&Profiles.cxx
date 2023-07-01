@@ -18,11 +18,12 @@
     \return puntero al string PATH*/
 const char* profilePath(const char* profileName);
 const char* profilePath(const char* profileName) {
-
-    std::string dirProfileName (SLASH_WITH_EOF_STR); 
-    dirProfileName.append(profileName);
-    dirProfileName.append(extensionProfiles);
-    return dirProfileName.c_str();
+  static std::string dirProfileName;
+  dirProfileName.clear();
+  dirProfileName.append(SLASH_WITH_EOF_STR); 
+  dirProfileName.append(profileName);
+  dirProfileName.append(extensionProfiles);
+  return dirProfileName.c_str();
 }
 /***********************************************
  * * * * * * * * * * * * * * * * * * * * * * * *
@@ -128,27 +129,27 @@ void sendCode(std::shared_ptr<Keep_t> aIRDataToSend) {
 }
 
 // Stores the code for later playback
-std::shared_ptr<storedIRDataStruct> storeCode(void) {
+storedIRDataStruct storeCode(void) {
 
-  std::shared_ptr<storedIRDataStruct> sStoredIRData( new storedIRDataStruct );
+  storedIRDataStruct sStoredIRData;
 
   //Copy decoded data
-  sStoredIRData->receivedIRData = IrReceiver.decodedIRData;
+  sStoredIRData.receivedIRData = IrReceiver.decodedIRData;
 
-  if (sStoredIRData->receivedIRData.protocol == UNKNOWN) {
+  if (sStoredIRData.receivedIRData.protocol == UNKNOWN) {
     Serial.print(F("Received unknown code and store "));
     Serial.print(IrReceiver.decodedIRData.rawDataPtr->rawlen - 1);
     Serial.println(F(" timing entries as raw "));
     IrReceiver.printIRResultRawFormatted(&Serial, true); // Output the results in RAW format
-    sStoredIRData->rawCodeLength = IrReceiver.decodedIRData.rawDataPtr->rawlen - 1;
+    sStoredIRData.rawCodeLength = IrReceiver.decodedIRData.rawDataPtr->rawlen - 1;
     
     //Store the current raw data in a dedicated array for later usage
-    IrReceiver.compensateAndStoreIRResultInArray(sStoredIRData->rawCode);
+    IrReceiver.compensateAndStoreIRResultInArray(sStoredIRData.rawCode);
   } else {
     IrReceiver.printIRResultShort(&Serial);
     IrReceiver.printIRSendUsage(&Serial);
-    sStoredIRData->receivedIRData.flags = 0; // clear flags -esp. repeat- for later sending
-    Serial.println();
+    sStoredIRData.receivedIRData.flags = 0; // clear flags -esp. repeat- for later sending
+    Serial.print( '\n' );
   }
 
   return sStoredIRData;
@@ -170,13 +171,13 @@ void SDBegin(void){
 
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
-    Serial.println("Error al inicializar la tarjeta SD");
+    Serial.println(F("Error al inicializar el almacenamiento"));
+    Serial.println(F("Esperando respuesta del almacenamiento..."));
     while (!SD.begin());
   }
 
   #elif defined(__AVR__)
   Sd2Card card;
-  
   // CODIGO DE INICIALIZACION DE LIBRERIAS UTILES
   // TESTEANDO SI LA TARJETA SD ESTA TRABAJANDO!
   if (!card.init(SPI_HALF_SPEED, PIN::SD_t::chipSelect)) {
@@ -221,10 +222,10 @@ std::vector<std::string> Profiles::showProfiles_(void){
  
   std::vector<std::string> takingProfilesName;
 
-  File rootForRead = SD.open("/"); // Abro como Root 
+  File root = SD.open("/"); // Abro como Root 
   File archivo; //Flujo para el movimiento entre los archivos
   do{
-    archivo = (rootForRead.openNextFile());
+    archivo = (root.openNextFile());
     if(!archivo){
       //Si no hay archivo siguiente
       Serial.println(F("Doesn't find any other profile."));
@@ -238,7 +239,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
 
         //Si es un archivo 
         Serial.print(F("Perfil: "));
-        Serial.println(archivo.name());  //Imprimo el nombre
+        Serial.println(F(archivo.name()));  //Imprimo el nombre
 
         takingProfilesName.push_back( [=] () -> std::string {
           std::string name = archivo.name();
@@ -259,19 +260,19 @@ std::vector<std::string> Profiles::showProfiles_(void){
   }while(archivo);
   
   archivo.close();
-  rootForRead.close();
+  root.close();
   return takingProfilesName;
 
 }
 
 
 void Profiles::createProfile_(const char* name){
-
-  File rootForWrite = SD.open(profilePath(name), FILE_WRITE);
-  rootForWrite.available()
+  
+  File root = SD.open(profilePath(name), FILE_WRITE);
+  root.available()
     ? Serial.println(F("Successfully created."))
     : Serial.println(F("Unsuccessfully created, check if already exists... \n If is that the case, first delete that profile."));
-  rootForWrite.close();
+  root.close();
 
 }
 
@@ -284,17 +285,16 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-std::shared_ptr<Keep_t> SubProfiles::convertIRData(std::shared_ptr<storedIRDataStruct> storedIRData, const char* subProfileName){
+std::shared_ptr<Keep_t> SubProfiles::convertIRData(storedIRDataStruct storedIRData, const char* subProfileName){
 
   std::shared_ptr<Keep_t> storedIRDataWithStr;
 
   //Logica de copiado de una estructura a otra sumandole el nombre del subperfil
-  storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData; // Copio estructura de datos
-
-  const size_t rawCodeSize = sizeof(storedIRData->receivedIRData);
-  for( size_t iterator = 0U ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData->receivedIRData) )
-    storedIRDataWithStr->rawCode[iterator] = storedIRData->rawCode[iterator];
-  storedIRDataWithStr->rawCodeLength = storedIRData->rawCodeLength;
+  storedIRDataWithStr->receivedIRData = storedIRData.receivedIRData; // Copio estructura de datos
+  const size_t rawCodeSize = sizeof(storedIRData.receivedIRData);
+  for( size_t iterator = 0U ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData.receivedIRData) )
+    storedIRDataWithStr->rawCode[iterator] = storedIRData.rawCode[iterator];
+  storedIRDataWithStr->rawCodeLength = storedIRData.rawCodeLength;
 
   strcpy( storedIRDataWithStr->nameSubProfile , subProfileName ); //Copio string, nombre del subperfil
 
@@ -302,25 +302,30 @@ std::shared_ptr<Keep_t> SubProfiles::convertIRData(std::shared_ptr<storedIRDataS
   
 }
 
-void SubProfiles::createSubProfile_(const char* subProfileName, std::shared_ptr<storedIRDataStruct> storedIRData, const char* profileName){
+void SubProfiles::createSubProfile_(const char* subProfileName, const char* typeProtocolSignal, const char* profileName){
 
-  auto storedIRDataWithStr = convertIRData(storedIRData, subProfileName);
+  if( strcmp (typeProtocolSignal , "IR") == 0) {
 
-  File rootStoring = SD.open( profilePath(profileName) , FILE_WRITE );
+  auto storedIRDataWithStr = convertIRData( storeCode() , subProfileName);
+
+  File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
   //Si el archivo no esta disponible...
-  if(!rootStoring.available()){
+  if(!root.available()){
     Serial.println(F("The file cannot be open successfully"));
     return; 
   }
 
   //Voy hasta el final del archivo
-  rootStoring.seek(EOF);
-
+  root.seek(EOF);
   //Escritura de la informacion en el archivo
-  rootStoring.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
+  root.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
+  root.close();
 
-  rootStoring.close();
+  }
+
+  // if( strcmp (typeProtocolSignal == "WIFI") == 0) {}
+  // if( strcmp (typeProtocolSignal == "BLUETOOTH") == 0) {}
 
 }
 
@@ -329,9 +334,9 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   std::vector<std::string> subProfilesName;
   uint16_t numberOfSubProfiles = 0U;
 
-  File rootRead = SD.open( profilePath(profileName) , FILE_READ );
+  File root = SD.open( profilePath(profileName) , FILE_READ );
 
-  if(!rootRead.available()){
+  if(!root.available()){
 
     Serial.println(F("The file cannot be open successfully"));
     return subProfilesName;
@@ -340,11 +345,11 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   //Si es un archivo...
   Serial.print(F("Perfil: "));
-  Serial.println(rootRead.name());  //Imprimo el nombre
+  Serial.println(root.name());  //Imprimo el nombre
   
   Serial.println(F("Subperfiles:"));
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras o hubo un error inesperado
-  if( ( sizeof(rootRead.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(root.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
     return subProfilesName; //Failure
@@ -352,18 +357,16 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   }
 
   //Cantidad de perfiles que se encuentran almacenados
-  const size_t && structPerFile = sizeof(rootRead.size()) / sizeof(Keep_t);
+  const size_t && structPerFile = sizeof(root.size()) / sizeof(Keep_t);
 
   //Reservo memoria para el movimiento de la informacion
   Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
 
   for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
     //Luego eliminar este If cuando se permita que el nombre del subperfil sea variable. Esto puede causar problemas...
-    if(rootRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
-
+    if(root.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
       Serial.println(F("Unsuccessfull reading subProfile"));
       continue;
-
     }
     
     //Imprimo en el Serial el nombre del subperfil
@@ -375,7 +378,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   delete[] retiredFromSD;
 
-  rootRead.close();
+  root.close();
 
   return subProfilesName;
  
@@ -384,10 +387,10 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   //Abro el archivo del perfil dado en modo Lectura
-  File rootForRead = SD.open(profilePath(profileName), FILE_READ);
+  File root = SD.open(profilePath(profileName), FILE_READ);
 
   //Si el archivo no esta disponible...
-  if(!rootForRead.available()){
+  if(!root.available()){
 
     Serial.print(F("The file: "));
     Serial.print(profilePath(profileName));
@@ -397,7 +400,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
-  if( ( sizeof(rootForRead.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(root.size()) % sizeof(Keep_t) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
     return nullptr; //Failure
@@ -405,14 +408,14 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
   }
 
   //Numero de subperfiles que se encuentran en el archivo
-  const size_t && structPerFile = sizeof(rootForRead.size()) / sizeof(Keep_t);
+  const size_t && structPerFile = sizeof(root.size()) / sizeof(Keep_t);
 
   //Reservo memoria para la inforamacion retirada del almacenamiento
   std::shared_ptr<Keep_t[]> retiredFromSD ( new Keep_t[structPerFile] );
 
   for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
 
-    if(rootForRead.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(root.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
       
       Serial.println(F("Unsuccessfull reading from File"));
 
@@ -432,28 +435,28 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
 
   }
 
-  rootForRead.close();
+  root.close();
 
 }
 
 void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName){
-  Serial.println("LLeggue hasta acaaaaaa");
+
   //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
-  File rootForWrite = SD.open( profilePath(profileName) , FILE_WRITE );
+  File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
   //Si el flujo del archivo no esta disponible...
-  if(!rootForWrite.available()){
+  if(!root.available()){
     Serial.println(F("Unsuccessfull opened Profile"));
     return; //Failure, No se pudo abrir el archivo correctamente
   }
 
   //Voy hasta el final del archivo
-  rootForWrite.seek(EOF);
+  root.seek(EOF);
 
   //Escribo en el perfil la informacion dada
-  rootForWrite.write( (uint8_t*) storeIR.get() , sizeof(Keep_t) ); 
+  root.write( (uint8_t*) storeIR.get() , sizeof(Keep_t) ); 
   
-  rootForWrite.close();
+  root.close();
 
 }
 

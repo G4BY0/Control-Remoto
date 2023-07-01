@@ -20,8 +20,8 @@ void MODE::hub__(void){
     case 3:     addSubProfile__();          break; //Agregar Subperfil de un Perfil dado
     case 4:     deleteSubProfile__();       break; //Eliminar Subperfil de un Perfil dado
     #pragma endregion
-    case 5: help__();                       break; //Entorno de Ayuda al usuario
-    default: exit(1);                       break; //Sale del void loop() .Finaliza el sistema
+    case 5:     help__();                   break; //Entorno de Ayuda al usuario
+    default:                                break; //IGNORE
 
   }
 

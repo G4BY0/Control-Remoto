@@ -26,16 +26,12 @@
 
 // Storage for the recorded code
 //Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-#ifndef storedIRDataStruct_type_declaration
-#define storedIRDataStruct_type_declaration
 struct storedIRDataStruct;
-#endif
+
 
 //Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
-#ifndef Keep_type_declaration
-#define Keep_type_declaration
 struct Keep_t;
-#endif
+
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -65,8 +61,8 @@ void sendCode(std::shared_ptr<Keep_t> aIRDataToSend);
 
 /*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
     @returns Retorna puntero inteligente de accesso unico del objeto de la informacion recibida
-    @note Retorna la copia de datos almacenado en un espacio de la memoria Heap (tipo estatico)
+    @note Retorna la copia de datos
 */
-std::shared_ptr<storedIRDataStruct> storeCode(void);
+storedIRDataStruct storeCode(void);
 
 #endif //Infrared_h

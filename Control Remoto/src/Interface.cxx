@@ -79,7 +79,7 @@ void Interface::profiles(void){
 
   Cursor cursor( profiles_ptr , &display );
   const char* profile_selected = cursor.getSelectedOption();
-
+  
   //Si el usuario no selecciono nada o hubo algun problema
   if(profile_selected == nullptr) return;
 
@@ -89,12 +89,13 @@ void Interface::profiles(void){
 }
 
 void Interface::addProfile(void){
-  
+
   //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
   WritterV2 writter( &display );
 
   String profileName = writter.stringFinished();
-
+  delay(DEBOUNCE_TIME);
+  
   //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
   if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
 
@@ -123,7 +124,7 @@ void Interface::addProfile(void){
     Profiles::createProfile_(profileName.c_str());
 
     //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
-    for(;;){
+    while(1){
       if(buttonState(PIN::Buttons::ENTER) == HIGH ){
         delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
         break;
@@ -151,7 +152,7 @@ void Interface::addProfile(void){
   if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
   
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
-  SubProfiles::createSubProfile_(  subProfileName.c_str() , storeCode() , profileName.c_str() ); 
+  SubProfiles::createSubProfile_(  subProfileName.c_str() , "IR" , profileName.c_str() ); 
 
 }
 
@@ -214,24 +215,24 @@ void Interface::nonProfiles(void){
 
   //Le muestro al usuario el problema que surgio
   Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
-  display.setCursor(10,10);
+  display.setCursor(0,10);
   display.println(F("No profiles stored"));
 
   //Le digo al usuario como terminar la ventana emergente
-  display.setCursor(15,30);
+  display.setCursor(0,30);
   display.println(F("Press any button"));
-  display.setCursor(25,40);
+  display.setCursor(0,40);
   display.println(F("to turn back"));
 
   display.display();
   
   //Logica de si se llegara a pulsar cualquier boton
-  while(  buttonState(PIN::Buttons::BACK)  == HIGH  ||
-          buttonState(PIN::Buttons::UP)    == HIGH  ||
-          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
-          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
-          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
-          buttonState(PIN::Buttons::ENTER) == HIGH    );
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
   delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
 
 }
@@ -246,7 +247,7 @@ void Interface::nonSubProfiles(void){
 
   //Le muestro al usuario el problema que surgio
   Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
-  display.setCursor(5,10);
+  display.setCursor(0,10);
   display.println(F("No sub-profiles stored"));
 
   //Le digo al usuario como terminar la ventana emergente
@@ -256,14 +257,14 @@ void Interface::nonSubProfiles(void){
   display.println(F("to turn back"));
 
   display.display();
-
+  
   //Logica de si se llegara a pulsar cualquier boton
-  while(  buttonState(PIN::Buttons::BACK)  == HIGH  ||
-          buttonState(PIN::Buttons::UP)    == HIGH  ||
-          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
-          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
-          buttonState(PIN::Buttons::RIGHT) == HIGH  ||
-          buttonState(PIN::Buttons::ENTER) == HIGH    );
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
   delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
 }
@@ -278,6 +279,7 @@ void Interface::createSubProfile(void){
     return; 
   }
 
+
   //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
   Cursor cursor(namesProfile,&display);
   const char* && profileSelected = cursor.getSelectedOption();
@@ -289,7 +291,8 @@ void Interface::createSubProfile(void){
   WritterV2 writter(&display);
 
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::storeSubProfile( SubProfiles::convertIRData( storeCode() , writter.stringFinished() ) , profileSelected );
+  SubProfiles::createSubProfile_(  writter.stringFinished() , "IR" , profileSelected ); 
+  //SubProfiles::storeSubProfile( SubProfiles::convertIRData( storeCode() , writter.stringFinished() ) , profileSelected );
   
 }
 
@@ -304,7 +307,7 @@ void Interface::deleteSubProfile(void){
   }
 
   //Inicializo un cursor para pedirle al usuario que perfil desea
-  Cursor cursor( names ,&display);
+  Cursor cursor( names , &display );
   const char* && selectedProfile = cursor.getSelectedOption();
 
   //Si no recibo ningun nombre...
@@ -314,7 +317,7 @@ void Interface::deleteSubProfile(void){
   names = SubProfiles::showSubProfiles(selectedProfile);
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
-  Cursor cursor2(names,&display); 
+  Cursor cursor2( names , &display ); 
   const char* && selectedSubProfile = cursor2.getSelectedOption();
 
   //Si no recibo ningun Subperfil...
