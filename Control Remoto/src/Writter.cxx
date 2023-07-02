@@ -410,7 +410,9 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
-            
+            Serial.println(F("snd was pressed... \n String Finished!"));
+            booleanStringFinished = true;
+            return;
           }
         case 33:
           switch (x) {
@@ -646,6 +648,9 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
+            Serial.println(F("snd was pressed... \n String Finished!"));
+            booleanStringFinished = true;
+            return;
           }
         case 33:
           switch (x) {
@@ -906,6 +911,9 @@ void WritterV2::drawBlink(void) {
 }//drawBlink
 
 const char* WritterV2::stringFinished(void){
+  //Inicializacion del contenido que tiene msgToSend por si en algun previo momento se usó
+  for(uint8_t iterator = 0 ; iterator < sizeof(msgToSend) ; iterator++) msgToSend[iterator] = '\0';
+
   while( booleanStringFinished == false ){
     display.clearDisplay();
     timeDelay();

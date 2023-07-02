@@ -45,14 +45,9 @@ struct storedIRDataStruct {
   // extensions for sendRaw
   uint8_t rawCode[RAW_BUFFER_LENGTH]; // The durations if raw
   uint8_t rawCodeLength; // The length of the code
-};
 
-
-//Estructura de almacenamiento de datos del infrarrojo (con el nombre del subperfil)
-struct Keep_t : public storedIRDataStruct{
   char nameSubProfile[30]; //Nombre del subperfil
 };
-
 
 void infraredBegin(void){
 
@@ -112,7 +107,7 @@ void Receive_stop(void){
 
 }
 
-void sendCode(std::shared_ptr<Keep_t> aIRDataToSend) {
+void sendCode(std::shared_ptr<storedIRDataStruct> aIRDataToSend) {
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
   if (aIRDataToSend->receivedIRData.protocol == UNKNOWN /* i.e. raw */) {
     // Assume 38 KHz
@@ -129,7 +124,7 @@ void sendCode(std::shared_ptr<Keep_t> aIRDataToSend) {
 }
 
 // Stores the code for later playback
-storedIRDataStruct storeCode(void) {
+storedIRDataStruct storeCode(const char* subprofileName) {
 
   storedIRDataStruct sStoredIRData;
 
@@ -164,6 +159,41 @@ storedIRDataStruct storeCode(void) {
  * 
  * * * * * * * * * * * * * * * * * * * * * * * *
 ***********************************************/
+
+//DEBUGGING!!!!!!!!!!!!!!!!!!!!!
+void julio(){
+  Receive_start();
+  //Pido la informacion a la entrada
+  while( [&]() -> bool {
+    
+    while( Receive_check() ){
+        //Logica de si se llegara a presionar algun boton
+    if(  !digitalRead(PIN::Buttons::BACK)   ||
+          !digitalRead(PIN::Buttons::UP)     ||
+          !digitalRead(PIN::Buttons::DOWN)   ||
+          !digitalRead(PIN::Buttons::LEFT)   ||
+          !digitalRead(PIN::Buttons::RIGHT)  ||
+          !digitalRead(PIN::Buttons::ENTER)    ) {
+        Receive_stop();
+        delay(500); //Rebote del fenomeno del pulsador
+        return EXIT_FAILURE; //Failure, se cancelo
+        }
+    }
+    Receive_stop();
+    delay(500); //Rebote del fenomeno del pulsador
+    return EXIT_SUCCESS; //Failure, se cancelo
+
+  }()); //Failure, Retorna que el usuario canceló la recepcion de la señal.
+
+  std::shared_ptr<storedIRDataStruct> pepe (new storedIRDataStruct);
+  storedIRDataStruct kgkg = storeCode("Julian");
+  memcpy(pepe.get() , &kgkg , sizeof(storedIRDataStruct) );
+  sendCode(pepe);
+  Serial.println("Code Sended");
+
+}
+
+//--------------------------------
 
 void SDBegin(void){
 
@@ -220,7 +250,7 @@ void SDBegin(void){
 
 std::vector<std::string> Profiles::showProfiles_(void){
  
-  std::vector<std::string> takingProfilesName;
+  std::vector<std::string> profilesName;
 
   File root = SD.open("/"); // Abro como Root 
   File archivo; //Flujo para el movimiento entre los archivos
@@ -241,7 +271,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
         Serial.print(F("Perfil: "));
         Serial.println(F(archivo.name()));  //Imprimo el nombre
 
-        takingProfilesName.push_back( [=] () -> std::string {
+        profilesName.push_back( [=] () -> std::string {
           std::string name = archivo.name();
           const size_t position = name.find( '.' );
           
@@ -261,7 +291,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
   
   archivo.close();
   root.close();
-  return takingProfilesName;
+  return profilesName;
 
 }
 
@@ -285,47 +315,37 @@ void Profiles::deleteProfile_(const char* name){
 
 }
 
-std::shared_ptr<Keep_t> SubProfiles::convertIRData(storedIRDataStruct storedIRData, const char* subProfileName){
+void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protocol, const char* profileName){
 
-  std::shared_ptr<Keep_t> storedIRDataWithStr;
+  //switch (protocol){
+    
+    //case Protocols::IR:
+      auto IRData = storeCode(subProfileName);
 
-  //Logica de copiado de una estructura a otra sumandole el nombre del subperfil
-  storedIRDataWithStr->receivedIRData = storedIRData.receivedIRData; // Copio estructura de datos
-  const size_t rawCodeSize = sizeof(storedIRData.receivedIRData);
-  for( size_t iterator = 0U ; iterator < rawCodeSize ; (storedIRDataWithStr->receivedIRData = storedIRData.receivedIRData) )
-    storedIRDataWithStr->rawCode[iterator] = storedIRData.rawCode[iterator];
-  storedIRDataWithStr->rawCodeLength = storedIRData.rawCodeLength;
+      File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
-  strcpy( storedIRDataWithStr->nameSubProfile , subProfileName ); //Copio string, nombre del subperfil
+      //Si el archivo no esta disponible...
+      if(!root.available()){
+        Serial.println(F("The file of the profile cannot be open successfully"));
+        return; 
+      }
 
-  return storedIRDataWithStr;
-  
-}
+      //Voy hasta el final del archivo
+      root.seek(EOF);
+      //Escritura de la informacion en el archivo
+      root.write((uint8_t*) &IRData, sizeof(IRData) );
+      root.close();
 
-void SubProfiles::createSubProfile_(const char* subProfileName, const char* typeProtocolSignal, const char* profileName){
+    //break;
 
-  if( strcmp (typeProtocolSignal , "IR") == 0) {
+    //case Protocols::WIFI:
+    //break;
 
-  auto storedIRDataWithStr = convertIRData( storeCode() , subProfileName);
+    //case Protocols::BLUETOOTH:
+    //break;
 
-  File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
-  //Si el archivo no esta disponible...
-  if(!root.available()){
-    Serial.println(F("The file cannot be open successfully"));
-    return; 
-  }
-
-  //Voy hasta el final del archivo
-  root.seek(EOF);
-  //Escritura de la informacion en el archivo
-  root.write((uint8_t*) &storedIRDataWithStr, sizeof(storedIRDataWithStr) );
-  root.close();
-
-  }
-
-  // if( strcmp (typeProtocolSignal == "WIFI") == 0) {}
-  // if( strcmp (typeProtocolSignal == "BLUETOOTH") == 0) {}
+  //}
 
 }
 
@@ -344,12 +364,12 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   }
 
   //Si es un archivo...
-  Serial.print(F("Perfil: "));
-  Serial.println(root.name());  //Imprimo el nombre
+  Serial.println(F("Perfil: "));
+  Serial.println(F(root.name()));  //Imprimo el nombre
   
   Serial.println(F("Subperfiles:"));
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras o hubo un error inesperado
-  if( ( sizeof(root.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(root.size()) % sizeof(storedIRDataStruct) ) != 0U){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
     return subProfilesName; //Failure
@@ -357,26 +377,26 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   }
 
   //Cantidad de perfiles que se encuentran almacenados
-  const size_t && structPerFile = sizeof(root.size()) / sizeof(Keep_t);
+  const size_t && structPerFile = sizeof(root.size()) / sizeof(storedIRDataStruct);
 
   //Reservo memoria para el movimiento de la informacion
-  Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
+  storedIRDataStruct* retiredData = new storedIRDataStruct[structPerFile]; 
 
   for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
     //Luego eliminar este If cuando se permita que el nombre del subperfil sea variable. Esto puede causar problemas...
-    if(root.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(root.read( (uint8_t *) (&retiredData[iterator]) , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
       Serial.println(F("Unsuccessfull reading subProfile"));
       continue;
     }
     
     //Imprimo en el Serial el nombre del subperfil
     Serial.print(F("Nombre del subperfil extraido del almacenamiento: "));
-    Serial.println(retiredFromSD[iterator].nameSubProfile);
-    subProfilesName.push_back(retiredFromSD[iterator].nameSubProfile);
+    Serial.println(retiredData[iterator].nameSubProfile);
+    subProfilesName.push_back(retiredData[iterator].nameSubProfile);
 
   }
 
-  delete[] retiredFromSD;
+  delete[] retiredData;
 
   root.close();
 
@@ -384,7 +404,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
  
 }
 
-std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
+std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
 
   //Abro el archivo del perfil dado en modo Lectura
   File root = SD.open(profilePath(profileName), FILE_READ);
@@ -400,7 +420,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
-  if( ( sizeof(root.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(root.size()) % sizeof(storedIRDataStruct) ) != 0){ 
 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information"));
     return nullptr; //Failure
@@ -408,14 +428,14 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
   }
 
   //Numero de subperfiles que se encuentran en el archivo
-  const size_t && structPerFile = sizeof(root.size()) / sizeof(Keep_t);
+  const size_t && structPerFile = sizeof(root.size()) / sizeof(storedIRDataStruct);
 
   //Reservo memoria para la inforamacion retirada del almacenamiento
-  std::shared_ptr<Keep_t[]> retiredFromSD ( new Keep_t[structPerFile] );
+  std::shared_ptr<storedIRDataStruct[]> retiredFromSD ( new storedIRDataStruct[structPerFile] );
 
   for( uint16_t iterator = 0U ; iterator < structPerFile; iterator++ ){
 
-    if(root.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(root.read( (uint8_t *) (&retiredFromSD[iterator]) , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
       
       Serial.println(F("Unsuccessfull reading from File"));
 
@@ -423,7 +443,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
 
     else if(strcmp( retiredFromSD[iterator].nameSubProfile , subProfileName ) == EXIT_SUCCESS){
       
-      std::shared_ptr<Keep_t> catchIt (&retiredFromSD[iterator]);
+      std::shared_ptr<storedIRDataStruct> catchIt (&retiredFromSD[iterator]);
       
       return catchIt; //Success
     }
@@ -439,7 +459,7 @@ std::shared_ptr<Keep_t> SubProfiles::ReturnSubProfile(const char* profileName, c
 
 }
 
-void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName){
+void SubProfiles::storeSubProfile(std::shared_ptr<storedIRDataStruct> storeIR, const char* profileName){
 
   //Abro el archivo del perfil a almacenar el subperfil dado (abierto en modo escritura)
   File root = SD.open( profilePath(profileName) , FILE_WRITE );
@@ -454,7 +474,7 @@ void SubProfiles::storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* p
   root.seek(EOF);
 
   //Escribo en el perfil la informacion dada
-  root.write( (uint8_t*) storeIR.get() , sizeof(Keep_t) ); 
+  root.write( (uint8_t*) storeIR.get() , sizeof(storedIRDataStruct) ); 
   
   root.close();
 
@@ -472,7 +492,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
-  if( ( sizeof(rootWriteOld.size()) % sizeof(Keep_t) ) != 0){ 
+  if( ( sizeof(rootWriteOld.size()) % sizeof(storedIRDataStruct) ) != 0){ 
     Serial.println(F("Profile has wrong data stored, doesn't match with normalized information."));
     return;
     /*En caso de problemas, si hay algo que no va bien retorna "nullptr" para evitar errores futuros en caso de seguir leyendo el almacenamiento
@@ -481,14 +501,14 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   }
 
   //Numero total de subperfiles almacenados
-  const size_t structPerFile = sizeof( rootWriteOld.size() ) / sizeof(Keep_t);
+  const size_t structPerFile = sizeof( rootWriteOld.size() ) / sizeof(storedIRDataStruct);
 
   //Reservo Memoria para buscar la informacion a eliminar
-  Keep_t* retiredFromSD = new Keep_t[structPerFile]; 
+  storedIRDataStruct* retiredFromSD = new storedIRDataStruct[structPerFile]; 
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
 
-    if(rootWriteOld.read( (uint8_t *) &retiredFromSD[iterator] , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(rootWriteOld.read( (uint8_t *) &retiredFromSD[iterator] , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
 
       Serial.print(F("Unsuccessfull reading from: "));
       Serial.println(profilePath(profileName));
@@ -508,7 +528,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
 
   for( uint16_t iterator = 0 ; iterator < structPerFile; iterator++ ){
 
-    if(rootWriteOld.read( (uint8_t *) &retiredFromSD[iterator] , sizeof(Keep_t) ) != sizeof(Keep_t) ){
+    if(rootWriteOld.read( (uint8_t *) &retiredFromSD[iterator] , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
 
       Serial.print(F("Unsuccessfull reading from: "));
       Serial.println(TRANSFER_FILE_DIRANDNAME);

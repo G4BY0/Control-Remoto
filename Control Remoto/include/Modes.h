@@ -10,6 +10,8 @@
 #ifndef MODES_H
 #define MODES_H
 
+#define URL_USER_HELP "https://drive.google.com/drive/folders/1oE-sRMhUQJEPQ91XLznxZHdQJ9x4quRs?usp=drive_link"
+
 #include "Interface.h"
 
 namespace MODE{

@@ -29,10 +29,6 @@
 struct storedIRDataStruct;
 
 
-//Es el equivalente de "struct storedIRDataStruct" + nombre del subperfil {char[20]}
-struct Keep_t;
-
-
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
 void infraredBegin(void);
@@ -57,12 +53,16 @@ void Receive_stop(void);
     @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(std::shared_ptr<Keep_t> aIRDataToSend);
+void sendCode(std::shared_ptr<storedIRDataStruct> aIRDataToSend);
 
 /*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
     @returns Retorna puntero inteligente de accesso unico del objeto de la informacion recibida
     @note Retorna la copia de datos
 */
-storedIRDataStruct storeCode(void);
+storedIRDataStruct storeCode(const char* subprofileName);
+
+//DEBUGGING!!!!!!
+void julio();
+//------------------
 
 #endif //Infrared_h

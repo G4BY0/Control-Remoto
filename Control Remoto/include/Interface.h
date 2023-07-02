@@ -14,12 +14,13 @@
  
 #include <stdint.h>
 #include <Arduino.h>
+#include <SD.h>
+#include <vector>
 #include <SPI.h>  //SPI
 #include <Wire.h> //I2C
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include <SD.h>
-#include <vector>
+#include <QRRCODE.h>
 
 #include "PIN.h"
 #include "Cursor.h"
@@ -103,7 +104,6 @@ namespace Interface {
   */
   void deleteSubProfile(void);
   
-
   /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
       \return   '1' Si el usuario canceló el modo.
                 '0' Si cumplió correctamente.
@@ -113,9 +113,10 @@ namespace Interface {
 
   /*! \brief    Muestra las instrucciones de como se usa el dispositivo 
       \note   El usuario debe scanear un QR que lo regirira a una web */
-  void help(void);
+  void help(const char* text);
 
 
 };
+
 
 #endif //Interface_h

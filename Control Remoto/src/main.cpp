@@ -22,19 +22,16 @@ void setup(){
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
     auto UsedCompiler = [&]() -> void {
-    Serial.println(F("Tipo de compilador Utilizado: "));
+    Serial.println(F("Compilado el: " __DATE__ "\nTipo de compilador Utilizado: "));
     #if defined(__GNUC__)
         Serial.println(F("GNU :)"));
-        Serial.print(F("Version del compilador de GNU es: "));
-        Serial.println(__GNUC__);
+        Serial.print(F("Version del compilador de GNU es: ")); 
+        Serial.println(F(__GNUC__));
     #elif defined(__clang__)
         Serial.println(F("CLANG !!"));
-        Serial.print(F("Version Principal del compilador de CLANG es: "));
-        Serial.println(__clang_major__);
-        Serial.print(F("Version Secundaria del compilador de CLANG es: "));
-        Serial.println(__clang_minor__);
-        Serial.print(F("Nivel de parche del compilador de CLANG: "));
-        Serial.println(__clang_patchlevel__);
+        Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));
+        Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));
+        Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));
     #else
         Serial.println(F("Generico"));
     #endif
@@ -52,8 +49,8 @@ void setup(){
     delay(4000); // To be able to connect Serial monitor after reset or power up and before first print out. Do not wait for an attached Serial Monitor!
     #endif
 
-    //Comentar en Caso de que no Sea necesario ver la version del Compilador Utilizado
-    // UsedCompiler();
+    //Descomentar en Caso de querer saber cual fue el compilador utilizado
+    //UsedCompiler();
 
     //Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado"));
@@ -72,4 +69,4 @@ void setup(){
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){ hub__(); }
+void loop(){ julio(); }

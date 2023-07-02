@@ -147,12 +147,12 @@ class WritterV2{
   dataPackage data;
 
   //Pins
-  const int leftPin = PIN::Buttons::LEFT;
-  const int rightPin = PIN::Buttons::RIGHT;
-  const int upPin = PIN::Buttons::UP;
-  const int downPin = PIN::Buttons::DOWN;
-  const int selectPin = PIN::Buttons::ENTER;
-  const int switchPin = 7;
+  const uint8_t leftPin = PIN::Buttons::LEFT;
+  const uint8_t rightPin = PIN::Buttons::RIGHT;
+  const uint8_t upPin = PIN::Buttons::UP;
+  const uint8_t downPin = PIN::Buttons::DOWN;
+  const uint8_t selectPin = PIN::Buttons::ENTER;
+  const uint8_t switchPin = 7;
 
   //timeDelay
   int buttonDelay = 0;
@@ -176,7 +176,7 @@ class WritterV2{
   //drawText
   int index = 0;
   //Vector de longitud fija en el que el usuario escribira el String pedido
-  char msgToSend[8] = {'\0'}; //Inicializa todos los miembros como EOF
+  char msgToSend[30];
   int num = 0;
 
   // - Creo que esto se podria eliminar porque no tiene uso alguno

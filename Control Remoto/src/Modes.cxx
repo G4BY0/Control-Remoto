@@ -34,7 +34,7 @@ void MODE::addSubProfile__(void)   { Interface::createSubProfile();  }
 void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile();  }
 
 #pragma region Developing-Future
-void MODE::help__(void)            { Interface::help(); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
+void MODE::help__(void)            { Interface::help(URL_USER_HELP); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
 #pragma endregion //Developing-Future (Opciones adicionales en un futuro)
 
 #pragma region Shutdown

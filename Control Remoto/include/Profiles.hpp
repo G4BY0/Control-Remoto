@@ -33,6 +33,13 @@
   #define FAILURE EXIT_FAILURE
 #endif
 
+enum class Protocols{
+    IR,                 //INFRARED
+    WIFI,               //WIFI
+    BLUETOOTH           //BLUETOOTH
+};
+
+
 //  Sd2Card card;
 //  SdVolume volume;
 //  SdFile root;
@@ -61,15 +68,7 @@ namespace Profiles{
 namespace SubProfiles{
 
     using ::storedIRDataStruct;
-    using ::Keep_t;
-
-    /*! \brief Retorna puntero inteligente de un tipo de estructura que es = Irdata + Nombre del Subperfil
-     *  \param storedIRData Recibe puntero inteligente de la informacion recibida
-     *  \param subProfileName Nombre de subperfil a añadir
-     *  \note Recordar eliminar la memoria dinamica reservada luego de su uso
-     *  \returns Tipo de estructura con el agregado mencionado
-    */
-    std::shared_ptr<Keep_t> convertIRData(storedIRDataStruct storedIRData, const char* subProfileName);
+    using ::Protocols;
 
     /*! \deprecated En desuso porque no se usara en la version Pre-Alpha
      *  \brief Crea un subperfil para un perfil
@@ -77,7 +76,7 @@ namespace SubProfiles{
      *  \param storedIRData Portador de la informacion de la señal
      *  \param profileName Nombre del perfil en el que quiere guardar el subperfil
     */
-    void createSubProfile_(const char* subProfileName, const char* typeProtocolSignal, const char* profileName);
+    void createSubProfile_(const char* subProfileName, Protocols protocol , const char* profileName);
  
     /*! \brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  \param name Nombre del perfil
@@ -92,13 +91,13 @@ namespace SubProfiles{
      *  \returns Puntero inteligente de la estructura de datos del subperfil solicitado
      *  \note Si hay un problema o no lo encuentra, el puntero apuntara 'nullptr'
     */
-    std::shared_ptr<Keep_t> ReturnSubProfile(const char* profileName, const char* subProfileName);
+    std::shared_ptr<storedIRDataStruct> ReturnSubProfile(const char* profileName, const char* subProfileName);
 
     /*! \brief Guarda en el almacenamiento el subPerfil recibido
      *  \param  storeIR Puntero Inteligente a estructura Normalizada con los datos a almacenar
      *  \param profileName nombre del perfil en el que se almacenará el subperfil
     */
-    void storeSubProfile(std::shared_ptr<Keep_t> storeIR, const char* profileName);
+    void storeSubProfile(std::shared_ptr<storedIRDataStruct> storeIR, const char* profileName);
 
     /*! \brief  Elimina en el almacenamiento el subPerfil recibido
      *  \param profileName Nombre del perfil en el que se encontrara el subperfil
