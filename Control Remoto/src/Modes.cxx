@@ -27,18 +27,26 @@ void MODE::hub__(void){
 
 }
 
-void MODE::profiles__(void)        { Interface::profiles();          }
-void MODE::addProfile__(void)      { Interface::addProfile();        }
-void MODE::deleteProfile__(void)   { Interface::deleteProfile();     }
-void MODE::addSubProfile__(void)   { Interface::createSubProfile();  }
-void MODE::deleteSubProfile__(void){ Interface::deleteSubProfile();  }
+void MODE::profiles__(void)           { Interface::profiles();          }
+void MODE::addProfile__(void)         { Interface::addProfile();        }
+void MODE::deleteProfile__(void)      { Interface::deleteProfile();     }
+void MODE::addSubProfile__(void)      { Interface::createSubProfile();  }
+void MODE::deleteSubProfile__(void)   { Interface::deleteSubProfile();  }
 
-#pragma region Developing-Future
-void MODE::help__(void)            { Interface::help(URL_USER_HELP); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
-#pragma endregion //Developing-Future (Opciones adicionales en un futuro)
+#define URL_USER_HELP "https://drive.google.com/file/d/1hc0Sb17FSV1dKWV1zGJdsFk9_PXR-PD6/view"
+void MODE::help__(void)               { Interface::help(URL_USER_HELP); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
 
-#pragma region Shutdown
-void Shutdown::displayService(void){ /*Aun no Desarrollado*/ }
-void Shutdown::SDService(void)     { /*Aun no Desarrollado*/ }
-void Shutdown::buttonsWaiting(void){ /*Aun no Desarrollado*/ }
-#pragma endregion //Shutdown
+#pragma region Sleep
+void MODE::Sleep::now(void)           { Sleep::displayService(); Sleep::SDService(); Sleep::buttonsWaiting(); }
+void MODE::Sleep::displayService(void){ display.clearDisplay(); display.display(); }
+void MODE::Sleep::SDService(void)     { SD.end(); }
+void MODE::Sleep::buttonsWaiting(void){ 
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+}
+#pragma endregion //Sleep

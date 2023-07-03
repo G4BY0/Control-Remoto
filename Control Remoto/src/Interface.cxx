@@ -76,7 +76,7 @@ void Interface::profiles(void){
   auto profiles_ptr = Profiles::showProfiles_();
 
   if ( profiles_ptr.empty() == true) {
-    Interface::nonProfiles();
+    Interface::EmergencyCalls::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
@@ -102,25 +102,27 @@ void Interface::addProfile(void){
   //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
   if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
 
+  //Creo el perfil en el almacenamiento con el nombre dado Y pregunto si no se cumplió correctamente...
+  if(! Profiles::createProfile_(profileName.c_str()) ) {
+    Interface::EmergencyCalls::noProfileCreated();
+    return;
+  }
+
   //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
-  display.setTextColor(SH110X_WHITE);
   display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
 
   //Le digo al usuario por pantalla si desea agregar un Subperfil en este momento
   display.setCursor(5,10);
   display.println(F("Do you want to add \n a Subprofile Now?"));
-
   display.setCursor(10,30);
   display.println(F("Press Enter To Continue"));
   display.setCursor(10,40);
   display.println(F("Press any other to Cancel"));
 
   display.display();
-
-  //Creo el perfil en el almacenamiento con el nombre dado
-  Profiles::createProfile_(profileName.c_str());
 
   //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
   while(1){
@@ -137,16 +139,13 @@ void Interface::addProfile(void){
       return;
     }
   }
-    
-  display.clearDisplay();
-  display.display();
 
   //Recbido del usuario (A traves del writter) el nombre del nuevo subperfil
   std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
   if(subProfileName.c_str() == nullptr ) return; // SI no recibo ningun nombre...
 
   if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
-  
+  yield();
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
   SubProfiles::createSubProfile_(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
@@ -159,7 +158,7 @@ void Interface::deleteProfile(void){
   
   //Si recibo el vector vacio, hubo un problema
   if (names.empty() == true) {
-    Interface::nonSubProfiles();
+    Interface::EmergencyCalls::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
@@ -179,7 +178,7 @@ void Interface::subProfiles(const char *profileName_){
   
   // Si no hay ningun subperfil...
   if (subprofiles.empty() == true) {
-    Interface::nonSubProfiles();
+    Interface::EmergencyCalls::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
     
   }
@@ -201,77 +200,13 @@ void Interface::subProfiles(const char *profileName_){
 
 }
 
-void Interface::nonProfiles(void){
-
-  //Establezco los parametros a utilizar para la muestra a la salida del display
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-  display.display();
-
-  //Le muestro al usuario el problema que surgio
-  Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
-  display.setCursor(0,10);
-  display.println(F("No profiles stored"));
-
-  //Le digo al usuario como terminar la ventana emergente
-  display.setCursor(0,30);
-  display.println(F("Press any button"));
-  display.setCursor(0,40);
-  display.println(F("to turn back"));
-
-  display.display();
-  
-  //Logica de si se llegara a pulsar cualquier boton
-  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
-            buttonState(PIN::Buttons::UP   ) == HIGH  ||
-            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
-            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
-            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
-            buttonState(PIN::Buttons::ENTER) == HIGH     ));
-  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
-
-}
-
-void Interface::nonSubProfiles(void){
-
-  //Establezco los parametros a utilizar para la muestra a la salida del display
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-  display.display();
-
-  //Le muestro al usuario el problema que surgio
-  Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
-  display.setCursor(0,10);
-  display.println(F("No sub-profiles stored"));
-
-  //Le digo al usuario como terminar la ventana emergente
-  display.setCursor(15,30);
-  display.println(F("Press any button"));
-  display.setCursor(25,40);
-  display.println(F("to turn back"));
-
-  display.display();
-  
-  //Logica de si se llegara a pulsar cualquier boton
-  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
-            buttonState(PIN::Buttons::UP   ) == HIGH  ||
-            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
-            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
-            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
-            buttonState(PIN::Buttons::ENTER) == HIGH     ));
-  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
-
-}
-
 void Interface::createSubProfile(void){
 
   auto namesProfile = Profiles::showProfiles_(); // Recibo del almacenamiento todos los nombres de los perfiles
   
   //Si no llegara a recibir ningun nombre de ningun perfil o si hubo un error inesperado...
   if ( namesProfile.empty() == true ) {
-    Interface::nonProfiles();
+    Interface::EmergencyCalls::nonProfiles();
     return; 
   }
 
@@ -281,7 +216,7 @@ void Interface::createSubProfile(void){
   const char* && profileSelected = cursor.getSelectedOption();
 
   //Pido la informacion a la entrada
-  if(waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
+  if(!waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
 
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
@@ -297,7 +232,7 @@ void Interface::deleteSubProfile(void){
   auto names = Profiles::showProfiles_();
 
   if ( names.empty() == true ) { //Si no recibo ningun nombre...
-    Interface::nonProfiles();
+    Interface::EmergencyCalls::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
@@ -332,15 +267,15 @@ bool Interface::waitingForIR(void){
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
 
-  display.setCursor(10,10);
-  display.print(F("Prepared to \n Receive IR\n SIGNAL. \n Waiting For \n Response... \n Press Any Botton \n To Cancel."));
+  display.setCursor(0,5);
+  display.print(F("Prepared to Receive\nIR SIGNAL.\nWaiting For\nResponse... \nPress Any Botton\nTo Cancel."));
   display.display();
 
   //Inicializo la entrada para recibir la informacion
   Serial.println(F("Start Receiving for infrared signals."));
   Receive_start();
   //Mientras el codigo recibido sea invalido...
-  while( Receive_check() ){
+  while( !Receive_check() ){
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
         buttonState(PIN::Buttons::UP)     ||
@@ -350,12 +285,12 @@ bool Interface::waitingForIR(void){
         buttonState(PIN::Buttons::ENTER)    ) {
       Receive_stop();
       delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
-      return EXIT_FAILURE; //Failure, se cancelo
+      return false; //Failure, se cancelo
       }
   }
   Receive_stop();
   delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
-  return EXIT_SUCCESS; //Recibido Correctamente
+  return true; //Recibido Correctamente
 
 }
 
@@ -399,7 +334,194 @@ void Interface::help(const char* text){
           buttonState(PIN::Buttons::LEFT)  == HIGH  ||
           buttonState(PIN::Buttons::RIGHT) == HIGH  || 
           buttonState(PIN::Buttons::ENTER) == HIGH    ));
+  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
+}
+
+void Interface::EmergencyCalls::nonProfiles(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.display();
+
+  //Le muestro al usuario el problema que surgio
+  Serial.println(F("No hay perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
+  display.setCursor(10,15);
+  display.println(F("No profiles stored"));
+
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
+  
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
+
+}
+
+void Interface::EmergencyCalls::nonSubProfiles(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.display();
+
+  //Le muestro al usuario el problema que surgio
+  Serial.println(F("No hay sub-perfiles disponibles en la SD O hubo una obstruccion al intentar hacerlo..."));
+  display.setCursor(20,10);
+  display.println(F("No sub-profiles"));
+  display.setCursor(40,20);
+  display.println(F("Stored"));
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
+  
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
   delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
 
+}
+
+void Interface::EmergencyCalls::noProfileCreated(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextColor(SH110X_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(30,10);
+  display.println(F("Couldn't Succeded "));
+  display.setCursor(20,20);
+  display.println(F("Creating The Profile"));
+
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
   
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
+
+}
+
+void Interface::EmergencyCalls::noSubProfileCreated(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextColor(SH110X_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(30,10);
+  display.println(F("Couldn't Succeded "));
+  display.setCursor(10,20);
+  display.println(F("Creating The Sub-Profile"));
+
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
+  
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
+
+}
+
+void Interface::EmergencyCalls::noProfileDeleted(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextColor(SH110X_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(30,10);
+  display.println(F("Couldn't Succeded "));
+  display.setCursor(20,20);
+  display.println(F("Deleting The Profile"));
+
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
+  
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
+
+}
+
+void Interface::EmergencyCalls::noSubProfileDeleted(void){
+
+  //Establezco los parametros a utilizar para la muestra a la salida del display
+  display.clearDisplay();
+  display.setTextColor(SH110X_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(30,10);
+  display.println(F("Couldn't Succeded "));
+  display.setCursor(10,20);
+  display.println(F("Deleting The Sub-Profile"));
+
+  //Le digo al usuario como terminar la ventana emergente
+  display.setCursor(15,40);
+  display.println(F("Press any button"));
+  display.setCursor(25,50);
+  display.println(F("to turn back"));
+
+  display.display();
+  
+  //Logica de si se llegara a pulsar cualquier boton
+  while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
+            buttonState(PIN::Buttons::UP   ) == HIGH  ||
+            buttonState(PIN::Buttons::DOWN ) == HIGH  ||
+            buttonState(PIN::Buttons::LEFT ) == HIGH  ||
+            buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+            buttonState(PIN::Buttons::ENTER) == HIGH     ));
+  delay(DEBOUNCE_TIME);  // delay para evitar pulsaciones de mas de las que el usuario no hizo voluntariamente
+
 }

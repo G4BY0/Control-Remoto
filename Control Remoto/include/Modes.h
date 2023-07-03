@@ -10,8 +10,6 @@
 #ifndef MODES_H
 #define MODES_H
 
-#define URL_USER_HELP "https://drive.google.com/drive/folders/1oE-sRMhUQJEPQ91XLznxZHdQJ9x4quRs?usp=drive_link"
-
 #include "Interface.h"
 
 namespace MODE{
@@ -39,10 +37,12 @@ namespace MODE{
     void help__(void);
     #pragma endregion
     
-};
+    #pragma region Sleep
+    namespace Sleep{
 
-#pragma region Shutdown
-namespace Shutdown{
+    /*! @brief Stoppea todos los servicios y pone en modo sleeping a la placa de desarrollo
+        @note Aun no Desarrollado */
+    void now(void);
 
     /*! @brief Stoppea el servicio visual
         @note Aun no Desarrollado */
@@ -55,8 +55,9 @@ namespace Shutdown{
     /*! @brief Prepara los botones en espera hasta alguna respuesta (presionando rompe el loop)
         @note Aun no Desarrollado */
     void buttonsWaiting(void);
+    #pragma endregion //Shutdown
 
+    };
 };
-#pragma endregion //Shutdown
 
-#endif
+#endif // Modes_h

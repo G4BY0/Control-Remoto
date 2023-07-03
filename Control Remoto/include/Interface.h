@@ -25,13 +25,17 @@
 #include "PIN.h"
 #include "Cursor.h"
 #include "Infrared.h"
-#include "Profiles.hpp"
+#include "Profiles.h"
+
+//Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
+extern Adafruit_SH1106G display;
 
 //Macros para el desarrollo del sistema
 #define INFINITE_LOOPING 0x1
 #define SYSTEM_STRING_ERROR "SystemError"
 
-//Display OLED Adafruit_SH110X
+//  DISPLAY OLED MACROS!
+// Display OLED Adafruit_SH110X
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define I2C_ADDRESS 0x3c // initialize with the I2C addr 0x3C Typically eBay OLED's
 // #define i2c_Address 0x3d //initialize with the I2C addr 0x3D Typically Adafruit OLED's
@@ -41,9 +45,6 @@
 #define BLINK_TIME 500 //Exclusivo para hacer parpadear un texto
 
 //Pulsadores
-
-
-#define buttonState_function_Macro
 /*! \brief Estado logico de la botonera
   \param PIN_BUTTON PIN de la placa conectada al boton
   \note Instalacion PullUP
@@ -87,14 +88,6 @@ namespace Interface {
   */
   void subProfiles(const char *profileName_);
 
-  /*! \brief    Interfaz del modo "No hay perfiles almacenados" a la salida del display
-  */
-  void nonProfiles(void);
-
-  /*! \brief    Interfaz del modo "No hay sub-perfiles almacenados" a la salida del display
-  */
-  void nonSubProfiles(void);
-
   
   /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
@@ -105,16 +98,50 @@ namespace Interface {
   void deleteSubProfile(void);
   
   /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
-      \return   '1' Si el usuario canceló el modo.
-                '0' Si cumplió correctamente.
+      \return   'true' Si cumplió correctamente.
+                'false' Si el usuario canceló el modo.
       \note Entra en bucle hasta vericar que el codigo recibido es correcto.
   */
   bool waitingForIR(void);
 
-  /*! \brief    Muestra las instrucciones de como se usa el dispositivo 
+  /*! \brief    Muestra las instrucciones de como se usa el dispositivo
+      \param  text Recibe String que se codificara en el codigo QR 
       \note   El usuario debe scanear un QR que lo regirira a una web */
   void help(const char* text);
 
+  namespace EmergencyCalls {
+
+    /*! \brief  Ventana Emergente al display que indica: "No hay perfiles almacenados" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void nonProfiles(void);
+
+    /*! \brief  Ventana Emergente al display que indica: "No hay sub-perfiles almacenados" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void nonSubProfiles(void);
+
+    /*! \brief  Ventana Emergente al display que indica: "No se pudo crear el Perfil" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void noProfileCreated(void);
+
+    /*! \brief  Ventana Emergente al display que indica: "No se pudo crear el Sub-Perfil" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void noSubProfileCreated(void);
+
+    /*! \brief  Ventana Emergente al display que indica: "No se pudo borrar el Perfil" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void noProfileDeleted(void);
+
+    /*! \brief  Ventana Emergente al display que indica: "No se pudo borrar el Sub-Perfil" a la salida del display
+        \note Tambien avisa por Serial
+    */
+    void noSubProfileDeleted(void);
+
+  };
 
 };
 

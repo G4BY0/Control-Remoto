@@ -19,10 +19,12 @@ using namespace MODE; // Implemento los modos
 void setup(){
 
     Serial.begin(115200);
+    // Just to know which program is running on my Arduino
+    Serial.println(F("START " __FILE__ " from " __DATE__ ));
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)
     auto UsedCompiler = [&]() -> void {
-    Serial.println(F("Compilado el: " __DATE__ "\nTipo de compilador Utilizado: "));
+    Serial.println(F("Tipo de compilador Utilizado: "));
     #if defined(__GNUC__)
         Serial.println(F("GNU :)"));
         Serial.print(F("Version del compilador de GNU es: ")); 
@@ -69,4 +71,4 @@ void setup(){
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void loop(){ julio(); }
+void loop(){ hub__(); }

@@ -171,7 +171,7 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
-            Serial.println(F("snd was pressed... \n String Finished!"));
+            Serial.println(F("snd was pressed... \nString Finished!"));
             booleanStringFinished = true;
             return;
 
@@ -410,7 +410,7 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
-            Serial.println(F("snd was pressed... \n String Finished!"));
+            Serial.println(F("snd was pressed... \nString Finished!"));
             booleanStringFinished = true;
             return;
           }
@@ -648,7 +648,7 @@ void WritterV2::drawText(void) {
             select = false;
             transmit = true;
             num++;
-            Serial.println(F("snd was pressed... \n String Finished!"));
+            Serial.println(F("snd was pressed... \nString Finished!"));
             booleanStringFinished = true;
             return;
           }

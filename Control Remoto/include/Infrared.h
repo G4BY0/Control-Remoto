@@ -12,22 +12,38 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <memory>
+#include <algorithm>
 #include "PIN.h"
+#include <IRsend.h>
+#include <IRrecv.h>
+#include <IRremoteESP8266.h> // Tambien tiene soporte para placas espressif32!
+#include <IRutils.h>
 
-#define IR_RECEIVE_PIN  PIN::InfraredReceiver::DATA
-#define IR_SEND_PIN     PIN::InfraredTransmitter::DATA
-
-#ifndef SUCCESS
-  #define SUCCESS EXIT_SUCCESS
-#endif
-#ifndef FAILURE
-  #define FAILURE EXIT_FAILURE
-#endif
+// The GPIO an IR detector/demodulator is connected to. Recommended: 14 (D5)
+// Note: GPIO 16 won't work on the ESP8266 as it does not have interrupts.
+// Note: GPIO 14 won't work on the ESP32-C3 as it causes the board to reboot.
+constexpr uint16_t kRecvPin = 15U;
+// GPIO to use to control the IR LED circuit. Recommended: 4 (D2).
+constexpr uint16_t kIrLedPin = 4U;
+// The Serial connection baud rate.
+// NOTE: Make sure you set your Serial Monitor to the same speed.
+constexpr uint32_t kBaudRate = 115200;
+// As this program is a special purpose capture/resender, let's use a larger
+// than expected buffer so we can handle very large IR messages.
+// i.e. Up to 512 bits.
+constexpr uint16_t kCaptureBufferSize = 1024U;
+// kTimeout is the Nr. of milli-Seconds of no-more-data before we consider a
+// message ended.
+constexpr uint8_t kTimeout = 50U;  // Milli-Seconds
+// kFrequency is the modulation frequency all messages will be replayed at.
+constexpr uint16_t kFrequency = 38000;  // in Hz. e.g. 38kHz.
 
 // Storage for the recorded code
-//Estructura de almacenamiento de datos del infrarrojo (sin el nombre del subperfil)
-struct storedIRDataStruct;
-
+// Estructura de almacenamiento de datos del infrarrojo
+struct storedIRDataStruct {
+  decode_results results;
+  char nameSubProfile[30] = {'\0'}; // Nombre del subperfil + Inicializacion
+};
 
 /*! @brief Inicializacion de infrarrojos
     @note Arduino por defecto establece como entrada los pines digitales*/
@@ -53,16 +69,12 @@ void Receive_stop(void);
     @param aIRDataToSend recibe estructura con la data de la señal
     @note usara la estructura recibida referencia para el envio de la informacion
 */
-void sendCode(std::shared_ptr<storedIRDataStruct> aIRDataToSend);
+void sendCode(std::shared_ptr<storedIRDataStruct> IRData);
 
 /*! @brief Hace una copia de datos del infrarrojo usando lo que tiene guardado la instancia IrReceiver
     @returns Retorna puntero inteligente de accesso unico del objeto de la informacion recibida
     @note Retorna la copia de datos
 */
-storedIRDataStruct storeCode(const char* subprofileName);
-
-//DEBUGGING!!!!!!
-void julio();
-//------------------
+std::shared_ptr<storedIRDataStruct> storeCode( const char* subprofileName );
 
 #endif //Infrared_h
