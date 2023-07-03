@@ -12,6 +12,23 @@
 #include <Wire.h> // I2C
 #include "Modes.h"
 
+/*
+#if defined ( ESP32 ) || defined( ESP8266 )
+#include <esp32-hal-wdt.h>
+void reset() {
+    wdtEnable(0);  // Habilita el watchdog con un tiempo de espera de 0 (reinicio inmediato)
+    while (true);  // Bucle infinito para permitir el reinicio
+}
+#elif defined(__AVR__)
+#include <avr/wdt.h> // Para la Utilizacion del Watch Dog
+//Timer Watch Dog
+void reset() {
+  wdt_enable(WDTO_15MS);  // Habilita el temporizador de reinicio
+  while (true) {}  // Bucle infinito para permitir el reinicio
+}
+#endif
+*/
+
 SPIClass spi;
 
 using namespace MODE; // Implemento los modos
@@ -41,7 +58,8 @@ void setup(){
 
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
-
+    spi.begin();
+    
     while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
     }

@@ -40,6 +40,9 @@ namespace MODE{
     #pragma region Sleep
     namespace Sleep{
 
+    //Apunta a la primera posicion de memoria '0' que es el inicio del programa
+    void(*resetNOW) (void) = 0;
+
     /*! @brief Stoppea todos los servicios y pone en modo sleeping a la placa de desarrollo
         @note Aun no Desarrollado */
     void now(void);

@@ -14,6 +14,7 @@
 
 #include <stdint.h>
 
+#define ESP_BOARDS defined ( ESP32 ) || defined( ESP8266 )
 
 #if defined ( ESP32 ) 
 //Placa actualmente en uso y usada para el debugging del proyecto

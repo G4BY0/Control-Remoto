@@ -51,7 +51,7 @@ uint8_t Interface::hub(void){
   display.setTextColor(SH110X_WHITE);
   
   //Opciones del menu Principal/Hub
-  std::vector<std::string> strings  = {"PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP"};
+  std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SLEEP" };
 
 
   Cursor cursor(strings,&display);
@@ -176,18 +176,29 @@ void Interface::subProfiles(const char *profileName_){
   // Pido del almacenamiento los nombres de los subperfiles del perfil dado
   auto subprofiles = SubProfiles::showSubProfiles(profileName_); 
   
+  subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" );
+  subprofiles.insert(  subprofiles.begin() , "DELETE SUBPROFILE" );
+
+  /*
   // Si no hay ningun subperfil...
   if (subprofiles.empty() == true) {
     Interface::EmergencyCalls::nonSubProfiles();
     return; // El puntero es nulo, salir de la función
     
   }
+  */
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
   Cursor cursor( subprofiles ,&display); 
   const char* subprofiles_selected = cursor.getSelectedOption();
   if(subprofiles_selected == nullptr) return; // Si no se selecciono ninguno...
-  
+
+  if(subprofiles_selected == "ADD SUBPROFILE")
+  Interface::addProfile();
+
+  if(subprofiles_selected == "DELETE SUBPROFILE")
+  Interface::deleteProfile();
+
   // Informacion a enviar a la salida
   auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
 
