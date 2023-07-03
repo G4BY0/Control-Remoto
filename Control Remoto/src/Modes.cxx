@@ -21,6 +21,7 @@ void MODE::hub__(void){
     case 4:     deleteSubProfile__();       break; //Eliminar Subperfil de un Perfil dado
     #pragma endregion
     case 5:     help__();                   break; //Entorno de Ayuda al usuario
+    case 6:     Sleep::now();               break;
     default:                                break; //IGNORE
 
   }
@@ -37,7 +38,22 @@ void MODE::deleteSubProfile__(void)   { Interface::deleteSubProfile();  }
 void MODE::help__(void)               { Interface::help(URL_USER_HELP); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
 
 #pragma region Sleep
-void MODE::Sleep::now(void)           { Sleep::displayService(); Sleep::SDService(); Sleep::buttonsWaiting(); }
+void MODE::Sleep::now(void)           { 
+  Sleep::displayService(); Sleep::SDService(); Sleep::buttonsWaiting(); 
+  //Inicializacion del sistema del display
+  displayBegin();     Serial.println(F("Display Inicializado"));
+  
+  //Inicializacion del sistema de botones
+  buttonsBegin();     Serial.println(F("Botonera Inicializada"));
+  
+  //Inicializacion del sistema de almacenamiento
+  SDBegin();          Serial.println(F("Almacenamiento Inicializado"));
+  
+  //Inicializacion del sistema del infrarrojo
+  infraredBegin();    Serial.println(F("Infrared Inicializado"));
+  //Espero a que todos los procesos terminen para inicializar
+  yield();
+}
 void MODE::Sleep::displayService(void){ display.clearDisplay(); display.display(); }
 void MODE::Sleep::SDService(void)     { SD.end(); }
 void MODE::Sleep::buttonsWaiting(void){ 
