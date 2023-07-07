@@ -12,6 +12,14 @@
 
 #include "Interface.h"
 
+#if defined(__AVR__)
+    #include <avr/power.h>
+#endif
+
+#if defined(ESP32) || defined(ESP8266)
+    #include <esp_sleep.h>
+#endif
+
 namespace MODE{
 
     /*! @brief Seleccion de Modos (Hub, Principal) */
@@ -32,35 +40,25 @@ namespace MODE{
     /*! @brief Eliminar Subperfil a un Perfil (Pide a el Usuario el perfil a eliminar) */
     void deleteSubProfile__(void);
 
-    #pragma region Developing-Future
     /*! @brief Muestra apartado de funcionamiento del dispositivo*/
     void help__(void);
-    #pragma endregion
     
-    #pragma region Sleep
-    namespace Sleep{
+    namespace ShutDown{
 
-    //Apunta a la primera posicion de memoria '0' que es el inicio del programa
-    void(*resetNOW) (void) = 0;
+        /*! @brief Stoppea todos los servicios y pone en modo sleeping a la placa de desarrollo */
+        void now(void);
 
-    /*! @brief Stoppea todos los servicios y pone en modo sleeping a la placa de desarrollo
-        @note Aun no Desarrollado */
-    void now(void);
+        /*! @brief Detiene el servicio visual */
+        void displayService(void);
 
-    /*! @brief Stoppea el servicio visual
-        @note Aun no Desarrollado */
-    void displayService(void);
+        /*! @brief Detiene el servicio de almacenamiento */
+        void SDService(void);
 
-    /*! @brief Stoppea el servicio de almacenamiento
-        @note Aun no Desarrollado */
-    void SDService(void);
-
-    /*! @brief Prepara los botones en espera hasta alguna respuesta (presionando rompe el loop)
-        @note Aun no Desarrollado */
-    void buttonsWaiting(void);
-    #pragma endregion //Shutdown
-
+        /*! @brief Pone en espera los botones hasta alguna respuesta */
+        void buttonsWaiting(void);
+    
     };
+
 };
 
 #endif // Modes_h

@@ -38,7 +38,7 @@ enum class Protocols{
 
 /*! \brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles'
     \param string nombre de perfil a convertir en directorio
-    \return puntero al string PATH*/
+    \return puntero al string PATH del perfil recibido*/
 const char* profilePath(const char* profileName);
 
 /*! \brief Inicializador de la SD
@@ -92,12 +92,6 @@ namespace SubProfiles{
      *  \note Si hay un problema o no lo encuentra, el puntero apuntara 'nullptr'
     */
     std::shared_ptr<storedIRDataStruct> ReturnSubProfile(const char* profileName, const char* subProfileName);
-
-    /*! \brief Guarda en el almacenamiento el subPerfil recibido
-     *  \param  storeIR Puntero Inteligente a estructura Normalizada con los datos a almacenar
-     *  \param profileName nombre del perfil en el que se almacenará el subperfil
-    */
-    void storeSubProfile(std::shared_ptr<storedIRDataStruct> storeIR, const char* profileName);
 
     /*! \brief  Elimina en el almacenamiento el subPerfil recibido
      *  \param profileName Nombre del perfil en el que se encontrara el subperfil

@@ -34,28 +34,32 @@ SPIClass spi;
 using namespace MODE; // Implemento los modos
 
 void setup(){
+    
+    //Aviso del compilador utilizado (usando los identificadores de cada uno)
+    #define UsedCompiler                                                                                    \                                       
+        Serial.println(F("Tipo de compilador Utilizado: "));                                                \
+        #if defined(__GNUC__)                                                                               \
+            Serial.println(F("GNU :)"));                                                                    \
+            Serial.print(F("Version del compilador de GNU es: "));                                          \
+            Serial.println(F(__GNUC__));                                                                    \
+        #elif defined(__clang__)                                                                            \
+            Serial.println(F("CLANG !!"));                                                                  \
+            Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));          \
+            Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));          \
+            Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \
+        #else                                                                                               \
+            Serial.println(F("Generico"));                                                                  \
+        #endif                                                                                              
+    
 
     Serial.begin(115200);
     // Just to know which program is running on my Arduino
     Serial.println(F("START " __FILE__ " from " __DATE__ ));
 
-    //Aviso del compilador utilizado (usando los identificadores de cada uno)
-    auto UsedCompiler = [&]() -> void {
-    Serial.println(F("Tipo de compilador Utilizado: "));
-    #if defined(__GNUC__)
-        Serial.println(F("GNU :)"));
-        Serial.print(F("Version del compilador de GNU es: ")); 
-        Serial.println(F(__GNUC__));
-    #elif defined(__clang__)
-        Serial.println(F("CLANG !!"));
-        Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));
-        Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));
-        Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));
-    #else
-        Serial.println(F("Generico"));
-    #endif
-    };
-
+    //Descomentar para ver: Aviso del compilador utilizado (usando los identificadores de cada uno)
+    //UsedCompiler
+    #undef UsedCompiler
+    
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
     spi.begin();
@@ -70,7 +74,7 @@ void setup(){
     #endif
 
     //Descomentar en Caso de querer saber cual fue el compilador utilizado
-    //UsedCompiler();
+    //UsedCompiler;
 
     //Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado"));
@@ -86,6 +90,7 @@ void setup(){
 
     //Espero a que todos los procesos terminen para inicializar
     yield();
+
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus

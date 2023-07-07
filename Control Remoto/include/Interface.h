@@ -91,11 +91,11 @@ namespace Interface {
   
   /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
-  void createSubProfile(void);
+  void createSubProfile(const char* profileSelected);
 
   /*! \brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
   */
-  void deleteSubProfile(void);
+  void deleteSubProfile(const char* profileSelected);
   
   /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
       \return   'true' Si cumplió correctamente.
@@ -105,9 +105,10 @@ namespace Interface {
   bool waitingForIR(void);
 
   /*! \brief    Muestra las instrucciones de como se usa el dispositivo
-      \param  text Recibe String que se codificara en el codigo QR 
-      \note   El usuario debe scanear un QR que lo regirira a una web */
-  void help(const char* text);
+      \param    text Recibe String que se codificara en el codigo QR
+      \param    version Version del QR (permite mas o menos informacion dentro)
+      \note     El usuario debe scanear un QR y recibirá el string del parametro */
+  void help(const char* text , uint8_t version );
 
   namespace EmergencyCalls {
 

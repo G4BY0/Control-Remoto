@@ -41,7 +41,6 @@ bool Receive_check(void){
 }
 
 void Receive_stop(void){
-  irrecv.pause(); // Libero la carga al procesador que produce la lectura de infrarrojos.
   irrecv.disableIRIn(); // Disable any timers and interrupts.
 }
 

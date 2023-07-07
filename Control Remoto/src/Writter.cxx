@@ -29,10 +29,10 @@ void WritterV2::atcLoop(void) {
 }//atcLoop
 
 void WritterV2::timeDelay(void) {
-  if (buttonDelay <= 3) {
+  if (buttonDelay <= 4) {
     buttonDelay++;
   }
-  if (selectDelay <= 3) {
+  if (selectDelay <= 5) {
     selectDelay++;
   }
   if (radioDelay <= 20) {
@@ -913,6 +913,41 @@ void WritterV2::drawBlink(void) {
 const char* WritterV2::stringFinished(void){
   //Inicializacion del contenido que tiene msgToSend por si en algun previo momento se usó
   for(uint8_t iterator = 0 ; iterator < sizeof(msgToSend) ; iterator++) msgToSend[iterator] = '\0';
+  //Reset de variables
+  //timeDelay
+  buttonDelay = 0;
+  selectDelay = 0;
+  radioDelay = 0;
+  blinkDelay = 0;
+
+  //drawMenu
+  show = true;
+  letters = true;
+  capitalize = false;
+
+  //drawCursor
+  x = 0;
+  y = 33;
+  width = 7;
+  height = 11;
+  select = false;
+  transmit = false;
+
+  //drawText
+  index = 0;
+  num = 0;
+
+  // - Creo que esto se podria eliminar porque no tiene uso alguno
+  //receiveText
+  msgFlag = 0;
+  displayMsg = false;
+  ringFlag = true;
+  booleanStringFinished = false;
+
+  //drawBlink (Parpadeo de la letra a continuacion del String)
+  xBlink = 0;
+  yBlink1 = 0;
+  yBlink2 = 0;
 
   while( booleanStringFinished == false ){
     display.clearDisplay();

@@ -116,11 +116,15 @@ void Interface::addProfile(void){
 
   //Le digo al usuario por pantalla si desea agregar un Subperfil en este momento
   display.setCursor(5,10);
-  display.println(F("Do you want to add \n a Subprofile Now?"));
-  display.setCursor(10,30);
-  display.println(F("Press Enter To Continue"));
+  display.println(F("Do you want to add"));
+  display.setCursor(6,20);
+  display.println(F("a Subprofile Now?"));
+  display.setCursor(20,30);
+  display.println(F("Press Enter To "));
   display.setCursor(10,40);
-  display.println(F("Press any other to Cancel"));
+  display.println(F("Continue. Press any"));
+  display.setCursor(20,50);
+  display.println(F("other to Cancel"));
 
   display.display();
 
@@ -140,12 +144,14 @@ void Interface::addProfile(void){
     }
   }
 
+  if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
+  yield();
+
   //Recbido del usuario (A traves del writter) el nombre del nuevo subperfil
   std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
   if(subProfileName.c_str() == nullptr ) return; // SI no recibo ningun nombre...
 
-  if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
-  yield();
+  
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
   SubProfiles::createSubProfile_(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
@@ -176,28 +182,23 @@ void Interface::subProfiles(const char *profileName_){
   // Pido del almacenamiento los nombres de los subperfiles del perfil dado
   auto subprofiles = SubProfiles::showSubProfiles(profileName_); 
   
-  subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" );
-  subprofiles.insert(  subprofiles.begin() , "DELETE SUBPROFILE" );
-
-  /*
-  // Si no hay ningun subperfil...
-  if (subprofiles.empty() == true) {
-    Interface::EmergencyCalls::nonSubProfiles();
-    return; // El puntero es nulo, salir de la función
-    
-  }
-  */
+  subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" ); // Primera Opcion
+  subprofiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
   Cursor cursor( subprofiles ,&display); 
   const char* subprofiles_selected = cursor.getSelectedOption();
   if(subprofiles_selected == nullptr) return; // Si no se selecciono ninguno...
 
-  if(subprofiles_selected == "ADD SUBPROFILE")
-  Interface::addProfile();
+  if(subprofiles_selected == "ADD SUBPROFILE"){
+  Interface::createSubProfile(profileName_);
+  return;
+  }
 
-  if(subprofiles_selected == "DELETE SUBPROFILE")
-  Interface::deleteProfile();
+  if(subprofiles_selected == "DELETE SUBPROFILE"){
+  Interface::deleteSubProfile(profileName_);
+  return;
+  }
 
   // Informacion a enviar a la salida
   auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
@@ -211,20 +212,23 @@ void Interface::subProfiles(const char *profileName_){
 
 }
 
-void Interface::createSubProfile(void){
+void Interface::createSubProfile(const char* profileSelected = nullptr){
 
-  auto namesProfile = Profiles::showProfiles_(); // Recibo del almacenamiento todos los nombres de los perfiles
-  
-  //Si no llegara a recibir ningun nombre de ningun perfil o si hubo un error inesperado...
-  if ( namesProfile.empty() == true ) {
-    Interface::EmergencyCalls::nonProfiles();
-    return; 
+  if(profileSelected == nullptr){
+
+    auto namesProfile = Profiles::showProfiles_(); // Recibo del almacenamiento todos los nombres de los perfiles
+
+    //Si no llegara a recibir ningun nombre de ningun perfil o si hubo un error inesperado...
+    if ( namesProfile.empty() == true ) {
+      Interface::EmergencyCalls::nonProfiles();
+      return; 
+    }
+
+    //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
+    Cursor cursor(namesProfile,&display);
+    const char* profileSelected = cursor.getSelectedOption();
+
   }
-
-
-  //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
-  Cursor cursor(namesProfile,&display);
-  const char* && profileSelected = cursor.getSelectedOption();
 
   //Pido la informacion a la entrada
   if(!waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
@@ -237,35 +241,39 @@ void Interface::createSubProfile(void){
   
 }
 
-void Interface::deleteSubProfile(void){
+void Interface::deleteSubProfile(const char* profileSelected = nullptr){
+
+  if(profileSelected == nullptr){
 
   //Recibo del almacenamiento el nombre de los perfiles
-  auto names = Profiles::showProfiles_();
+  auto namesProfiles = Profiles::showProfiles_();
 
-  if ( names.empty() == true ) { //Si no recibo ningun nombre...
+  if ( namesProfiles.empty() == true ) { //Si no recibo ningun nombre...
     Interface::EmergencyCalls::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
   //Inicializo un cursor para pedirle al usuario que perfil desea
-  Cursor cursor( names , &display );
-  const char* && selectedProfile = cursor.getSelectedOption();
+  Cursor cursor( namesProfiles , &display );
+  const char* && profileSelected = cursor.getSelectedOption();
+
+  }
 
   //Si no recibo ningun nombre...
-  if(selectedProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de perfiles
+  if(profileSelected == nullptr) return; //Failure, el usuario cancelo la seleccion de perfiles
 
   //Recido del almacenamiento el nombre de los subperfiles del perfil dado
-  names = SubProfiles::showSubProfiles(selectedProfile);
+  auto namesSubProfiles = SubProfiles::showSubProfiles(profileSelected);
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
-  Cursor cursor2( names , &display ); 
+  Cursor cursor2( namesSubProfiles , &display ); 
   const char* && selectedSubProfile = cursor2.getSelectedOption();
 
   //Si no recibo ningun Subperfil...
   if(selectedSubProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de subperfiles
 
   //Elimino el subperfil dado del subperfil dado
-  SubProfiles::deleteSubProfile(selectedProfile, selectedSubProfile);
+  SubProfiles::deleteSubProfile(profileSelected, selectedSubProfile);
 
 }
 
@@ -295,17 +303,19 @@ bool Interface::waitingForIR(void){
         buttonState(PIN::Buttons::RIGHT)  ||
         buttonState(PIN::Buttons::ENTER)    ) {
       Receive_stop();
+      Serial.println(F("End Receiving for infrared signals."));
       delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
       return false; //Failure, se cancelo
       }
   }
   Receive_stop();
+  Serial.println(F("End Receiving for infrared signals."));
   delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
   return true; //Recibido Correctamente
 
 }
 
-void Interface::help(const char* text){
+void Interface::help(const char* text , uint8_t version = 4){
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -314,10 +324,10 @@ void Interface::help(const char* text){
   display.display();
   
   QRCode qrcode;
-  uint8_t qrcodeData[qrcode_getBufferSize(3)];
-  qrcode_initText(&qrcode , qrcodeData , 3 , 0 , text );
+  uint8_t qrcodeData[qrcode_getBufferSize(version)];
+  qrcode_initText(&qrcode , qrcodeData , version , 0 , text );
 
-  int scale = min( SCREEN_WIDTH / qrcode.size , SCREEN_HEIGHT / qrcode.size ); 
+  int scale = min( SCREEN_WIDTH / qrcode.size , SCREEN_HEIGHT / qrcode.size ) * 2; 
 
   int shiftX = ( SCREEN_WIDTH - qrcode.size * scale ) / 2;
   int shiftY = ( SCREEN_HEIGHT - qrcode.size * scale ) / 2;
