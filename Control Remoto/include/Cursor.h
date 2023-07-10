@@ -13,8 +13,7 @@
 #define CURSOR_H
 
 #include <Arduino.h> //Arduino Framework
-#include <stdint.h> //Tipo de Enteros
-#include <inttypes.h> //Tipo de Enteros
+#include <cstdint> //Tipo de Enteros
 #include <Adafruit_SH110X.h> // Lib de display Oled
 #include "Interface.h" // Interfaz del usuario
 
@@ -196,9 +195,6 @@ class WritterV2{
 
   //! \brief Constructor
   WritterV2(Adafruit_SH1106G* displayReference);
-
-  /*! \brief Hace en conjunto la interfaz del Writter para el usuario */
-  void atcLoop(void);
 
   /*! \brief Logica de calculo para el rebote de los pulsadores
       \note NO USA PARADAS DEL PROCESADOR!!! */

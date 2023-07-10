@@ -10,6 +10,8 @@
 
 //Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+//Semaforo para el libre uso del display
+SemaphoreHandle_t semaphoreDisplay;  
 
 void buttonsBegin(void){
 
@@ -30,6 +32,13 @@ void buttonsBegin(void){
 
 void displayBegin(void){
 
+  // Inicializacion del Semaforo
+  semaphoreDisplay = xSemaphoreCreateBinary();
+  xSemaphoreGive(semaphoreDisplay); //Inicializado el semaforo
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
   //Inicializacion del display con la comunicacion I2C
   display.begin(I2C_ADDRESS, true);
 
@@ -40,32 +49,34 @@ void displayBegin(void){
   display.clearDisplay();
   display.display();
 
-}
-
-//DEBUGGING CURSOR
-uint8_t Interface::hub(void){
-
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
+  display.display();
+
+  //Inicializado el semaforo
+  xSemaphoreGive(semaphoreDisplay);
+
+}
+
+//DEBUGGING CURSOR
+uint8_t Interface::hub(void){
   
   //Opciones del menu Principal/Hub
-  std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SLEEP" };
-
+  std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SHUTDOWN" };
 
   Cursor cursor(strings,&display);
-  const char* selected = cursor.getSelectedOption();
-  //Si se cancelo la eleccion...
-  if(selected == nullptr) return 255U;
+  const char* selected;
+
+  do{ selected = cursor.getSelectedOption(); } 
+  while(selected == nullptr);
 
   //Busco el numero de la opcion seleccionada y lo retorno
-  for(uint8_t iterator = 0; iterator < strings.size(); iterator++ ){ 
+  for(uint8_t iterator = 0; iterator < strings.size(); iterator++ ){
     if(strcmp( selected , strings[iterator].c_str() ) == 0) 
     return iterator; 
   }
-
-  return 255U; //Si hay problemas retorna
 
 }
 //---------------------------------------------------
@@ -80,11 +91,24 @@ void Interface::profiles(void){
     return; // El puntero es nulo, salir de la función
   }
 
+  profiles_ptr.insert( profiles_ptr.begin() , "ADD PROFILES" ); //Primera Opcion
+  profiles_ptr.insert( profiles_ptr.begin() +1 , "DELETE PROFILES" );  //Segunda Opcion
+
   Cursor cursor( profiles_ptr , &display );
   const char* profile_selected = cursor.getSelectedOption();
   
   //Si el usuario no selecciono nada o hubo algun problema
   if(profile_selected == nullptr) return;
+
+  if(profile_selected == "ADD PROFILES"){
+  Interface::addProfile();
+  return;
+  }
+
+  if(profile_selected == "DELETE PROFILES"){
+  Interface::deleteProfile();
+  return;
+  }
 
   //Muestro los subperfiles del perfil seleccionado por el usuario
   Interface::subProfiles( profile_selected );
@@ -107,6 +131,9 @@ void Interface::addProfile(void){
     Interface::EmergencyCalls::noProfileCreated();
     return;
   }
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
   //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
   //Establezco los parametros a utilizar para la muestra a la salida del display
@@ -279,8 +306,10 @@ void Interface::deleteSubProfile(const char* profileSelected = nullptr){
 
 bool Interface::waitingForIR(void){
 
-  //Le hago saber al usuario por pantalla de que se esta esperando respuesta de la informacion
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
+  //Le hago saber al usuario por pantalla de que se esta esperando respuesta de la informacion
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
@@ -289,6 +318,9 @@ bool Interface::waitingForIR(void){
   display.setCursor(0,5);
   display.print(F("Prepared to Receive\nIR SIGNAL.\nWaiting For\nResponse... \nPress Any Botton\nTo Cancel."));
   display.display();
+
+  // Desbloquear el semáforo
+  xSemaphoreGive( semaphoreDisplay );
 
   //Inicializo la entrada para recibir la informacion
   Serial.println(F("Start Receiving for infrared signals."));
@@ -317,6 +349,9 @@ bool Interface::waitingForIR(void){
 
 void Interface::help(const char* text , uint8_t version = 4){
 
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
   display.setTextSize(1);
@@ -341,12 +376,8 @@ void Interface::help(const char* text , uint8_t version = 4){
   }
   display.display();
 
-
-  //126 De alto y 51 de ancho el bitmap
-  //display.drawBitmap( 0 , 0 , QRCode , 128 ,  64, SH110X_WHITE);
-  //display.display();
-  //A partir de X=0, Y=0
-  
+  // Desbloquear el semáforo
+  xSemaphoreGive( semaphoreDisplay );
 
   //Si se presiona cualquier boton...
   while(!(buttonState(PIN::Buttons::BACK)  == HIGH  ||
@@ -358,7 +389,42 @@ void Interface::help(const char* text , uint8_t version = 4){
   delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
 }
 
+void Interface::battery(void){
+
+  PROGMEM const uint8_t batt_high_bits[] = {
+    0xFF, 0x7F, 0x01, 0x40, 0xFD, 0xC3, 0xFD, 0xC3, 0xFD, 0xC3, 0xFD, 0xC3, 0x01, 0x40, 0xFF, 0x7F,
+  };
+
+  const uint8_t && battery_level = map(analogRead(PIN::Energy::BATTERY) , 0 , 1024 , 1 , 3 );
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
+  switch( battery_level ){
+
+    case 1: 
+    break;
+
+    case 2: 
+    break;
+
+    case 3:
+    display.drawBitmap( 118 , 10 , batt_high_bits , 10 , 5 , SH110X_WHITE );
+  
+    break;
+
+  }
+
+  // Desbloquear el semáforo
+  xSemaphoreGive( semaphoreDisplay );
+
+
+}
+
 void Interface::EmergencyCalls::nonProfiles(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -379,6 +445,9 @@ void Interface::EmergencyCalls::nonProfiles(void){
 
   display.display();
   
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -391,6 +460,9 @@ void Interface::EmergencyCalls::nonProfiles(void){
 }
 
 void Interface::EmergencyCalls::nonSubProfiles(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -412,6 +484,9 @@ void Interface::EmergencyCalls::nonSubProfiles(void){
 
   display.display();
   
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -424,6 +499,9 @@ void Interface::EmergencyCalls::nonSubProfiles(void){
 }
 
 void Interface::EmergencyCalls::noProfileCreated(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -443,6 +521,9 @@ void Interface::EmergencyCalls::noProfileCreated(void){
 
   display.display();
   
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -455,6 +536,9 @@ void Interface::EmergencyCalls::noProfileCreated(void){
 }
 
 void Interface::EmergencyCalls::noSubProfileCreated(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -474,6 +558,9 @@ void Interface::EmergencyCalls::noSubProfileCreated(void){
 
   display.display();
   
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -486,6 +573,9 @@ void Interface::EmergencyCalls::noSubProfileCreated(void){
 }
 
 void Interface::EmergencyCalls::noProfileDeleted(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -504,7 +594,10 @@ void Interface::EmergencyCalls::noProfileDeleted(void){
   display.println(F("to turn back"));
 
   display.display();
-  
+
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -517,6 +610,9 @@ void Interface::EmergencyCalls::noProfileDeleted(void){
 }
 
 void Interface::EmergencyCalls::noSubProfileDeleted(void){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
   //Establezco los parametros a utilizar para la muestra a la salida del display
   display.clearDisplay();
@@ -536,6 +632,9 @@ void Interface::EmergencyCalls::noSubProfileDeleted(void){
 
   display.display();
   
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||

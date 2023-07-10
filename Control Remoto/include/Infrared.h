@@ -10,7 +10,7 @@
 #define INFRARED_H
 
 #include <Arduino.h>
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 #include <algorithm>
 #include "PIN.h"

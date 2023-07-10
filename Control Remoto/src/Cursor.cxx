@@ -190,6 +190,10 @@ const size_t Cursor::getNumberOfOptions() const {
 }
 
 void Cursor::showCurrentPage() {
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
@@ -201,13 +205,27 @@ void Cursor::showCurrentPage() {
     sh1106->print(options[iterator].c_str());
   }
   sh1106->display();
+
+  // Desbloquear el semáforo
+  xSemaphoreGive( semaphoreDisplay );
+
 }
 
 const char* Cursor::getSelectedOption() {
   while (true) {
     showCurrentPage();
-    // Ajuste en la función getSelectedOption()
-    if (buttonState(UP_BUTTON_PIN) == HIGH) {
+    // Boton ENTER Y Boton DERECHA
+    if (buttonState(ENTER_BUTTON_PIN) == true || buttonState(PIN::Buttons::RIGHT) == true ) {
+      delay(DEBOUNCE_TIME);
+      return options[currentIndex].c_str();
+    }
+    // Boton BACK Y Boton IZQUIERDA
+    if (buttonState(BACK_BUTTON_PIN) == true || buttonState(PIN::Buttons::LEFT) == true ) {
+      delay(DEBOUNCE_TIME);
+      return nullptr;
+    }
+    // Boton UP
+    if (buttonState(UP_BUTTON_PIN) == true ) {
       if (currentIndex == currentPage * MAX_LINE_OPTIONS_OUTPUT) {
         if (currentPage == 0) {
         currentPage = totalPages - 1;
@@ -222,7 +240,7 @@ const char* Cursor::getSelectedOption() {
       showCurrentPage();
     }
     //Boton DOWN
-    if (buttonState(DOWN_BUTTON_PIN) == HIGH) {
+    if (buttonState(DOWN_BUTTON_PIN) == true ) {
       if (currentIndex == (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT - 1) {
         if (currentPage == totalPages - 1) {
           currentPage = 0;
@@ -235,17 +253,6 @@ const char* Cursor::getSelectedOption() {
       }
       delay(DEBOUNCE_TIME);
       showCurrentPage();
-    }
-
-    //Boton ENTER
-    if (buttonState(ENTER_BUTTON_PIN) == HIGH) {
-      delay(DEBOUNCE_TIME);
-      return options[currentIndex].c_str();
-    }
-    //Boton BACK
-    if (buttonState(BACK_BUTTON_PIN) == HIGH) {
-      delay(DEBOUNCE_TIME);
-      return nullptr;
     }
   }
 }

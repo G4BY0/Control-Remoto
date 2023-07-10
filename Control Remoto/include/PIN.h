@@ -20,17 +20,23 @@
 //Placa actualmente en uso y usada para el debugging del proyecto
 namespace PIN{
   
+  namespace Energy{
+
+    constexpr uint8_t BATTERY = 35U; // Despues ver este pin que lo puse por tirar para probar el codigo
+
+  };
+
   namespace Display{
-    const uint8_t SDA    = 21U;
-    const uint8_t SDL    = 22U;
+    constexpr uint8_t SDA    = 21U;
+    constexpr uint8_t SDL    = 22U;
   };
 
   namespace InfraredReceiver{
-    const uint8_t DATA   = 15U;     
+    constexpr uint8_t DATA   = 15U;     
   };
 
   namespace InfraredTransmitter{
-    const uint8_t DATA   = 4U;  
+    constexpr uint8_t DATA   = 4U;  
   };
 
   namespace Buttons{
@@ -76,70 +82,6 @@ namespace PIN{
 
   namespace SD_t{
     constexpr uint8_t chipSelect = 15U;  
-  }
-
-};
-
-#elif defined( ARDUINO_AVR_MEGA )
-#warning "Este proyecto como se encuentra en desarrollo, esta siendo testeado en el Nodemcu ESP32. Por lo tanto, no se sabe del todo si aun esta hecho para el tipo de placas AVR"
-namespace PIN{
-  
-  namespace Display{
-    constexpr uint8_t SDA    = 20U;
-    constexpr uint8_t SDL    = 21U;
-  };
-
-  namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 2U;
-  };
-
-  namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = 3U;
-  };
-
-  namespace Buttons{
-    constexpr uint8_t UP     = A0;
-    constexpr uint8_t DOWN   = A3;
-    constexpr uint8_t LEFT   = A1;
-    constexpr uint8_t RIGHT  = A2;
-    constexpr uint8_t BACK   = A4;
-    constexpr uint8_t ENTER  = A5;
-  };
-
-  namespace SD_t{
-    constexpr uint8_t chipSelect = 53U;
-  }
-
-};
-
-#elif defined(ARDUINO_AVR_LEONARDO)
-#warning "Este proyecto como se encuentra en desarrollo, esta siendo testeado en el Nodemcu ESP32. Por lo tanto, no se sabe del todo si aun esta hecho para el tipo de placas AVR"
-namespace PIN{
-  
-  namespace Display{
-    constexpr uint8_t SDA    = 2U;
-    constexpr uint8_t SDL    = 3U;
-  };
-
-  namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 4U;     
-  };
-
-  namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = 5U;  
-  };
-
-  namespace Buttons{
-    constexpr uint8_t UP     = A0;
-    constexpr uint8_t DOWN   = A1;
-    constexpr uint8_t LEFT   = A2;
-    constexpr uint8_t RIGHT  = A3;
-    constexpr uint8_t BACK   = A5;
-    constexpr uint8_t ENTER  = A4;
-  };
-
-  namespace SD_t{
-    constexpr uint8_t chipSelect = 10U;
   }
 
 };

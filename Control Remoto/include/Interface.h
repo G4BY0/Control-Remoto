@@ -12,7 +12,7 @@
 #ifndef INTERFACE_H 
 #define INTERFACE_H
  
-#include <stdint.h>
+#include <cstdint>
 #include <Arduino.h>
 #include <SD.h>
 #include <vector>
@@ -29,6 +29,7 @@
 
 //Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
 extern Adafruit_SH1106G display;
+extern SemaphoreHandle_t semaphoreDisplay; //Semaforo para el libre uso del display
 
 //Macros para el desarrollo del sistema
 #define INFINITE_LOOPING 0x1
@@ -109,6 +110,10 @@ namespace Interface {
       \param    version Version del QR (permite mas o menos informacion dentro)
       \note     El usuario debe scanear un QR y recibirá el string del parametro */
   void help(const char* text , uint8_t version );
+
+  /*! \brief Muestra la bateria en la pantalla
+      \note Se muestra en alguna de las esquinas de la pantalla*/
+  void battery(void);
 
   namespace EmergencyCalls {
 

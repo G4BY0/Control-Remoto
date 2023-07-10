@@ -16,18 +16,6 @@ WritterV2::WritterV2(Adafruit_SH1106G* displayReference) : display_ptr(displayRe
 //      -FUNCTIONS-      //
 ///////////////////////////
 
-void WritterV2::atcLoop(void) {
-  while( booleanStringFinished == false ){
-    display.clearDisplay();
-    timeDelay();
-    drawMenu();
-    drawCursor();
-    drawText();
-    drawBlink();
-    display.display();
-  }
-}//atcLoop
-
 void WritterV2::timeDelay(void) {
   if (buttonDelay <= 4) {
     buttonDelay++;
@@ -890,6 +878,7 @@ void WritterV2::drawText(void) {
 }//drawText
 
 void WritterV2::drawBlink(void) {
+  
   if (show == true) {
     if (xBlink <= 125) {
       xBlink = index * 6;
@@ -950,6 +939,10 @@ const char* WritterV2::stringFinished(void){
   yBlink2 = 0;
 
   while( booleanStringFinished == false ){
+
+    // Bloquear el semáforo
+    xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
     display.clearDisplay();
     timeDelay();
     drawMenu();
@@ -957,7 +950,12 @@ const char* WritterV2::stringFinished(void){
     drawText();
     drawBlink();
     display.display();
+
+    // Desbloquear el semáforo
+    xSemaphoreGive(semaphoreDisplay);
+
   }
+
   booleanStringFinished = false; // Reset de FLAG string terminado para luego permitir nuevamente su uso
   return msgToSend[0] != '\0' ? msgToSend : nullptr;
   
@@ -1061,6 +1059,7 @@ void Writter::keyboard(void) {
 }
 
 const char* Writter::stringFinished(void){ 
+
   Writter::Graphics();
   Writter::keyboard();
   if(To_Transmit.c_str() == "")

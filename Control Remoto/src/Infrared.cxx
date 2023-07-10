@@ -25,6 +25,7 @@ void infraredBegin(void){
 
   // Inicializacion del IRSender
   irsend.begin(); // Start up the IR sender.
+  
 }
 
 void Receive_start(void){

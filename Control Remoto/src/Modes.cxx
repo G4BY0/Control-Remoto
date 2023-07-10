@@ -8,19 +8,19 @@
 ***********************************************/
 #include "Modes.h"
 
-void MODE::hub__(void){
+void MODE::hub(void){
 
-  switch (Interface::hub()){
+  switch ( Interface::hub() ){
 
-    case 0:     profiles__();               break; //Manejo de Perfiles y Subperfiles Almacenados
-    case 1:     addProfile__();             break; //Agregar un Perfil del almacenamiento 
-    case 2:     deleteProfile__();          break; //Eliminar un Perfil del almacenamiento
+    case 0:     profiles();               break; //Manejo de Perfiles y Subperfiles Almacenados
+    case 1:     addProfile();             break; //Agregar un Perfil del almacenamiento 
+    case 2:     deleteProfile();          break; //Eliminar un Perfil del almacenamiento
     
     #pragma region Pre-Alpha Modes
-    case 3:     addSubProfile__();          break; //Agregar Subperfil de un Perfil dado
-    case 4:     deleteSubProfile__();       break; //Eliminar Subperfil de un Perfil dado
+    case 3:     addSubProfile();          break; //Agregar Subperfil de un Perfil dado
+    case 4:     deleteSubProfile();       break; //Eliminar Subperfil de un Perfil dado
     #pragma endregion
-    case 5:     help__();                   break; //Entorno de Ayuda al usuario
+    case 5:     help();                   break; //Entorno de Ayuda al usuario
     case 6:     ShutDown::now();            break; //Modo Apagado (Deja en espera los botones en caso de querer volver a iniciar)
     default:                                break; //IGNORE
 
@@ -28,19 +28,29 @@ void MODE::hub__(void){
 
 }
 
-void MODE::profiles__(void)           { Interface::profiles();          }
-void MODE::addProfile__(void)         { Interface::addProfile();        }
-void MODE::deleteProfile__(void)      { Interface::deleteProfile();     }
-void MODE::addSubProfile__(void)      { Interface::createSubProfile(nullptr);  }
-void MODE::deleteSubProfile__(void)   { Interface::deleteSubProfile(nullptr);  }
+void MODE::profiles(void)           { Interface::profiles();          }
+void MODE::addProfile(void)         { Interface::addProfile();        }
+void MODE::deleteProfile(void)      { Interface::deleteProfile();     }
+void MODE::addSubProfile(void)      { Interface::createSubProfile(nullptr);  }
+void MODE::deleteSubProfile(void)   { Interface::deleteSubProfile(nullptr);  }
 
+#define QRVERSION 4
 #define URL_USER_HELP "https://drive.google.com/file/d/1hc0Sb17FSV1dKWV1zGJdsFk9_PXR-PD6/view"
-void MODE::help__(void)               { Interface::help(URL_USER_HELP , 4); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
+void MODE::help(void)               { Interface::help(URL_USER_HELP , QRVERSION ); /*Apartado de Joaco Para el desarrollo de la pagina*/ }
 
+
+void MODE::sleep(uint32_t Seconds){
+  auto countSleep = millis();
+  MODE::ShutDown::buttonsWaiting();
+  yield();
+  if( ( millis() - countSleep ) >= Seconds ) MODE::ShutDown::now();
+}
+
+volatile bool MODE::ShutDown::shouldRestart = false;
 
 void MODE::ShutDown::now(void) { 
   //Servicio de pantalla off
-  displayService();
+  displayService(); 
   //Servicio de Almacenamiento off
   SDService();
   //Servicio de comunicacion SPI off
@@ -48,30 +58,36 @@ void MODE::ShutDown::now(void) {
 
   //Aviso que se entro en el modo ShutDown
   Serial.println(F("Entrando al modo ShutDown."));
+  // Asegura que se envíen los datos pendientes antes de apagar el Serial
+  Serial.flush(); 
   //Servicio de comunicacion Serial (Rx/Tx) off
   Serial.end(); 
 
-  #if defined(__AVR__)
-  // Reducir la velocidad del reloj dividido 8
-  clock_prescale_set(clock_div_8);
-  Serial.println(F("Velocidad del reloj reducida a 80 MHz."));
-  #endif
-
   //Servicio de botonera en espera
   buttonsWaiting();
+  
+  yield(); // Realimento el Watch Dog por si se produce larga la espera
+  //Finalizo todos los Task menos este...
 
-  #if defined(__AVR__)
-  // Restaurar la velocidad del reloj a la configuración predeterminada
-  clock_prescale_set(clock_div_1);
-  Serial.println(F("Velocidad del reloj devuelta a la normalidad."));
-  #endif
+  TaskStatus_t taskStatus;
+  
+  // Iterar a través de todos los tasks
+  /* while (uxTaskGetSystemState(&taskStatus, configMAX_TASK_NAME_LEN, NULL) > 1) { // 1 porque Considerando que solo esté este mismo. // NO FUNCIONA uxTaskGetSystemState() undefined reference to `uxTaskGetSystemState'
+  
+    //TaskHandle_t taskHandle = taskStatus.xHandle;
 
-  //Reinicio del Sistema, se despierta del sleeping
-  #if defined(ESP32) || defined(ESP8266)
-  ESP.restart();
-  #else
-  asm volatile("reset"); 
-  #endif
+    if(sleepIndicateTasks == xTaskGetCurrentTaskHandle())
+    continue;
+
+    // Eliminar el task
+    vTaskDelete(sleepIndicateTasks);
+  }*/
+
+  shouldRestart = true;
+
+  // Código de limpieza y finalización del task
+  vTaskDelete(NULL); // Delete este mismo Task
+
 }
 
 void MODE::ShutDown::displayService(void){ display.clearDisplay(); display.display(); }
