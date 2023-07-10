@@ -39,25 +39,19 @@ TaskHandle_t handleLoop; //Task de mi propio "loop", pero no pertenece al Idle (
 using namespace MODE;
 
 
-
 /*! \brief Task para mostrar de manera dinamica la bateria
     \note lo muestra en esquinas de la pantalla */
-void Task_Battery(void* nonParameters){  // Como la funcion no recibe parametros no lo voy a usar el argumento   
-    
+void Task_Battery(void* nonParameters){  // Como la funcion no recibe parametros no lo voy a usar el argumento     
     while(1){
-        
-    Interface::battery();
-    
-    // Pausar la tarea durante un breve periodo de tiempo
-    vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-    }
-    
+        Interface::battery();
+        // Pausar la tarea durante un breve periodo de tiempo
+        vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
+    }   
 }
 
 /*! \brief Task para preguntar de manera dinamica si se muestran sintomas de dormir
     \note El boton BACK se debe mantener presionado el tiempo determinado -> 'SLEEP_TIME_BUTTONPRESSING' */
 void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no lo voy a usar el argumento
-    
     while(1){
         
         for(unsigned long countPressed = millis(); buttonState(PIN::Buttons::BACK) == true; )
@@ -75,8 +69,7 @@ void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no
         vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
     }
     #undef SLEEP_TIME_BUTTON_PRESSING
-    #undef SLEEP_TIME_WAITING_TO_SHUTDOWN
-    
+    #undef SLEEP_TIME_WAITING_TO_SHUTDOWN  
 }
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
@@ -113,7 +106,7 @@ void setup(){
     
     //Descomentar para ver: Aviso del compilador utilizado (usando los identificadores de cada uno)
     //UsedCompiler;
-    Serial.println("hola llegue aca");
+
     #undef UsedCompiler
 
     //Descomentar en Caso de querer saber cual fue el compilador utilizado
@@ -121,7 +114,7 @@ void setup(){
 
     // Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado"));
-Serial.println("hola llegue aca");
+
     // Inicializacion del sistema de botones
     buttonsBegin();     Serial.println(F("Botonera Inicializada"));
 
@@ -132,6 +125,7 @@ Serial.println("hola llegue aca");
     infraredBegin();    Serial.println(F("Infrared Inicializado"));
 
     // Espero a que todos los procesos terminen para inicializar
+    Serial.flush();
     yield();
 
     // Task para mostrar la bateria en el display de forma dinamica
@@ -172,7 +166,7 @@ Serial.println("hola llegue aca");
 
     
     // Iniciar el scheduler de FreeRTOS
-    vTaskStartScheduler();
+    //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)
 
 }
 
@@ -197,6 +191,7 @@ void loop(){
         #endif
         
     }
+    
 
 
 } 
