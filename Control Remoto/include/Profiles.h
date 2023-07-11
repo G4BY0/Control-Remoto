@@ -24,11 +24,12 @@
 #include "Infrared.h"
 
 // Path del archivo que se usara para poder sobreescribir perfiles
-#define TRANSFER_FILE_DIRANDNAME "/Transfer.db"
+#define TRANSFER_FILE_DIRANDNAME "/RESERVED.db"
+#define TRANSFER_FILE_NAME "RESERVED"
 
-// Los perfiles se almacenan en archivos individuales ".db"
-#define SLASH_WITH_EOF_STR "/"
-#define extensionProfiles ".db"
+// Los perfiles se almacenan en archivos individuales
+#define PROFILES_DIR_PATH "/"
+#define EXTENSION_PROFILES ".db"
 
 enum class Protocols{
     IR,                 //INFRARED
@@ -36,10 +37,10 @@ enum class Protocols{
     BLUETOOTH           //BLUETOOTH
 };
 
-/*! \brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'SLASH_WITH_EOF_STR' y 'extensionProfiles'
+/*! \brief Convierte a nombre de perfil a PATH (de manera normalizada, partiendo de raiz) usando los macros 'PROFILES_DIR_PATH' y 'EXTENSION_PROFILES'
     \param string nombre de perfil a convertir en directorio
-    \return puntero al string PATH del perfil recibido*/
-const char* profilePath(const char* profileName);
+    \return String del PATH del archivo del Perfil*/
+String profilePath(const char* profileName);
 
 /*! \brief Inicializador de la SD
     \note chequea todos los parametros. Y si no cumplen, dictara los problemas dados por el serial.

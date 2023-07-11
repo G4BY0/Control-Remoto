@@ -9,13 +9,13 @@
 
 #include "Profiles.h"
 
-const char* profilePath(const char* profileName) {
-  static std::string dirProfileName;
-  dirProfileName.clear();
-  dirProfileName.append(SLASH_WITH_EOF_STR); 
-  dirProfileName.append(profileName);
-  dirProfileName.append(extensionProfiles);
-  return dirProfileName.c_str();
+String profilePath(const char* profileName) {
+  //Convierto el string del dir
+  String dirProfileName = PROFILES_DIR_PATH;
+  dirProfileName += profileName;
+  dirProfileName += EXTENSION_PROFILES;
+  
+  return dirProfileName;
 }
 
 void SDBegin(void){
@@ -55,11 +55,11 @@ std::vector<std::string> Profiles::showProfiles_(void){
       if (!archivo.isDirectory()){
 
         //IGNORAR "Transfer.db" (archivo para el manejo del programa)
-        if( strcmp( archivo.name() , "Transfer.db" ) == 0 ) continue; //Si son iguales...
+        if( strcmp( archivo.name() , TRANSFER_FILE_NAME ".db" ) == 0 ) continue; //Si son iguales...
 
         //Si es un archivo 
         Serial.print(F("Perfil: "));
-        Serial.println(F(archivo.name()));  //Imprimo el nombre
+        Serial.println(archivo.name());  //Imprimo el nombre
 
         profilesName.push_back( [=] () -> std::string {
           std::string name = archivo.name();
@@ -116,24 +116,27 @@ bool Profiles::deleteProfile_(const char* name){
 void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protocol, const char* profileName){
 
   //switch (protocol){
-    
+
     //case Protocols::IR:
       auto IRData = storeCode( subProfileName );
-
+      Serial.printf("(DEBUG!) Profile: %s y su path es %s\n" ,profileName ,profilePath(profileName));
       File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
       //Si el archivo no esta disponible...
-      if(!root){
+      if(!root){ 
         Serial.println(F("The file of the profile cannot be open successfully."));
         return; 
       }
 
       //Voy hasta el final del archivo
-      root.seek(EOF);
+      root.seek(root.size());
       //Escritura de la informacion en el archivo
-      root.write((const byte*) IRData.get(), sizeof(IRData) );
-      root.close();
+      root.write((const byte*) IRData.get(), sizeof(*IRData.get()) );
+      root.flush();
       Serial.println(F("Successfull Uploaded SubProfile."));
+      Serial.printf("Now the Profile weights %d\n" , root.size() );
+      root.close();
+      
     //break;
 
     //case Protocols::WIFI:
@@ -162,39 +165,18 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   }
 
   //Si es un archivo...
-  Serial.println(F("Perfil: "));
-  Serial.println(F(root.name()));  //Imprimo el nombre
+  Serial.printf("Perfil: %s\n" , root.name()); //Imprimo el nombre
   
   Serial.println(F("Subperfiles:"));
-  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras o hubo un error inesperado
-  if( ( sizeof(root.size()) % sizeof(storedIRDataStruct) ) != 0U){ 
-
-    Serial.println(F("Profile has wrong data stored, doesn't match with normalized information."));
-    return subProfilesName; //Failure
-
-  }
-
-  //Cantidad de perfiles que se encuentran almacenados
-  const size_t && structPerFile = sizeof(root.size()) / sizeof(storedIRDataStruct);
-
-  //Reservo memoria para el movimiento de la informacion
-  storedIRDataStruct* retiredData = new storedIRDataStruct[structPerFile]; 
-
-  for( uint32_t iterator = 0U ; iterator < structPerFile; iterator++ ){
-    //Luego eliminar este If cuando se permita que el nombre del subperfil sea variable. Esto puede causar problemas...
-    if(root.read( ( byte* ) (&retiredData[iterator]) , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
-      Serial.println(F("Unsuccessfull reading subProfile."));
-      continue;
-    }
-    
-    //Imprimo en el Serial el nombre del subperfil
-    Serial.print(F("Nombre del subperfil extraido del almacenamiento: "));
-    Serial.println(retiredData[iterator].nameSubProfile);
-    subProfilesName.push_back(std::string(retiredData[iterator].nameSubProfile));
+  root.seek(0U);
+  while( root.position() != root.size() ){
+    storedIRDataStruct Stored;
+    root.read(reinterpret_cast<byte*>(&Stored) , sizeof(Stored) );
+    Serial.printf("nombre sub %s" ,Stored.nameSubProfile);
+    subProfilesName.push_back(Stored.nameSubProfile);
 
   }
 
-  delete[] retiredData;
   root.close();
 
   return subProfilesName;
@@ -215,45 +197,23 @@ std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* pr
     return nullptr; //Failure
 
   }
+  
+  std::shared_ptr<storedIRDataStruct> Stored(new storedIRDataStruct);
+  
+  
+  root.seek(0U);
+  while( root.position() != root.size() ){
 
-  // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras
-  if( ( sizeof(root.size()) % sizeof(storedIRDataStruct) ) != 0U){ 
-
-    Serial.println(F("Profile has wrong data stored, doesn't match with normalized information."));
-    return nullptr; //Failure
-
-  }
-
-  //Numero de subperfiles que se encuentran en el archivo
-  const size_t && structPerFile = sizeof(root.size()) / sizeof(storedIRDataStruct);
-
-  //Reservo memoria para la inforamacion retirada del almacenamiento
-  std::shared_ptr<storedIRDataStruct[]> retiredFromSD ( new storedIRDataStruct[structPerFile] );
-
-  for( uint32_t iterator = 0U ; iterator < structPerFile; iterator++ ){
-
-    if(root.read( (byte *) (&retiredFromSD[iterator]) , sizeof(storedIRDataStruct) ) != sizeof(storedIRDataStruct) ){
-      
-      Serial.println(F("Unsuccessfull reading from File."));
-
-    }
-
-    else if(strcmp( retiredFromSD[iterator].nameSubProfile , subProfileName ) == EXIT_SUCCESS){
-      
-      std::shared_ptr<storedIRDataStruct> catchIt(&retiredFromSD[iterator]);
-      
-      return catchIt; //Success
-    }
-
-    return nullptr; 
-    /*En caso de problemas, si hay algo que no va bien retorna "nullptr" para evitar errores futuros en caso de seguir leyendo el almacenamiento
-     *Haciendo eso evito problemas que podria generar el bajo nivel de energia de suplementacion de el almacenamiento
-    */
+    
+    root.read(reinterpret_cast<byte*> (&( *Stored.get() ) ) , sizeof(& ( *Stored.get() ) ) );
+    if( strcmp( Stored->nameSubProfile , subProfileName ) == 0 )
+    break;
 
   }
 
   root.close();
   Serial.println(F("Successfull retired SubProfile Stored."));
+
 }
 
 void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfileName){

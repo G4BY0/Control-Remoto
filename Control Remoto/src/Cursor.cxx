@@ -197,8 +197,8 @@ void Cursor::showCurrentPage() {
   sh1106->clearDisplay();
   sh1106->setCursor(0, 0);
   sh1106->print(F("Seleccione una opcion:"));
-  for (uint8_t iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) && iterator < options.size(); iterator++) {
-    sh1106->setCursor(0, (iterator - currentPage * MAX_LINE_OPTIONS_OUTPUT + 1) * 10);
+  for (uint8_t iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1U) * MAX_LINE_OPTIONS_OUTPUT) && iterator < options.size(); iterator++) {
+    sh1106->setCursor(0, (iterator - currentPage * MAX_LINE_OPTIONS_OUTPUT + 1U) * 10U);
     if (iterator == currentIndex) {
       sh1106->print(">");
     }
@@ -227,12 +227,12 @@ const char* Cursor::getSelectedOption() {
     // Boton UP
     if (buttonState(UP_BUTTON_PIN) == true ) {
       if (currentIndex == currentPage * MAX_LINE_OPTIONS_OUTPUT) {
-        if (currentPage == 0) {
-        currentPage = totalPages - 1;
+        if (currentPage == 0U) {
+        currentPage = totalPages - 1U;
         } else {
         currentPage--;
         }
-        currentIndex = min(getNumberOfOptions(), (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT) - 1;
+        currentIndex = min(getNumberOfOptions(), (currentPage + 1U) * MAX_LINE_OPTIONS_OUTPUT) - 1;
       } else {
         currentIndex--;
       }
@@ -241,8 +241,8 @@ const char* Cursor::getSelectedOption() {
     }
     //Boton DOWN
     if (buttonState(DOWN_BUTTON_PIN) == true ) {
-      if (currentIndex == (currentPage + 1) * MAX_LINE_OPTIONS_OUTPUT - 1) {
-        if (currentPage == totalPages - 1) {
+      if (currentIndex == (currentPage + 1U) * MAX_LINE_OPTIONS_OUTPUT - 1U) {
+        if (currentPage == totalPages - 1U) {
           currentPage = 0;
         } else {
           currentPage++;

@@ -12,29 +12,29 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <Arduino.h> //Arduino Framework
-#include <cstdint> //Tipo de Enteros
-#include <Adafruit_SH110X.h> // Lib de display Oled
-#include "Interface.h" // Interfaz del usuario
+#include <Arduino.h>            //Arduino Framework
+#include <cstdint>              //Tipo de Enteros
+#include <Adafruit_SH110X.h>    // Lib de display Oled
+#include "Interface.h"          // Interfaz del usuario
 
 //Cursor
-#define MAX_LINE_OPTIONS_OUTPUT 5
-#define UP_BUTTON_PIN PIN::Buttons::UP
-#define DOWN_BUTTON_PIN PIN::Buttons::DOWN
-#define ENTER_BUTTON_PIN PIN::Buttons::ENTER
-#define BACK_BUTTON_PIN PIN::Buttons::BACK
+#define MAX_LINE_OPTIONS_OUTPUT (5U)
+#define UP_BUTTON_PIN           PIN::Buttons::UP
+#define DOWN_BUTTON_PIN         PIN::Buttons::DOWN
+#define ENTER_BUTTON_PIN        PIN::Buttons::ENTER
+#define BACK_BUTTON_PIN         PIN::Buttons::BACK
 
 //Writter Macros
-#define UP_BUTTON_PIN PIN::Buttons::UP
-#define DOWN_BUTTON_PIN PIN::Buttons::DOWN
-#define LEFT_BUTTON_PIN PIN::Buttons::LEFT
-#define RIGHT_BUTTON_PIN PIN::Buttons::RIGHT
-#define ENTER_BUTTON_PIN PIN::Buttons::ENTER
-#define BACK_BUTTON_PIN PIN::Buttons::BACK
+#define UP_BUTTON_PIN           PIN::Buttons::UP
+#define DOWN_BUTTON_PIN         PIN::Buttons::DOWN
+#define LEFT_BUTTON_PIN         PIN::Buttons::LEFT
+#define RIGHT_BUTTON_PIN        PIN::Buttons::RIGHT
+#define ENTER_BUTTON_PIN        PIN::Buttons::ENTER
+#define BACK_BUTTON_PIN         PIN::Buttons::BACK
 
 // Oled display size
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define SCREEN_WIDTH            (128U) // OLED display width, in pixels
+#define SCREEN_HEIGHT           (64U)  // OLED display height, in pixels
 // Mario's Ideas
 // Text input using OLED display an 5 Key Keyboard
 
