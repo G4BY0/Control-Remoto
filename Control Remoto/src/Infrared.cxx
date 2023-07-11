@@ -46,11 +46,13 @@ void Receive_stop(void){
 }
 
 void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
+  Serial.printf("(DEBUG) Total memory heap available %d" ,esp_get_minimum_free_heap_size());
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
-
+  
   // Convert the results into an array suitable for sendRaw().
   // resultToRawArray() allocates the memory we need for the array.
   uint16_t *raw_array = resultToRawArray(&IRData->results);
+  Serial.printf("(DEBUGAFTERRESULTTORAWARRAY()) Total memory heap available %d" ,esp_get_minimum_free_heap_size());
   // Find out how many elements are in the array.
   uint16_t length = getCorrectedRawLength(&IRData->results);
   // Send it out via the IR LED circuit.
@@ -59,7 +61,6 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
   // Deallocate the memory allocated by resultToRawArray().
   delete [] raw_array;
   
-  yield();  // Or delay(milliseconds); This ensures the ESP doesn't WDT reset.
 }
 
 // Stores the code for later playback

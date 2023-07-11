@@ -58,8 +58,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
         if( strcmp( archivo.name() , TRANSFER_FILE_NAME ".db" ) == 0 ) continue; //Si son iguales...
 
         //Si es un archivo 
-        Serial.print(F("Perfil: "));
-        Serial.println(archivo.name());  //Imprimo el nombre
+        Serial.printf("Perfil: %s" ,archivo.name() );
 
         profilesName.push_back( [=] () -> std::string {
           std::string name = archivo.name();
@@ -119,7 +118,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
 
     //case Protocols::IR:
       auto IRData = storeCode( subProfileName );
-      Serial.printf("(DEBUG!) Profile: %s y su path es %s\n" ,profileName ,profilePath(profileName));
+      //Serial.printf("(DEBUG!) Profile: %s y su path es %s\n" ,profileName ,profilePath(profileName));
       File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
       //Si el archivo no esta disponible...
@@ -145,7 +144,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
     //case Protocols::BLUETOOTH:
     //break;
 
-
+sendCode(IRData);
   //}
 
 }
@@ -157,6 +156,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
 
   File root = SD.open( profilePath(profileName) , FILE_READ );
 
+  // Si el archivo no se abrio correctamente
   if(!root){
 
     Serial.println(F("The file cannot be open successfully."));
@@ -169,11 +169,12 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   
   Serial.println(F("Subperfiles:"));
   root.seek(0U);
+  // Comparo la posicion de bytes del puntero con el tamanio equivalente del archivo
   while( root.position() != root.size() ){
     storedIRDataStruct Stored;
-    root.read(reinterpret_cast<byte*>(&Stored) , sizeof(Stored) );
-    Serial.printf("nombre sub %s" ,Stored.nameSubProfile);
-    subProfilesName.push_back(Stored.nameSubProfile);
+    root.read(reinterpret_cast<byte*>(&Stored) , sizeof(Stored) ); // Leo en bytes la estructura para hacer el copiado
+    Serial.println(Stored.nameSubProfile);                         
+    subProfilesName.push_back(Stored.nameSubProfile);              // Guardo el String en el Vector Dinamico
 
   }
 
@@ -213,6 +214,8 @@ std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* pr
 
   root.close();
   Serial.println(F("Successfull retired SubProfile Stored."));
+
+  return Stored;
 
 }
 

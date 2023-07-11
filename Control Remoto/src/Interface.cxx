@@ -155,6 +155,9 @@ void Interface::addProfile(void){
 
   display.display();
 
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
   //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
   while(1){
     if(buttonState(PIN::Buttons::ENTER) == HIGH ){
@@ -229,12 +232,11 @@ void Interface::subProfiles(const char *profileName_){
 
   // Informacion a enviar a la salida
   auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
-
-  if(IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
+  if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
     Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
     return;
   }
-
+  
   sendCode(IRToSend); //Envio la señal a la salida con la informacion dada 
 
 }
