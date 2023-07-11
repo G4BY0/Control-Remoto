@@ -47,6 +47,7 @@ String profilePath(const char* profileName);
 */
 void SDBegin(void);
 
+/*! \brief Permite el Manjeo del Almacenamiento de los Perfiles*/
 namespace Profiles{
     /*! \brief Hace lectura del nombre de los perfiles dentro del almacenamiento  
         \returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los perfiles)
@@ -66,6 +67,7 @@ namespace Profiles{
 
 };
 
+/*! \brief Permite el Manjeo del Almacenamiento de los Sub-Perfiles*/
 namespace SubProfiles{
 
     using ::storedIRDataStruct;

@@ -46,27 +46,36 @@ class Cursor {
     uint currentIndex;
     uint totalPages;
     uint currentPage;
+    uint8_t inicialOption = 0;
 
   public:
-    /*! @brief Constructor
-        @param menuOptions objeto de caracter std::vector<std::string> que contiene las opciones de trabajo para el cursor
-        @param display Recibe referencia o puntero al objeto del display
+    /*! \brief Constructor, si la opcion inicial = 0
+        \param menuOptions objeto de caracter std::vector<std::string> que contiene las opciones de trabajo para el cursor
+        \param display Recibe referencia o puntero al objeto del display
+        \param inicialOption Opcion Inicial del Cursor
     */
-    Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display);
+    Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display );
 
-    /*! @brief Obtiene el numero total strings
-        @returns Numero total de punteros que hay dentro del array
+    /*! \brief Constructor con la opcion inicial dada
+        \param menuOptions objeto de caracter std::vector<std::string> que contiene las opciones de trabajo para el cursor
+        \param display Recibe referencia o puntero al objeto del display
+        \param inicialOption Opcion Inicial del Cursor
+    */
+    Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display , const uint8_t inicialOption);
+
+    /*! \brief Obtiene el numero total strings
+        \returns Numero total de punteros que hay dentro del array
     */
     const size_t getNumberOfOptions(void) const;
 
-    /*! @brief Pagina/apartado en el que se encuentra el cursor
-        @note Lo muestra en el screen Oled
+    /*! \brief Pagina/apartado en el que se encuentra el cursor
+        \note Lo muestra en el screen Oled
     */
     void showCurrentPage(void);
 
-    /*! @brief Inicia bucle infinito 
-        @returns
-        @note Lo muestra en el screen Oled
+    /*! \brief Inicia bucle infinito 
+        \returns
+        \note Lo muestra en el screen Oled
     */
     const char* getSelectedOption(void);
 };

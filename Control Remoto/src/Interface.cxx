@@ -66,7 +66,8 @@ uint8_t Interface::hub(void){
   //Opciones del menu Principal/Hub
   std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SHUTDOWN" };
 
-  Cursor cursor(strings,&display);
+  //Cursor Para Hacer el manejo del Hub
+  Cursor cursor( strings , &display );
   const char* selected;
 
   do{ selected = cursor.getSelectedOption(); } 
@@ -217,27 +218,31 @@ void Interface::subProfiles(const char *profileName_){
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
   Cursor cursor( subprofiles ,&display); 
-  const char* subprofiles_selected = cursor.getSelectedOption();
-  if(subprofiles_selected == nullptr) return; // Si no se selecciono ninguno...
 
-  if(subprofiles_selected == "ADD SUBPROFILE"){
-  Interface::createSubProfile(profileName_);
-  return;
-  }
-
-  if(subprofiles_selected == "DELETE SUBPROFILE"){
-  Interface::deleteSubProfile(profileName_);
-  return;
-  }
-
-  // Informacion a enviar a la salida
-  auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofiles_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
-  if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
-    Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
-    return;
-  }
+  for(const char* subprofile_selected = cursor.getSelectedOption() ; subprofile_selected != nullptr ; subprofile_selected = cursor.getSelectedOption()){
   
-  sendCode(IRToSend); //Envio la señal a la salida con la informacion dada 
+    if(subprofile_selected == nullptr) return; // Si no se selecciono ninguno...
+
+    if(subprofile_selected == "ADD SUBPROFILE"){
+    Interface::createSubProfile(profileName_);
+    return;
+    }
+
+    if(subprofile_selected == "DELETE SUBPROFILE"){
+    Interface::deleteSubProfile(profileName_);
+    return;
+    }
+
+    // Informacion a enviar a la salida
+    auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofile_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
+    if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
+      Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
+      return;
+    }
+
+    sendCode(IRToSend); //Envio la señal a la salida con la informacion dada
+    Serial.println(F("Successfull Sended"));
+  }
 
 }
 

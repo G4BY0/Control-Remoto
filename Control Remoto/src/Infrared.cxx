@@ -48,7 +48,8 @@ void Receive_stop(void){
 void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
   Serial.printf("(DEBUG) Total memory heap available %d" ,esp_get_minimum_free_heap_size());
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
-  
+  /*
+  if(IRData->results.decode_type == decode_type_t::UNKNOWN){
   // Convert the results into an array suitable for sendRaw().
   // resultToRawArray() allocates the memory we need for the array.
   uint16_t *raw_array = resultToRawArray(&IRData->results);
@@ -59,7 +60,32 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
   irsend.sendRaw(raw_array, length, kFrequency);
   // Resume capturing IR messages. It was not restarted until after we sent
   // Deallocate the memory allocated by resultToRawArray().
-  delete [] raw_array;
+  */
+ 
+  bool success = true;
+  uint16_t size = IRData->results.bits;
+  decode_type_t protocol = IRData->results.decode_type;
+  if (protocol == decode_type_t::UNKNOWN) {  // Yes.
+      // Convert the results into an array suitable for sendRaw().
+      // resultToRawArray() allocates the memory we need for the array.
+      uint16_t *raw_array = resultToRawArray(&results);
+      // Find out how many elements are in the array.
+      size = getCorrectedRawLength(&results);
+
+      // Send it out via the IR LED circuit.
+      irsend.sendRaw(raw_array, size, kFrequency);
+
+      // Deallocate the memory allocated by resultToRawArray().
+      delete [] raw_array;
+    } else if (hasACState(protocol)) {  // Does the message require a state[]?
+      // It does, so send with bytes instead.
+      success = irsend.send(protocol, IRData->results.state, size / 8);
+    } else {  // Anything else must be a simple message protocol. ie. <= 64 bits
+      success = irsend.send(protocol, IRData->results.value, size);
+    }
+
+
+  
   
 }
 
