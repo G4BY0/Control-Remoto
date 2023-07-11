@@ -14,7 +14,9 @@
 #include <freertos/FreeRTOS.h>  //FreeRTOS Operative System
 #include <freeRTOS/task.h>      //MultiThreading
 #include <freeRTOS/semphr.h>    //Semaphore
+#include <ESP32Time.h>          //Built-IN RTC
 #include "Modes.h"
+
 
 // Descomentar en caso de querer establecer cuanto se pone el modo apagado luego de estar ese tiempo en el modo SLEEPING
 //#define SLEEP_TIME_WAITING_TO_SHUTDOWN timeHere!
@@ -46,14 +48,15 @@ void Task_Battery(void* nonParameters){  // Como la funcion no recibe parametros
         Interface::battery();
         // Pausar la tarea durante un breve periodo de tiempo
         vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-    }   
+
+    }
 }
 
 /*! \brief Task para preguntar de manera dinamica si se muestran sintomas de dormir
     \note El boton BACK se debe mantener presionado el tiempo determinado -> 'SLEEP_TIME_BUTTONPRESSING' */
 void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no lo voy a usar el argumento
     while(1){
-        
+
         for(unsigned long countPressed = millis(); buttonState(PIN::Buttons::BACK) == true; )
         if ( ( millis() - countPressed ) >= SLEEP_TIME_BUTTONPRESSING ){
             
@@ -67,6 +70,7 @@ void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no
         
         // Pausar la tarea durante un breve periodo de tiempo
         vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
+        
     }
     #undef SLEEP_TIME_BUTTON_PRESSING
     #undef SLEEP_TIME_WAITING_TO_SHUTDOWN  
@@ -75,8 +79,8 @@ void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no
 //Parte todo del Hub y luego se ramifica en los demas Menus
 void Task_Loop(void * nonParameters){ while(1) hub(); }
 
-#define WATCHDOG_FEED_PERIOD_MS 1000  // Realimentación del WDT cada 1 segundo
-void watchdogTask(void* parameter) {
+#define WATCHDOG_FEED_PERIOD_MS (1000U)  // Realimentación del WDT cada 1 segundo
+void Task_WatchDogTimer(void* parameter) {  
   TickType_t lastWakeTime = xTaskGetTickCount();
 
   while (true) {
@@ -159,7 +163,7 @@ void setup(){
         "Task_Sleep",               //Nombre del Task 
         1500U,                      //Reserva de espacio en la Pila 
         NULL,                       //Argumentos
-        2,                          //Prioridad
+        tskIDLE_PRIORITY + 1U,      //Prioridad
         &handleSleep                //Handle   
 
     );
@@ -168,16 +172,25 @@ void setup(){
     xTaskCreate(
 
         Task_Battery,               // Funcion codigo del Task
-        "Task_Battery",             // Nombre del Task 
-        1500U,                      // Reserva de espacio en la Pila 
+        "Task_Battery",             // Nombre del Task
+        1500U,                      // Reserva de espacio en la Pila
         NULL,                       // Argumentos
-        3,                          // Prioridad
-        &handleBattery              // Handle 
+        tskIDLE_PRIORITY + 1U,      // Prioridad
+        &handleBattery              // Handle
 
     );
-    #define WATCHDOG_TASK_PRIORITY 1  // Prioridad de la tarea del Watchdog Timer
+
     // Crear tarea del Watchdog Timer
-    xTaskCreate(watchdogTask, "Watchdog Task", 1500U, NULL, WATCHDOG_TASK_PRIORITY, NULL);
+    xTaskCreate(
+
+        Task_WatchDogTimer,               // Funcion codigo del Task
+        "Task_WatchDogTimer",       // Nombre del Task 
+        1500U,                      // Reserva de espacio en la Pila
+        NULL,                       // Argumentos
+        tskIDLE_PRIORITY + 2U,      // Prioridad
+        NULL                        // Sin Handle 
+    
+    );
     
     // Iniciar el scheduler de FreeRTOS
     //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)

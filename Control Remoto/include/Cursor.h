@@ -46,7 +46,6 @@ class Cursor {
     uint currentIndex;
     uint totalPages;
     uint currentPage;
-    uint8_t inicialOption = 0;
 
   public:
     /*! \brief Constructor, si la opcion inicial = 0

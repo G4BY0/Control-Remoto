@@ -217,7 +217,7 @@ void Interface::subProfiles(const char *profileName_){
   subprofiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
-  Cursor cursor( subprofiles ,&display); 
+  Cursor cursor( subprofiles ,&display , 2 ); 
 
   for(const char* subprofile_selected = cursor.getSelectedOption() ; subprofile_selected != nullptr ; subprofile_selected = cursor.getSelectedOption()){
   
@@ -241,7 +241,7 @@ void Interface::subProfiles(const char *profileName_){
     }
 
     sendCode(IRToSend); //Envio la señal a la salida con la informacion dada
-    Serial.println(F("Successfull Sended"));
+    Serial.println(F("Successfull Sended."));
   }
 
 }

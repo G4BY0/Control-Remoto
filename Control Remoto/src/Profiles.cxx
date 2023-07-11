@@ -20,8 +20,6 @@ String profilePath(const char* profileName) {
 
 void SDBegin(void){
 
-
-
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
     Serial.println(F("Error al inicializar el almacenamiento."));
@@ -76,14 +74,13 @@ std::vector<std::string> Profiles::showProfiles_(void){
       Serial.print('\n');
       
     }
-  }while(archivo);
+  } while(archivo);
   
   archivo.close();
   root.close();
   return profilesName;
 
 }
-
 
 bool Profiles::createProfile_(const char* name){
   
@@ -118,7 +115,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
 
     //case Protocols::IR:
       auto IRData = storeCode( subProfileName );
-      //Serial.printf("(DEBUG!) Profile: %s y su path es %s\n" ,profileName ,profilePath(profileName));
+      
       File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
       //Si el archivo no esta disponible...
@@ -132,6 +129,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
       //Escritura de la informacion en el archivo
       root.write((const byte*) IRData.get(), sizeof(*IRData.get()) );
       root.flush();
+
       Serial.println(F("Successfull Uploaded SubProfile."));
       Serial.printf("Now the Profile weights %d\n" , root.size() );
       root.close();
@@ -144,7 +142,6 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
     //case Protocols::BLUETOOTH:
     //break;
 
-sendCode(IRData);
   //}
 
 }
@@ -227,7 +224,7 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
   
   if(!rootWriteOld){
     Serial.println(F("Unsuccessfull writting from File."));
-    return;//Failure, No se pudo abrir el archivo correctamente 
+    return; //Failure, No se pudo abrir el archivo correctamente 
   }
 
   // Test de si corresponde lo que esta guardado. Sino, es porque hay otra cosa almacenada en vez de las estructuras

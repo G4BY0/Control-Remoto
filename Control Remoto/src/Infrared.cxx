@@ -46,21 +46,7 @@ void Receive_stop(void){
 }
 
 void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
-  Serial.printf("(DEBUG) Total memory heap available %d" ,esp_get_minimum_free_heap_size());
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
-  /*
-  if(IRData->results.decode_type == decode_type_t::UNKNOWN){
-  // Convert the results into an array suitable for sendRaw().
-  // resultToRawArray() allocates the memory we need for the array.
-  uint16_t *raw_array = resultToRawArray(&IRData->results);
-  Serial.printf("(DEBUGAFTERRESULTTORAWARRAY()) Total memory heap available %d" ,esp_get_minimum_free_heap_size());
-  // Find out how many elements are in the array.
-  uint16_t length = getCorrectedRawLength(&IRData->results);
-  // Send it out via the IR LED circuit.
-  irsend.sendRaw(raw_array, length, kFrequency);
-  // Resume capturing IR messages. It was not restarted until after we sent
-  // Deallocate the memory allocated by resultToRawArray().
-  */
  
   bool success = true;
   uint16_t size = IRData->results.bits;
@@ -68,9 +54,9 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
   if (protocol == decode_type_t::UNKNOWN) {  // Yes.
       // Convert the results into an array suitable for sendRaw().
       // resultToRawArray() allocates the memory we need for the array.
-      uint16_t *raw_array = resultToRawArray(&results);
+      uint16_t *raw_array = resultToRawArray(&IRData->results);
       // Find out how many elements are in the array.
-      size = getCorrectedRawLength(&results);
+      size = getCorrectedRawLength(&IRData->results);
 
       // Send it out via the IR LED circuit.
       irsend.sendRaw(raw_array, size, kFrequency);
@@ -83,9 +69,10 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
     } else {  // Anything else must be a simple message protocol. ie. <= 64 bits
       success = irsend.send(protocol, IRData->results.value, size);
     }
-
-
-  
+    Serial.println(F(success == false
+    ? "Failed sending Signal!"
+    : "Successful sending Signal."   
+    ));
   
 }
 

@@ -20,6 +20,7 @@
     #include <esp_sleep.h>
 #endif
 
+/*! \brief Modos del Control Remoto*/
 namespace MODE{
 
     /*! \brief Seleccion de Modos (Hub, Principal) */
@@ -47,6 +48,7 @@ namespace MODE{
         \param Seconds si pasa el tiempo estipulado, se coloca el dispositivo en MODE::ShutDown */
     void sleep(uint32_t Seconds);
 
+    /*! \brief Manejo de Servicios poniendo en apagado*/
     namespace ShutDown{
 
         // Bandera para indicar el reinicio

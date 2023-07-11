@@ -188,7 +188,7 @@ Cursor::Cursor( std::vector<std::string> menuOptions, Adafruit_SH1106G* display 
 
 //Si recibo la cadena de strings en formato std::vector<std::string>
 Cursor::Cursor(std::vector<std::string> menuOptions, Adafruit_SH1106G* display , const uint8_t inicialOption ) 
-: options(menuOptions), sh1106(display), inicialOption(inicialOption), currentIndex(0), currentPage(0) {
+: options(menuOptions), sh1106(display), currentIndex(inicialOption), currentPage(0) {
   totalPages = (getNumberOfOptions() - 1U) / MAX_LINE_OPTIONS_OUTPUT + 1U; // calcular el número total de páginas
 }
 
@@ -220,7 +220,6 @@ void Cursor::showCurrentPage() {
 }
 
 const char* Cursor::getSelectedOption() {
-  currentIndex = inicialOption;
   while (true) {
     showCurrentPage();
     // Boton ENTER Y Boton DERECHA
