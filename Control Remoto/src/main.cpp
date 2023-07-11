@@ -75,6 +75,18 @@ void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no
 //Parte todo del Hub y luego se ramifica en los demas Menus
 void Task_Loop(void * nonParameters){ while(1) hub(); }
 
+#define WATCHDOG_FEED_PERIOD_MS 1000  // Realimentación del WDT cada 1 segundo
+void watchdogTask(void* parameter) {
+  TickType_t lastWakeTime = xTaskGetTickCount();
+
+  while (true) {
+    // Realimentación del WDT
+    // Puedes utilizar xTaskNotify() o cualquier otro mecanismo para enviar una notificación a la tarea de supervisión
+
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(WATCHDOG_FEED_PERIOD_MS));
+  }
+}
+
 void setup(){
     
     Serial.begin(115200);
@@ -135,7 +147,7 @@ void setup(){
         "Task_Loop",                // Nombre del Task 
         15000U,                     // Reserva de espacio en la Pila
         NULL,                       // Argumentos
-        1,                          // Prioridad
+        tskIDLE_PRIORITY,           // Prioridad
         &handleLoop                 // Handle 
 
     );
@@ -145,7 +157,7 @@ void setup(){
 
         Task_Sleep,                 //Funcion codigo del Task
         "Task_Sleep",               //Nombre del Task 
-        1000U,                      //Reserva de espacio en la Pila 
+        1500U,                      //Reserva de espacio en la Pila 
         NULL,                       //Argumentos
         2,                          //Prioridad
         &handleSleep                //Handle   
@@ -157,13 +169,15 @@ void setup(){
 
         Task_Battery,               // Funcion codigo del Task
         "Task_Battery",             // Nombre del Task 
-        1000U,                      // Reserva de espacio en la Pila 
+        1500U,                      // Reserva de espacio en la Pila 
         NULL,                       // Argumentos
         3,                          // Prioridad
         &handleBattery              // Handle 
 
     );
-
+    #define WATCHDOG_TASK_PRIORITY 1  // Prioridad de la tarea del Watchdog Timer
+    // Crear tarea del Watchdog Timer
+    xTaskCreate(watchdogTask, "Watchdog Task", 1500U, NULL, WATCHDOG_TASK_PRIORITY, NULL);
     
     // Iniciar el scheduler de FreeRTOS
     //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)
