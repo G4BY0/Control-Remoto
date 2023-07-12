@@ -121,7 +121,7 @@ void Interface::addProfile(void){
   //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
   WritterV2 writter( &display );
 
-  String profileName = writter.stringFinished();
+  std::string profileName = writter.stringFinished();
   delay(DEBOUNCE_TIME);
   
   //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
@@ -269,32 +269,44 @@ void Interface::createSubProfile(const char* profileSelected = nullptr){
 
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
+  const char* subProfileName = writter.stringFinished();
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+
+  Serial.println(F("Storing... Please wait time."));
+  display.setCursor( 20 , 20 );
+  display.println(F("Storing..."));
+  display.setCursor( 10 , 50 );
+  display.print(F("Please wait time"));
+  display.setCursor( 0 , 0 );
+
+  // Desbloquear el semáforo
+  xSemaphoreGive( semaphoreDisplay );
 
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::createSubProfile_(  writter.stringFinished() , Protocols::IR , profileSelected ); 
-  
+  SubProfiles::createSubProfile_(  subProfileName , Protocols::IR , profileSelected ); 
+
 }
 
 void Interface::deleteSubProfile(const char* profileSelected = nullptr){
 
+  //Si no recibo ningun nombre...
   if(profileSelected == nullptr){
 
-  //Recibo del almacenamiento el nombre de los perfiles
-  auto namesProfiles = Profiles::showProfiles_();
+    //Recibo del almacenamiento el nombre de los perfiles
+    auto namesProfiles = Profiles::showProfiles_();
 
-  if ( namesProfiles.empty() == true ) { //Si no recibo ningun nombre...
-    Interface::EmergencyCalls::nonProfiles();
-    return; // El puntero es nulo, salir de la función
+    if ( namesProfiles.empty() == true ) { //Si no recibo ningun nombre...
+      Interface::EmergencyCalls::nonProfiles();
+      return; // El puntero es nulo, salir de la función
+    }
+
+    //Inicializo un cursor para pedirle al usuario que perfil desea
+    Cursor cursor( namesProfiles , &display );
+    const char* && profileSelected = cursor.getSelectedOption();
+
   }
-
-  //Inicializo un cursor para pedirle al usuario que perfil desea
-  Cursor cursor( namesProfiles , &display );
-  const char* && profileSelected = cursor.getSelectedOption();
-
-  }
-
-  //Si no recibo ningun nombre...
-  if(profileSelected == nullptr) return; //Failure, el usuario cancelo la seleccion de perfiles
 
   //Recido del almacenamiento el nombre de los subperfiles del perfil dado
   auto namesSubProfiles = SubProfiles::showSubProfiles(profileSelected);
@@ -345,7 +357,7 @@ bool Interface::waitingForIR(void){
       Serial.println(F("End Receiving for infrared signals."));
       delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
       return false; //Failure, se cancelo
-      }
+    }
   }
   Receive_stop();
   Serial.println(F("End Receiving for infrared signals."));
@@ -354,7 +366,7 @@ bool Interface::waitingForIR(void){
 
 }
 
-void Interface::help(const char* text , uint8_t version = 4){
+void Interface::help( const char* text , uint8_t version ){
 
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
@@ -435,6 +447,7 @@ void Interface::clock( struct tm& time ){
 
 
   display.setCursor( 0 , 0 );
+  display.display();
   
 
   // Desbloquear el semáforo
@@ -459,9 +472,9 @@ void Interface::EmergencyCalls::nonProfiles(void){
   display.println(F("No profiles stored"));
 
   //Le digo al usuario como terminar la ventana emergente
-  display.setCursor(15,40);
+  display.setCursor( 15 , 40 );
   display.println(F("Press any button"));
-  display.setCursor(25,50);
+  display.setCursor( 25 , 50 );
   display.println(F("to turn back"));
 
   display.display();

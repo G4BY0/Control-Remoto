@@ -69,21 +69,15 @@ void MODE::ShutDown::now(void) {
   yield(); // Realimento el Watch Dog por si se produce larga la espera
   //Finalizo todos los Task menos este...
 
-  TaskStatus_t taskStatus;
-  
-  // Iterar a través de todos los tasks
-  /* while (uxTaskGetSystemState(&taskStatus, configMAX_TASK_NAME_LEN, NULL) > 1) { // 1 porque Considerando que solo esté este mismo. // NO FUNCIONA uxTaskGetSystemState() undefined reference to `uxTaskGetSystemState'
-  
-    //TaskHandle_t taskHandle = taskStatus.xHandle;
-
-    if(sleepIndicateTasks == xTaskGetCurrentTaskHandle())
-    continue;
-
-    // Eliminar el task
-    vTaskDelete(sleepIndicateTasks);
-  }*/
-
-  shouldRestart = true;
+  // Task para mostrar la bateria en el display de forma dinamica
+  xTaskCreate(
+    Task_Restart,               // Funcion codigo del Task
+    "Task_Restart",             // Nombre del Task 
+    1024U,                      // Reserva de espacio en la Pila
+    NULL,                       // Argumentos
+    tskIDLE_PRIORITY + 4U,      // Prioridad
+    NULL                        // Handle 
+  );
 
   // Código de limpieza y finalización del task
   vTaskDelete(NULL); // Delete este mismo Task

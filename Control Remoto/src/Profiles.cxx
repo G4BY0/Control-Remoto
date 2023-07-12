@@ -54,7 +54,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
 
         //IGNORAR "Transfer.db" (archivo para el manejo del programa)
         if( strcmp( archivo.name() , TRANSFER_FILE_NAME ".db" ) == 0 ) continue; //Si son iguales...
-
+ 
         //Si es un archivo 
         Serial.printf("Perfil: %s" ,archivo.name() );
 
@@ -198,7 +198,6 @@ std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* pr
   root.seek(0U);
   while( root.position() != root.size() ){
 
-    
     root.read((byte*)  Stored.get()   , sizeof( ( *Stored.get() ) ));
     if( strcmp( Stored->nameSubProfile , subProfileName ) == 0 )
     break;

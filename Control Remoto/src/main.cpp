@@ -11,10 +11,8 @@
 #include <Arduino.h>
 #include <Wire.h>               // I2C
 #include <SPI.h> 
-#include <freertos/FreeRTOS.h>  //FreeRTOS Operative System
-#include <freeRTOS/task.h>      //MultiThreading
-#include <freeRTOS/semphr.h>    //Semaphore
 #include <ESP32Time.h>          //Built-IN RTC
+#include "Tasks.h"
 #include "Modes.h"
 
 //Frecuencia de Actualizacion del Clock
@@ -36,84 +34,6 @@ TaskHandle_t handleLoop; //Task de mi propio "loop", pero no pertenece al Idle (
 using namespace MODE;
 
 
-/*! \brief Task para mostrar de manera dinamica la bateria
-    \note lo muestra en esquinas de la pantalla */
-void Task_Battery(void* nonParameters){  // Como la funcion no recibe parametros no lo voy a usar el argumento     
-    while(1){
-        Interface::battery();
-        // Pausar la tarea durante un breve periodo de tiempo
-        vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-
-    }
-}
-
-/*! \brief Task para preguntar de manera dinamica si se muestran sintomas de dormir
-    \note El boton BACK se debe mantener presionado el tiempo determinado -> 'SLEEP_TIME_BUTTONPRESSING' */
-void Task_Sleep(void* nonParameters){ // Como la funcion no recibe parametros no lo voy a usar el argumento
-    while(1){
-
-        for(unsigned long countPressed = millis(); buttonState(PIN::Buttons::BACK) == true; )
-        if ( ( millis() - countPressed ) >= SLEEP_TIME_BUTTONPRESSING ){
-            
-            // Control de modo Sleeping Hasta el tiempo estipulado, si pasa entrara en ShutDown
-            MODE::sleep(SLEEP_TIME_WAITING_TO_SHUTDOWN);
-
-            
-            // Pausar la tarea durante un breve periodo de tiempo
-            vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-        }
-        
-        // Pausar la tarea durante un breve periodo de tiempo
-        vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-        
-    }
-    #undef SLEEP_TIME_BUTTON_PRESSING
-    #undef SLEEP_TIME_WAITING_TO_SHUTDOWN  
-}
-
-//Parte todo del Hub y luego se ramifica en los demas Menus
-void Task_Loop(void * nonParameters){ while(1)hub(); }
-
-#define WATCHDOG_FEED_PERIOD_MS (1000U)  // Realimentación del WDT cada 1 segundo
-void Task_WatchDogTimer(void* parameter) {  
-    TickType_t lastWakeTime = xTaskGetTickCount();
-
-    while (true) {
-        // Realimentación del WDT
-        // Puedes utilizar xTaskNotify() o cualquier otro mecanismo para enviar una notificación a la tarea de supervisión
-
-        vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(WATCHDOG_FEED_PERIOD_MS));
-  }
-}
-
-/*
-void Task_Clock(void* nonParameter){
-
-  while(1){
-  
-  
-  // Pausar la tarea durante un breve periodo de tiempo
-  vTaskDelay(pdMS_TO_TICKS(REFRESH_CLOCK)); // Pausa de refresh
-  }
-
-
-}
-*/
-/*
-bool Wifi_off = false;
-bool Wifi_ = false;
-void Task_Wifi(void* nonParameter){
-
-  while(1){
-  
-  
-  // Pausar la tarea durante un breve periodo de tiempo
-  vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)
-  }
-
-
-}
-*/
 void setup(){
     
     Serial.begin(115200);
@@ -205,17 +125,17 @@ void setup(){
     // Crear tarea del Watchdog Timer
     xTaskCreate(
 
-        Task_WatchDogTimer,               // Funcion codigo del Task
-        "Task_WatchDogTimer",       // Nombre del Task 
+        Task_WatchDogTimer,         // Funcion codigo del Task
+        "Task_WatchDogTimer",       // Nombre del Task
         1500U,                      // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY + 2U,      // Prioridad
-        NULL                        // Sin Handle 
+        NULL                        // Sin Handle
     
     );
     
-    /*
-    // Crear tarea del Watchdog Timer
+    
+    // Crear tarea del Reloj
     xTaskCreate(
 
         Task_Clock,                 // Funcion codigo del Task
@@ -226,7 +146,7 @@ void setup(){
         NULL                        // Sin Handle 
     
     );
-    */
+    
     // Iniciar el scheduler de FreeRTOS
     //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)
 
@@ -234,25 +154,4 @@ void setup(){
 
 
 //Solamente se encarga de hacer el reinicio si es pedido
-void loop(){
-
-    
-  // Verificar si se debe reiniciar la placa
-  if (ShutDown::shouldRestart) { //Antes de reiniciar la placa deben haber terminado o suspendido los Tasks
-      
-      //Elimino todos los Tasks del sistema
-      vTaskDelete(handleBattery);
-      vTaskDelete(handleLoop);
-      // Le doy tiempo a los demas Tasks de liberar los recursos que estaban consumiendo
-      vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-      //Reinicio del Sistema, se despierta del ShutDown
-      #if defined(ESP32) || defined(ESP8266)
-      ESP.restart();
-      #else
-      asm volatile("reset"); 
-      #endif
-      
-  }
-
-
-} 
+void loop(){  } 

@@ -10,6 +10,7 @@
 #ifndef MODES_H
 #define MODES_H
 
+#include "Tasks.h"
 #include "Interface.h"
 
 #if defined(__AVR__)
