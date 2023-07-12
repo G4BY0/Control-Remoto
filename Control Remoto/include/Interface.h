@@ -115,6 +115,11 @@ namespace Interface {
       \note Se muestra en alguna de las esquinas de la pantalla*/
   void battery(void);
 
+  /*! \brief Muestra el clock en tiempo real
+      \param rtc Objeto de Registro del Tiempo
+      \note Se refresca cada 'REFRESH CLOCK' (MACRO que estipula el tiempo de actualizacion)*/
+  void clock( struct tm& time ) ;
+
   namespace EmergencyCalls {
 
     /*! \brief  Ventana Emergente al display que indica: "No hay perfiles almacenados" a la salida del display

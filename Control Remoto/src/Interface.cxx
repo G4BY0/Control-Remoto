@@ -428,6 +428,20 @@ void Interface::battery(void){
 
 }
 
+void Interface::clock( struct tm& time ){
+
+  // Bloquear el semáforo
+  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
+
+
+  display.setCursor( 0 , 0 );
+  
+
+  // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
+}
+
 void Interface::EmergencyCalls::nonProfiles(void){
 
   // Bloquear el semáforo

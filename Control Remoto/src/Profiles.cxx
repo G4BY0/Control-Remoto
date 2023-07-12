@@ -127,13 +127,13 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
       //Voy hasta el final del archivo
       root.seek(root.size());
       //Escritura de la informacion en el archivo
-      root.write((const byte*) IRData.get(), sizeof(*IRData.get()) );
+      root.write((const byte*) IRData.get(), sizeof( *IRData.get() ) );
       root.flush();
 
       Serial.println(F("Successfull Uploaded SubProfile."));
-      Serial.printf("Now the Profile weights %d\n" , root.size() );
+      Serial.printf("Now the Profile weights %d Bytes\n" , root.size() );
       root.close();
-      
+
     //break;
 
     //case Protocols::WIFI:
@@ -169,10 +169,9 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
   // Comparo la posicion de bytes del puntero con el tamanio equivalente del archivo
   while( root.position() != root.size() ){
     storedIRDataStruct Stored;
-    root.read(reinterpret_cast<byte*>(&Stored) , sizeof(Stored) ); // Leo en bytes la estructura para hacer el copiado
-    Serial.println(Stored.nameSubProfile);                         
-    subProfilesName.push_back(Stored.nameSubProfile);              // Guardo el String en el Vector Dinamico
-
+    root.read(reinterpret_cast<byte*>(&Stored) , sizeof(Stored) );              // Leo en bytes la estructura para hacer el copiado
+    subProfilesName.push_back(std::string(Stored.nameSubProfile));              // Guardo el String en el Vector Dinamico
+    Serial.println(Stored.nameSubProfile);
   }
 
   root.close();
@@ -189,21 +188,18 @@ std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* pr
   //Si el archivo no esta disponible...
   if(!root){
 
-    Serial.print(F("The file: "));
-    Serial.print(profilePath(profileName));
-    Serial.println(F("cannot be open successfully."));
+    Serial.printf("The file: %s cannot be open successfully.\n" , profilePath(profileName) );
     return nullptr; //Failure
 
   }
   
   std::shared_ptr<storedIRDataStruct> Stored(new storedIRDataStruct);
   
-  
   root.seek(0U);
   while( root.position() != root.size() ){
 
     
-    root.read(reinterpret_cast<byte*> (&( *Stored.get() ) ) , sizeof(& ( *Stored.get() ) ) );
+    root.read((byte*)  Stored.get()   , sizeof( ( *Stored.get() ) ));
     if( strcmp( Stored->nameSubProfile , subProfileName ) == 0 )
     break;
 
@@ -219,7 +215,7 @@ std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* pr
 void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfileName){
 
   //Abro los siguientes archivos para el trabajo de desplazamiento de informacion entre archivos
-  File rootWriteOld = SD.open( profilePath(profileName) , FILE_READ);
+  File rootWriteOld = SD.open(  profilePath(profileName) , FILE_READ );
   File rootReplacing = SD.open( TRANSFER_FILE_DIRANDNAME , FILE_WRITE);
   
   if(!rootWriteOld){
