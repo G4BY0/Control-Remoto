@@ -10,9 +10,9 @@ using namespace MODE;
 
 TaskHandle_t handleBattery;     //Handle al Task de mostrar la bateria
 TaskHandle_t handleSleep;       //Handle al Task de SLEEPING
-TaskHandle_t handleLoop;        //Hanlde al Task del idle
+TaskHandle_t handleIdle;        //Hanlde al Task del idle
 TaskHandle_t handleClock;       //Handle al Task de Clock
-TaskHandle_t handleWifi;        //Handle al Servicio Wifi
+TaskHandle_t handleWiFi;        //Handle al Servicio Wifi
 TaskHandle_t handleBluetooth;   //Handle al Servicio Bluetooth
 
 /*! \brief Task para mostrar de manera dinamica la bateria
@@ -27,11 +27,11 @@ void Task_Battery(void* __nonParameter);
     \note El boton BACK se debe mantener presionado en SLEEP_TIME_BUTTONPRESSING O En Caso de no presionar ningun boton en */
 void Task_Sleep(void* __nonParameter);
 
-//Parte todo del Hub y luego se ramifica en los demas Menus
+//Tarea de ejecucion en el momento de reinicio
 void Task_Restart(void* __nonParameter);
 
 //Parte todo del Hub y luego se ramifica en los demas Menus
-void Task_Loop(void * __nonParameter);
+void Task_Idle(void * __nonParameter);
 
 #define WATCHDOG_FEED_PERIOD_MS (1000U)  // Realimentación del WDT cada 1 segundo
 /*! \brief Realimentacion Constante para el Watch Dog Timer

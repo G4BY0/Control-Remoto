@@ -24,12 +24,12 @@
 #include "Infrared.h"
 
 // Path del archivo que se usara para poder sobreescribir perfiles
-#define TRANSFER_FILE_DIRANDNAME "/RESERVED.db"
-#define TRANSFER_FILE_NAME "RESERVED"
+#define TRANSFER_FILE_DIRANDNAME    "/RESERVED.db"
+#define TRANSFER_FILE_NAME          "RESERVED"
 
 // Los perfiles se almacenan en archivos individuales
-#define PROFILES_DIR_PATH "/"
-#define EXTENSION_PROFILES ".db"
+#define PROFILES_DIR_PATH           "/"
+#define EXTENSION_PROFILES          ".db"
 
 enum class Protocols{
     IR,                 //INFRARED

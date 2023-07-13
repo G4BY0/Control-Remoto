@@ -37,8 +37,17 @@ void Task_Restart(void* __nonParameter){
     if (ShutDown::shouldRestart) { //Antes de reiniciar la placa deben haber terminado o suspendido los Tasks
     
         //Elimino todos los Tasks del sistema
-        vTaskDelete(handleBattery);
         vTaskDelete(handleLoop);
+        vTaskDelete(handleBattery);
+        #ifdef CLOCK_ON
+        vTaskDelete(handleClock);
+        #endif
+        #ifdef WIFI_ON
+        vTaskDelete(handleWiFi);
+        #endif
+        #ifdef BLUETOOTH_ON
+        vTaskDelete(handleBluetooth);
+        #endif
         // Le doy tiempo a los demas Tasks de liberar los recursos que estaban consumiendo
         vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
         //Reinicio del Sistema, se despierta del ShutDown

@@ -10,29 +10,35 @@
 
 #include <Arduino.h>
 #include <Wire.h>               // I2C
+#include <Wifi.h>
 #include <SPI.h> 
 #include <ESP32Time.h>          //Built-IN RTC
 #include "Tasks.h"
 #include "Modes.h"
 
-//Frecuencia de Actualizacion del Clock
-#define REFRESH_CLOCK 500 //Milisegundos
-// Retocar macro en caso de querer establecer cuanto se pone el modo apagado luego de estar ese tiempo en el modo SLEEPING
-#define SLEEP_TIME_WAITING_TO_SHUTDOWN (5U * 60U) // 5 minutos en segundos
-// Retocar macro en caso de querer establecer cuanto tiempo el usuario debe mantener el boton back para poner el modo SLEEPING
-#define SLEEP_TIME_BUTTONPRESSING (5U) // 5 segundos
+SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
+//Frecuencia de Actualizacion del Clock (En Milisegundos)
+#define REFRESH_CLOCK 500 
+// Retocar macro en caso de querer establecer cuanto se pone el modo apagado luego de estar ese tiempo en el modo SLEEPING (En Segundos)
+#define SLEEP_TIME_WAITING_TO_SHUTDOWN (5U * 60U)   // 5 minutos en segundos
 
-  
-SPIClass spi;
+// Retocar macro en caso de querer establecer cuanto tiempo el usuario debe mantener el boton back para poner el modo SLEEPING (En Segundos)
+#define SLEEP_TIME_BUTTONPRESSING (5U)
 
-TaskHandle_t handleBattery; //Handle al Task de mostrar la bateria
-TaskHandle_t handleSleep; //Handle al Task de SLEEPING
-TaskHandle_t handleLoop; //Task de mi propio "loop", pero no pertenece al Idle (programa Principal)
+#define CLOCK_ON
+#define WIFI_ON  
+//#define BLUETOOTH_ON
 
+#define SSID_IN         "TP-LINK_4F48"        //SSID del access point en el que se conectara el servicio WiFi
+#define PASSWORD_IN     "51807511"            //PASSWORD del access point en el que se conectara el servicio WiFi
+
+#define SSID_OUT        "REMOTE_CONTROLLER"   //SSID del access point que se generara
+#define PASSWORD_OUT    "SARAGOYLAJEFA"       //PASSWORD del access point que se generara
 
 using namespace MODE;
 
+ESP32Time clock;
 
 void setup(){
     
@@ -43,11 +49,11 @@ void setup(){
     spi=SPIClass(VSPI); 
     spi.begin();
 
+    #ifdef DEBUG
     // Just to know which program is running on my Sketch
     Serial.println(F("START " __FILE__ " from " __DATE__ "."));
 
-    //Aviso del compilador utilizado (usando los identificadores de cada uno)
-    #define UsedCompiler  \                                       
+    //Aviso del compilador utilizado (usando los identificadores de cada uno)                                        
     Serial.println(F("Tipo de compilador Utilizado: "));                                                \
     #if defined(__GNUC__)                                                                               \
         Serial.println(F("GNU :)"));                                                                    \
@@ -60,13 +66,9 @@ void setup(){
         Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \
     #else                                                                                               \
         Serial.println(F("Generico"));                                                                  \
-    #endif                                                                                              
+    #endif      
+    #endif                                                                                        
     
-    
-    //Descomentar para ver: Aviso del compilador utilizado (usando los identificadores de cada uno)
-    //UsedCompiler;
-
-    #undef UsedCompiler
 
     //Descomentar en Caso de querer saber cual fue el compilador utilizado
     //UsedCompiler;
@@ -83,18 +85,34 @@ void setup(){
     // Inicializacion del sistema del infrarrojo
     infraredBegin();    Serial.println(F("Infrared Inicializado"));
 
+    #ifdef WIFI_ON
+    //  Inicializacion del servicio WiFi
+    // Conectar a la red WiFi
+    WiFi.begin(SSID_IN, PASSWORD_IN);
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Conectando a WiFi...");
+    }
+
+    // Seteo del servicio del Clock con NTC
+    // Configurar la zona horaria
+    clock.setTimeZone("America/Argentina");
+
+    #endif
+
     // Espero a que todos los procesos terminen para inicializar
     Serial.flush(); yield();
 
-    // Task para mostrar la bateria en el display de forma dinamica
+    // Task para correr el programa principal
     xTaskCreate(
 
-        Task_Loop,                  // Funcion codigo del Task
+        Task_Idle,                  // Funcion codigo del Task
         "Task_Loop",                // Nombre del Task 
         15000U,                     // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
-        &handleLoop                 // Handle 
+        &handleIdle                 // Handle 
 
     );
 
@@ -134,7 +152,7 @@ void setup(){
     
     );
     
-    
+    #ifdef CLOCK_ON
     // Crear tarea del Reloj
     xTaskCreate(
 
@@ -142,11 +160,40 @@ void setup(){
         "Task_Clock",               // Nombre del Task 
         configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
-        tskIDLE_PRIORITY,      // Prioridad
-        NULL                        // Sin Handle 
+        tskIDLE_PRIORITY,           // Prioridad
+        &handleClock                // Handle 
     
     );
+    #endif
+
+    #ifdef WIFI_ON
+    // Crear tarea para el funcionamiento WI-FI
+    xTaskCreate(
+
+        Task_Wifi,                  // Funcion codigo del Task
+        "Task_Wifi",                // Nombre del Task 
+        configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
+        NULL,                       // Argumentos
+        tskIDLE_PRIORITY,           // Prioridad
+        &handleWiFi                 // Handle 
     
+    );
+    #endif
+
+    #ifdef BLUETOOTH_ON
+    // Crear tarea para el funcionamiento BLUETOOTH
+    xTaskCreate(
+
+        Task_Bluetooth,             // Funcion codigo del Task
+        "Task_Bluetooth",           // Nombre del Task 
+        configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
+        NULL,                       // Argumentos
+        tskIDLE_PRIORITY,           // Prioridad
+        &handleBluetooth            // Sin Handle 
+    
+    );
+    #endif
+
     // Iniciar el scheduler de FreeRTOS
     //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)
 
