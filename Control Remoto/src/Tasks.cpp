@@ -1,5 +1,13 @@
-#include "Tasks.h"
+//Copyright Grupo 11, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * Source code of Tasks.h
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
 
+#include "Tasks.h"
 
 void Task_Battery(void* __nonParameter){  // Como la funcion no recibe parametros no lo voy a usar el argumento     
     while(1){
@@ -35,9 +43,12 @@ void Task_Restart(void* __nonParameter){
     
     // Verificar si se debe reiniciar la placa
     if (ShutDown::shouldRestart) { //Antes de reiniciar la placa deben haber terminado o suspendido los Tasks
-    
+
+        //disconnect WiFi as it's no longer needed
+        WiFi.disconnect(true);
+        WiFi.mode(WIFI_OFF);
         //Elimino todos los Tasks del sistema
-        vTaskDelete(handleLoop);
+        vTaskDelete(handleIdle);
         vTaskDelete(handleBattery);
         #ifdef CLOCK_ON
         vTaskDelete(handleClock);
@@ -61,9 +72,7 @@ void Task_Restart(void* __nonParameter){
 
 }
 
-
-void Task_Loop(void * __nonParameter){ while(1)hub(); }
-
+void Task_Idle(void * __nonParameter){ while(1)hub(); }
 
 void Task_WatchDogTimer(void* parameter) {  
     TickType_t lastWakeTime = xTaskGetTickCount();
@@ -76,22 +85,34 @@ void Task_WatchDogTimer(void* parameter) {
   }
 }
 
-
+ESP32Time RTC;
 void Task_Clock(void* __nonParameter){
 
-  while(1){
+    while(1){
   
-  
-  // Pausar la tarea durante un breve periodo de tiempo
-  vTaskDelay(pdMS_TO_TICKS(REFRESH_CLOCK)); // Pausa de refresh
-  }
+        struct tm time;
+        if(!getLocalTime(&time)){
+            Serial.println(F("Failed to obtain time."));
+            return;
+        }
+        time.tm_year = RTC.getHour(true);    
+        time.tm_mon  = RTC.getMonth();
+        time.tm_mday = RTC.getDay();     
+        time.tm_hour = RTC.getHour();
+        time.tm_min  = RTC.getMinute();
+        time.tm_sec  = RTC.getSecond();
+
+        Interface::clock(time);
+        
+        // Pausar la tarea durante un breve periodo de tiempo
+        vTaskDelay(pdMS_TO_TICKS(REFRESH_CLOCK)); // Pausa de refresh
+    }
 
 
 }
 
 
 extern bool __Wifi = false;
-
 void Task_Wifi(void* __nonParameter){
 
   while(1){
@@ -103,3 +124,5 @@ void Task_Wifi(void* __nonParameter){
 
 
 }
+
+void Task_Bluetooth(void* __nonParameter){}

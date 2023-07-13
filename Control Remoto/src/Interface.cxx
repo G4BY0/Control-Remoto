@@ -366,7 +366,7 @@ bool Interface::waitingForIR(void){
 
 }
 
-void Interface::help( const char* text , uint8_t version ){
+void Interface::help( const char* text , const uint8_t version ){
 
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
@@ -440,13 +440,14 @@ void Interface::battery(void){
 
 }
 
-void Interface::clock( struct tm& time ){
+void Interface::clock( const struct tm& time ){
 
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
 
 
   display.setCursor( 0 , 0 );
+  display.printf("%2.d/%2.d/%2.d" ,time.tm_hour ,time.tm_min ,time.tm_sec );
   display.display();
   
 

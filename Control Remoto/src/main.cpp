@@ -12,7 +12,6 @@
 #include <Wire.h>               // I2C
 #include <Wifi.h>
 #include <SPI.h> 
-#include <ESP32Time.h>          //Built-IN RTC
 #include "Tasks.h"
 #include "Modes.h"
 
@@ -38,11 +37,9 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
 using namespace MODE;
 
-ESP32Time clock;
-
 void setup(){
     
-    Serial.begin(115200);
+    Serial.begin(115200 , SERIAL_8N1 , 0, 1);
     while (!Serial); // wait for serial port to connect. Needed for native USB port only
     
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
@@ -96,8 +93,9 @@ void setup(){
     }
 
     // Seteo del servicio del Clock con NTC
-    // Configurar la zona horaria
-    clock.setTimeZone("America/Argentina");
+    struct tm time_NTPC;
+    RTC.setTimeStruct(time_NTPC);	// set with time struct
+    // RTC.setTimeStruct(time);	// set with time struct
 
     #endif
 
@@ -106,91 +104,77 @@ void setup(){
 
     // Task para correr el programa principal
     xTaskCreate(
-
         Task_Idle,                  // Funcion codigo del Task
         "Task_Loop",                // Nombre del Task 
         15000U,                     // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleIdle                 // Handle 
-
     );
 
     // Task para preguntar si el usuario esta activo de forma dinamica 
     xTaskCreate(
-
         Task_Sleep,                 //Funcion codigo del Task
         "Task_Sleep",               //Nombre del Task 
         1500U,                      //Reserva de espacio en la Pila 
         NULL,                       //Argumentos
         tskIDLE_PRIORITY + 1U,      //Prioridad
         &handleSleep                //Handle   
-
     );
 
     // Task para mostrar la bateria en el display de forma dinamica
     xTaskCreate(
-
         Task_Battery,               // Funcion codigo del Task
         "Task_Battery",             // Nombre del Task
         1500U,                      // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleBattery              // Handle
-
     );
 
     // Crear tarea del Watchdog Timer
     xTaskCreate(
-
         Task_WatchDogTimer,         // Funcion codigo del Task
         "Task_WatchDogTimer",       // Nombre del Task
         1500U,                      // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY + 2U,      // Prioridad
         NULL                        // Sin Handle
-    
     );
     
     #ifdef CLOCK_ON
     // Crear tarea del Reloj
     xTaskCreate(
-
         Task_Clock,                 // Funcion codigo del Task
         "Task_Clock",               // Nombre del Task 
         configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleClock                // Handle 
-    
     );
     #endif
 
     #ifdef WIFI_ON
     // Crear tarea para el funcionamiento WI-FI
     xTaskCreate(
-
         Task_Wifi,                  // Funcion codigo del Task
         "Task_Wifi",                // Nombre del Task 
         configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleWiFi                 // Handle 
-    
     );
     #endif
 
     #ifdef BLUETOOTH_ON
     // Crear tarea para el funcionamiento BLUETOOTH
     xTaskCreate(
-
         Task_Bluetooth,             // Funcion codigo del Task
         "Task_Bluetooth",           // Nombre del Task 
         configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleBluetooth            // Sin Handle 
-    
     );
     #endif
 

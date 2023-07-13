@@ -203,8 +203,6 @@ void Cursor::showCurrentPage() {
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
   sh1106->clearDisplay();
-  sh1106->setCursor(0, 0);
-  sh1106->print(F("Seleccione una opcion:"));
   for (uint8_t iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; iterator < min(getNumberOfOptions(), (currentPage + 1U) * MAX_LINE_OPTIONS_OUTPUT) && iterator < options.size(); iterator++) {
     sh1106->setCursor(0, (iterator - currentPage * MAX_LINE_OPTIONS_OUTPUT + 1U) * 10U);
     if (iterator == currentIndex) {

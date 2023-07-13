@@ -109,7 +109,7 @@ namespace Interface {
       \param    text Recibe String que se codificara en el codigo QR
       \param    version Version del QR (permite mas o menos informacion dentro)
       \note     El usuario debe scanear un QR y recibirá el string del parametro */
-  void help(const char* text , uint8_t version = 4);
+  void help(const char* text , const uint8_t version = 4);
 
   /*! \brief Muestra la bateria en la pantalla
       \note Se muestra en alguna de las esquinas de la pantalla*/
@@ -118,7 +118,7 @@ namespace Interface {
   /*! \brief Muestra el clock en tiempo real
       \param rtc Objeto de Registro del Tiempo
       \note Se refresca cada 'REFRESH CLOCK' (MACRO que estipula el tiempo de actualizacion)*/
-  void clock( struct tm& time ) ;
+  void clock( const struct tm& time ) ;
 
   namespace EmergencyCalls {
 

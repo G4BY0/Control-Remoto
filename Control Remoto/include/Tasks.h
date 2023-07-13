@@ -1,9 +1,20 @@
+//Copyright Grupo 11, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * Tasks for the Program
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
 #ifndef TASKS_H
 #define TASKS_H
 
 #include <freertos/FreeRTOS.h>  //FreeRTOS Operative System
 #include <freeRTOS/task.h>      //MultiThreading
 #include <freeRTOS/semphr.h>    //Semaphore
+#include <WiFi.h>               //Wi-Fi
+#include <ESP32Time.h>          //Built-IN RTC
 #include "Modes.h"
 
 using namespace MODE;
@@ -38,6 +49,7 @@ void Task_Idle(void * __nonParameter);
     \note (BUG) NECESARIO PARA QUE EL PROGRAMA NO CRASHEE*/
 void Task_WatchDogTimer(void* __nonparameter);
 
+extern ESP32Time RTC;
 //Frecuencia de Actualizacion del Clock (En milisegundos)
 #define REFRESH_CLOCK 500
 /*! \brief Muestra el clock en pantalla
@@ -45,7 +57,7 @@ void Task_WatchDogTimer(void* __nonparameter);
     \note Cada Vez que se refresca en pantalla reserva su semaforo*/
 void Task_Clock(void* __nonParameter);
 
-extern bool __Wifi;
+extern bool __Wifi; // Flag that senialize if the WiFi Service is working or not. 'True' Enabled
 
 /*! \brief Servicio Wifi*/
 void Task_Wifi(void* nonParameter);
