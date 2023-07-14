@@ -9,6 +9,13 @@
 
 #include "Tasks.h"
 
+TaskHandle_t handleBattery;     //Handle al Task de mostrar la bateria
+TaskHandle_t handleSleep;       //Handle al Task de SLEEPING
+TaskHandle_t handleIdle;        //Hanlde al Task del idle
+TaskHandle_t handleClock;       //Handle al Task de Clock
+TaskHandle_t handleWiFi;        //Handle al Servicio Wifi
+TaskHandle_t handleBluetooth;   //Handle al Servicio Bluetooth
+
 void Task_Battery(void* __nonParameter){  // Como la funcion no recibe parametros no lo voy a usar el argumento     
     while(1){
         Interface::battery();
@@ -42,7 +49,7 @@ void Task_Sleep(void* __nonParameter){ // Como la funcion no recibe parametros n
 void Task_Restart(void* __nonParameter){
     
     // Verificar si se debe reiniciar la placa
-    if (ShutDown::shouldRestart) { //Antes de reiniciar la placa deben haber terminado o suspendido los Tasks
+    if (MODE::ShutDown::shouldRestart) { //Antes de reiniciar la placa deben haber terminado o suspendido los Tasks
 
         //disconnect WiFi as it's no longer needed
         WiFi.disconnect(true);
@@ -72,7 +79,7 @@ void Task_Restart(void* __nonParameter){
 
 }
 
-void Task_Idle(void * __nonParameter){ while(1)hub(); }
+void Task_Idle(void * __nonParameter){ while(1)MODE::hub(); }
 
 void Task_WatchDogTimer(void* parameter) {  
     TickType_t lastWakeTime = xTaskGetTickCount();
@@ -89,19 +96,20 @@ ESP32Time RTC;
 void Task_Clock(void* __nonParameter){
 
     while(1){
-  
         struct tm time;
+        #ifdef WIFI_ON
         if(!getLocalTime(&time)){
             Serial.println(F("Failed to obtain time."));
             return;
         }
+        #else
         time.tm_year = RTC.getHour(true);    
         time.tm_mon  = RTC.getMonth();
         time.tm_mday = RTC.getDay();     
         time.tm_hour = RTC.getHour();
         time.tm_min  = RTC.getMinute();
         time.tm_sec  = RTC.getSecond();
-
+        #endif
         Interface::clock(time);
         
         // Pausar la tarea durante un breve periodo de tiempo

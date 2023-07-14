@@ -14,22 +14,20 @@
 #include <freeRTOS/task.h>      //MultiThreading
 #include <freeRTOS/semphr.h>    //Semaphore
 #include <WiFi.h>               //Wi-Fi
+#include <WiFiUdp.h>
 #include <ESP32Time.h>          //Built-IN RTC
 #include "Modes.h"
 
-using namespace MODE;
-
-TaskHandle_t handleBattery;     //Handle al Task de mostrar la bateria
-TaskHandle_t handleSleep;       //Handle al Task de SLEEPING
-TaskHandle_t handleIdle;        //Hanlde al Task del idle
-TaskHandle_t handleClock;       //Handle al Task de Clock
-TaskHandle_t handleWiFi;        //Handle al Servicio Wifi
-TaskHandle_t handleBluetooth;   //Handle al Servicio Bluetooth
+extern TaskHandle_t handleBattery;     //Handle al Task de mostrar la bateria
+extern TaskHandle_t handleSleep;       //Handle al Task de SLEEPING
+extern TaskHandle_t handleIdle;        //Hanlde al Task del idle
+extern TaskHandle_t handleClock;       //Handle al Task de Clock
+extern TaskHandle_t handleWiFi;        //Handle al Servicio Wifi
+extern TaskHandle_t handleBluetooth;   //Handle al Servicio Bluetooth
 
 /*! \brief Task para mostrar de manera dinamica la bateria
     \note lo muestra en esquinas de la pantalla */
 void Task_Battery(void* __nonParameter);
-
 
 #define SLEEP_TIME_WAITING_TO_SHUTDOWN  (5U * 60U)   // Tiempo en cuanto se pone el modo apagado luego de estar ese tiempo en el modo SLEEPING (En minutos)
 #define SLEEP_TIME_BUTTONPRESSING       (5U)         // Tiempo en cuanto el usuario debe mantener el boton back para poner el modo SLEEPING (En segundos)

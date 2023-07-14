@@ -92,11 +92,6 @@ void setup(){
         Serial.println("Conectando a WiFi...");
     }
 
-    // Seteo del servicio del Clock con NTC
-    struct tm time_NTPC;
-    RTC.setTimeStruct(time_NTPC);	// set with time struct
-    // RTC.setTimeStruct(time);	// set with time struct
-
     #endif
 
     // Espero a que todos los procesos terminen para inicializar
