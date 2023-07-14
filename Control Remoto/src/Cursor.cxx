@@ -210,6 +210,10 @@ void Cursor::showCurrentPage() {
     }
     sh1106->print(options[iterator].c_str());
   }
+
+  sh1106->setCursor( 100 , 58 );
+  sh1106->printf("%d/%d" ,currentPage , ceil(getNumberOfOptions() / MAX_LINE_OPTIONS_OUTPUT) );
+
   sh1106->display();
 
   // Desbloquear el semáforo

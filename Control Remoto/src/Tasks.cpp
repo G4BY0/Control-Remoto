@@ -44,6 +44,7 @@ void Task_Sleep(void* __nonParameter){ // Como la funcion no recibe parametros n
     }
     #undef SLEEP_TIME_BUTTON_PRESSING
     #undef SLEEP_TIME_WAITING_TO_SHUTDOWN  
+    
 }
 
 void Task_Restart(void* __nonParameter){
@@ -77,9 +78,19 @@ void Task_Restart(void* __nonParameter){
       
     }
 
+    vTaskDelete(NULL);
+
 }
 
-void Task_Idle(void * __nonParameter){ while(1)MODE::hub(); }
+void Task_Idle(void * __nonParameter){ 
+    
+    while(1){
+        #ifdef DEBUG
+        Serial.printf("%s Pila Consume: %d" ,pcTaskGetName ,uxTaskGetStackHighWaterMark(NULL) );
+        #endif
+        MODE::hub();
+    } 
+}
 
 void Task_WatchDogTimer(void* parameter) {  
     TickType_t lastWakeTime = xTaskGetTickCount();
@@ -120,11 +131,12 @@ void Task_Clock(void* __nonParameter){
 }
 
 
-extern bool __Wifi = false;
+bool __Wifi = false;
 void Task_Wifi(void* __nonParameter){
 
   while(1){
   
+
   
   // Pausar la tarea durante un breve periodo de tiempo
   vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)

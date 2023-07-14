@@ -8,6 +8,8 @@
 ***********************************************/
 #warning "Project is in developing, it's not already yet!"
 
+#define DEBUG
+
 #include <Arduino.h>
 #include <Wire.h>               // I2C
 #include <Wifi.h>
@@ -29,8 +31,8 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 #define WIFI_ON  
 //#define BLUETOOTH_ON
 
-#define SSID_IN         "TP-LINK_4F48"        //SSID del access point en el que se conectara el servicio WiFi
-#define PASSWORD_IN     "51807511"            //PASSWORD del access point en el que se conectara el servicio WiFi
+#define SSID_IN         "Enzo_Fernandez"        //SSID del access point en el que se conectara el servicio WiFi
+#define PASSWORD_IN     "joacoguereta"            //PASSWORD del access point en el que se conectara el servicio WiFi
 
 #define SSID_OUT        "REMOTE_CONTROLLER"   //SSID del access point que se generara
 #define PASSWORD_OUT    "SARAGOYLAJEFA"       //PASSWORD del access point que se generara
@@ -52,7 +54,7 @@ void setup(){
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)                                        
     Serial.println(F("Tipo de compilador Utilizado: "));                                                \
-    #if defined(__GNUC__)                                                                               \
+    #ifdef (__GNUC__)                                                                               \
         Serial.println(F("GNU :)"));                                                                    \
         Serial.print(F("Version del compilador de GNU es: "));                                          \
         Serial.println(F(__GNUC__));                                                                    \
@@ -63,35 +65,35 @@ void setup(){
         Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \
     #else                                                                                               \
         Serial.println(F("Generico"));                                                                  \
-    #endif      
-    #endif                                                                                        
+    #endif
+    #endif                                                                                          
     
 
     //Descomentar en Caso de querer saber cual fue el compilador utilizado
     //UsedCompiler;
 
     // Inicializacion del sistema del display
-    displayBegin();     Serial.println(F("Display Inicializado"));
+    displayBegin();     Serial.println(F("Display Inicializado."));
 
     // Inicializacion del sistema de botones
-    buttonsBegin();     Serial.println(F("Botonera Inicializada"));
+    buttonsBegin();     Serial.println(F("Botonera Inicializada."));
 
     // Inicializacion del sistema de almacenamiento
-    SDBegin();          Serial.println(F("Almacenamiento Inicializado"));
+    SDBegin();          Serial.println(F("Almacenamiento Inicializado."));
 
     // Inicializacion del sistema del infrarrojo
-    infraredBegin();    Serial.println(F("Infrared Inicializado"));
+    infraredBegin();    Serial.println(F("Infrared Inicializado."));
 
     #ifdef WIFI_ON
     //  Inicializacion del servicio WiFi
     // Conectar a la red WiFi
     WiFi.begin(SSID_IN, PASSWORD_IN);
-
+    Serial.print(F("Conectando a WiFi..."));
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
-        Serial.println("Conectando a WiFi...");
+        
     }
-
+    Serial.println(F("Conectado!"));
     #endif
 
     // Espero a que todos los procesos terminen para inicializar
@@ -142,7 +144,7 @@ void setup(){
     xTaskCreate(
         Task_Clock,                 // Funcion codigo del Task
         "Task_Clock",               // Nombre del Task 
-        configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
+        3000U,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleClock                // Handle 
@@ -154,7 +156,7 @@ void setup(){
     xTaskCreate(
         Task_Wifi,                  // Funcion codigo del Task
         "Task_Wifi",                // Nombre del Task 
-        configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
+        3000U,   // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleWiFi                 // Handle 
