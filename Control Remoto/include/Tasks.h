@@ -18,12 +18,16 @@
 #include <ESP32Time.h>          //Built-IN RTC
 #include "Modes.h"
 
+//Handles
 extern TaskHandle_t handleBattery;     //Handle al Task de mostrar la bateria
 extern TaskHandle_t handleSleep;       //Handle al Task de SLEEPING
 extern TaskHandle_t handleIdle;        //Hanlde al Task del idle
 extern TaskHandle_t handleClock;       //Handle al Task de Clock
 extern TaskHandle_t handleWiFi;        //Handle al Servicio Wifi
 extern TaskHandle_t handleBluetooth;   //Handle al Servicio Bluetooth
+
+//Semaphores
+extern SemaphoreHandle_t semaphoreDisplay; //Semaforo para el libre uso del display
 
 /*! \brief Task para mostrar de manera dinamica la bateria
     \note lo muestra en esquinas de la pantalla */
@@ -47,6 +51,7 @@ void Task_Idle(void * __nonParameter);
     \note (BUG) NECESARIO PARA QUE EL PROGRAMA NO CRASHEE*/
 void Task_WatchDogTimer(void* __nonparameter);
 
+// Objeto global para el libre manejo de el RTC
 extern ESP32Time RTC;
 //Frecuencia de Actualizacion del Clock (En milisegundos)
 #define REFRESH_CLOCK 500
@@ -55,8 +60,7 @@ extern ESP32Time RTC;
     \note Cada Vez que se refresca en pantalla reserva su semaforo*/
 void Task_Clock(void* __nonParameter);
 
-extern bool __Wifi; // Flag that senialize if the WiFi Service is working or not. 'True' Enabled
-
+extern bool __wifi; // Flag that senialize if the WiFi Service is working or not. 'True' Enabled
 /*! \brief Servicio Wifi*/
 void Task_Wifi(void* nonParameter);
 

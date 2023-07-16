@@ -29,7 +29,6 @@
 
 //Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
 extern Adafruit_SH1106G display;
-extern SemaphoreHandle_t semaphoreDisplay; //Semaforo para el libre uso del display
 
 //Macros para el desarrollo del sistema
 #define INFINITE_LOOPING 0x1

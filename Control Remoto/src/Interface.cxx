@@ -85,7 +85,7 @@ uint8_t Interface::hub(void){
 void Interface::profiles(void){
   
   //Recibo Vector de Strings con el nombre de cada perfil cada uno (Ignorando el archivo reservado "Transfer.db")
-  auto profiles_ptr = Profiles::showProfiles_();
+  auto profiles_ptr = Profiles::getProfiles();
 
   if ( profiles_ptr.empty() == true) {
     Interface::EmergencyCalls::nonProfiles();
@@ -128,7 +128,7 @@ void Interface::addProfile(void){
   if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
 
   //Creo el perfil en el almacenamiento con el nombre dado Y pregunto si no se cumplió correctamente...
-  if(! Profiles::createProfile_(profileName.c_str()) ) {
+  if(! Profiles::createProfile(profileName.c_str()) ) {
     Interface::EmergencyCalls::noProfileCreated();
     return;
   }
@@ -184,14 +184,14 @@ void Interface::addProfile(void){
 
   
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
-  SubProfiles::createSubProfile_(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
+  SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
 }
 
 void Interface::deleteProfile(void){
 
   //Recibo del almacenamiento un vector de strings de los nombres de los perfiles
-  auto names = Profiles::showProfiles_();
+  auto names = Profiles::getProfiles();
   
   //Si recibo el vector vacio, hubo un problema
   if (names.empty() == true) {
@@ -204,14 +204,14 @@ void Interface::deleteProfile(void){
   const char* selected = cursor.getSelectedOption();
 
   //Pido al almacenamiento eliminar el perfil dado
-  Profiles::deleteProfile_(selected);
+  Profiles::deleteProfile(selected);
 
 }
 
 void Interface::subProfiles(const char *profileName_){
 
   // Pido del almacenamiento los nombres de los subperfiles del perfil dado
-  auto subprofiles = SubProfiles::showSubProfiles(profileName_); 
+  auto subprofiles = SubProfiles::getSubProfiles(profileName_); 
   
   subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" ); // Primera Opcion
   subprofiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
@@ -234,7 +234,7 @@ void Interface::subProfiles(const char *profileName_){
     }
 
     // Informacion a enviar a la salida
-    auto IRToSend = SubProfiles::ReturnSubProfile( profileName_ , subprofile_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
+    auto IRToSend = SubProfiles::returnSubProfile( profileName_ , subprofile_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
     if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
       Serial.println(F("The IR Signal can´t be send because has been received wrong IRDATA"));
       return;
@@ -250,7 +250,7 @@ void Interface::createSubProfile(const char* profileSelected = nullptr){
 
   if(profileSelected == nullptr){
 
-    auto namesProfile = Profiles::showProfiles_(); // Recibo del almacenamiento todos los nombres de los perfiles
+    auto namesProfile = Profiles::getProfiles(); // Recibo del almacenamiento todos los nombres de los perfiles
 
     //Si no llegara a recibir ningun nombre de ningun perfil o si hubo un error inesperado...
     if ( namesProfile.empty() == true ) {
@@ -285,7 +285,7 @@ void Interface::createSubProfile(const char* profileSelected = nullptr){
   xSemaphoreGive( semaphoreDisplay );
 
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::createSubProfile_(  subProfileName , Protocols::IR , profileSelected ); 
+  SubProfiles::createSubProfile(  subProfileName , Protocols::IR , profileSelected ); 
 
 }
 
@@ -295,7 +295,7 @@ void Interface::deleteSubProfile(const char* profileSelected = nullptr){
   if(profileSelected == nullptr){
 
     //Recibo del almacenamiento el nombre de los perfiles
-    auto namesProfiles = Profiles::showProfiles_();
+    auto namesProfiles = Profiles::getProfiles();
 
     if ( namesProfiles.empty() == true ) { //Si no recibo ningun nombre...
       Interface::EmergencyCalls::nonProfiles();
@@ -309,7 +309,7 @@ void Interface::deleteSubProfile(const char* profileSelected = nullptr){
   }
 
   //Recido del almacenamiento el nombre de los subperfiles del perfil dado
-  auto namesSubProfiles = SubProfiles::showSubProfiles(profileSelected);
+  auto namesSubProfiles = SubProfiles::getSubProfiles(profileSelected);
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
   Cursor cursor2( namesSubProfiles , &display ); 

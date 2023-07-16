@@ -131,17 +131,29 @@ void Task_Clock(void* __nonParameter){
 }
 
 
-bool __Wifi = false;
+bool __wifi = false;
 void Task_Wifi(void* __nonParameter){
+    
+    while(1){
+        //El servicio es inicializado en setup()
+        if(__wifi){
 
-  while(1){
-  
 
-  
-  // Pausar la tarea durante un breve periodo de tiempo
-  vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)
-  }
+        
+            // Pausar la tarea durante un breve periodo de tiempo
+            vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)
+        } else {
 
+            // Bloquear el semáforo
+            xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
+
+
+            // Desbloquear el semáforo
+  xSemaphoreGive(semaphoreDisplay);
+
+        }
+
+    }
 
 }
 

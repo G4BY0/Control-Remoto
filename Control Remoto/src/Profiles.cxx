@@ -36,7 +36,7 @@ void SDBegin(void){
 
 }
 
-std::vector<std::string> Profiles::showProfiles_(void){
+std::vector<std::string> Profiles::getProfiles(void){
  
   std::vector<std::string> profilesName;
 
@@ -82,7 +82,7 @@ std::vector<std::string> Profiles::showProfiles_(void){
 
 }
 
-bool Profiles::createProfile_(const char* name){
+bool Profiles::createProfile(const char* name){
   
   File root = SD.open(profilePath(name), FILE_WRITE);
   if( root ){
@@ -96,7 +96,7 @@ bool Profiles::createProfile_(const char* name){
 
 }
 
-bool Profiles::deleteProfile_(const char* name){
+bool Profiles::deleteProfile(const char* name){
   
   //Elimina archivo
   if( SD.remove(profilePath(name)) == true ){
@@ -109,7 +109,7 @@ bool Profiles::deleteProfile_(const char* name){
 
 }
 
-void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protocol, const char* profileName){
+void SubProfiles::createSubProfile(const char* subProfileName, Protocols protocol, const char* profileName){
 
   //switch (protocol){
 
@@ -146,7 +146,7 @@ void SubProfiles::createSubProfile_(const char* subProfileName, Protocols protoc
 
 }
 
-std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
+std::vector<std::string> SubProfiles::getSubProfiles(const char* profileName){
 
   std::vector<std::string> subProfilesName;
   uint16_t numberOfSubProfiles = 0U;
@@ -180,7 +180,7 @@ std::vector<std::string> SubProfiles::showSubProfiles(const char* profileName){
  
 }
 
-std::shared_ptr<storedIRDataStruct> SubProfiles::ReturnSubProfile(const char* profileName, const char* subProfileName){
+std::shared_ptr<storedIRDataStruct> SubProfiles::returnSubProfile(const char* profileName, const char* subProfileName){
 
   //Abro el archivo del perfil dado en modo Lectura
   File root = SD.open(profilePath(profileName), FILE_READ);

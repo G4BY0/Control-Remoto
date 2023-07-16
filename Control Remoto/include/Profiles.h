@@ -52,18 +52,18 @@ namespace Profiles{
     /*! \brief Hace lectura del nombre de los perfiles dentro del almacenamiento  
         \returns Doble puntero estatico que apunta a vector de punteros. Cada puntero del vector apunta a los strings (que son los nombres de los perfiles)
      */
-    std::vector<std::string> showProfiles_(void);
+    std::vector<std::string> getProfiles(void);
     
     /*! \brief Crea un almacenamiento para un nuevo perfil
         \param name Nombre del perfil
         \returns Booleano si se cumplio satisfactoriamente o si falló       
         \note Si cumplió 'true' si falló 'false'       */
-    bool createProfile_(const char* name);
+    bool createProfile(const char* name);
     /*! \brief Elimina el almacenamiento de un perfil
         \param name Nombre del perfil
         \returns Booleano si se cumplio satisfactoriamente o si falló       
         \note Si cumplió 'true' si falló 'false'       */
-    bool deleteProfile_(const char* name);
+    bool deleteProfile(const char* name);
 
 };
 
@@ -79,14 +79,14 @@ namespace SubProfiles{
      *  \param storedIRData Portador de la informacion de la señal
      *  \param profileName Nombre del perfil en el que quiere guardar el subperfil
     */
-    void createSubProfile_(const char* subProfileName, Protocols protocol , const char* profileName);
+    void createSubProfile(const char* subProfileName, Protocols protocol , const char* profileName);
  
     /*! \brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  \param name Nombre del perfil
      *  \returns Vector dinamico de std::string (Cada string es el nombre de un subperfil)
      *  \note Si hay un problema o no hay ningun subperfil, el puntero apuntara 'nullptr'
     */
-    std::vector<std::string> showSubProfiles(const char* profileName);
+    std::vector<std::string> getSubProfiles(const char* profileName);
 
     /*! \brief Busca dentro del almacenamiento del perfil dado, el subperfil solicitado
      *  \param profileName Nombre del perfil en el que se encontrara el subperfil
@@ -94,7 +94,7 @@ namespace SubProfiles{
      *  \returns Puntero inteligente de la estructura de datos del subperfil solicitado
      *  \note Si hay un problema o no lo encuentra, el puntero apuntara 'nullptr'
     */
-    std::shared_ptr<storedIRDataStruct> ReturnSubProfile(const char* profileName, const char* subProfileName);
+    std::shared_ptr<storedIRDataStruct> returnSubProfile(const char* profileName, const char* subProfileName);
 
     /*! \brief  Elimina en el almacenamiento el subPerfil recibido
      *  \param profileName Nombre del perfil en el que se encontrara el subperfil
