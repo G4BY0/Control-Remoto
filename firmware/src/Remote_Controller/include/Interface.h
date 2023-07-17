@@ -13,9 +13,12 @@
 #define INTERFACE_H
  
 #include <cstdint>
+#include <algorithm>
+#include <pgmspace.h>
 #include <Arduino.h>
 #include <SD.h>
 #include <vector>
+#include <array>
 #include <SPI.h>  //SPI
 #include <Wire.h> //I2C
 #include <Adafruit_GFX.h>

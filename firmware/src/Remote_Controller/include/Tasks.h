@@ -10,6 +10,9 @@
 #ifndef TASKS_H
 #define TASKS_H
 
+#define DEBUG
+
+#include <Arduino.h>
 #include <freertos/FreeRTOS.h>  //FreeRTOS Operative System
 #include <freeRTOS/task.h>      //MultiThreading
 #include <freeRTOS/semphr.h>    //Semaphore
@@ -51,8 +54,9 @@ void Task_Idle(void * __nonParameter);
     \note (BUG) NECESARIO PARA QUE EL PROGRAMA NO CRASHEE*/
 void Task_WatchDogTimer(void* __nonparameter);
 
-// Objeto global para el libre manejo de el RTC
-extern ESP32Time RTC;
+
+extern ESP32Time RTC; // Objeto global para el libre manejo de el RTC
+extern bool __clock; // Flag that senialize if the Clock Service is working or not. 'True' Enabled
 //Frecuencia de Actualizacion del Clock (En milisegundos)
 #define REFRESH_CLOCK 500
 /*! \brief Muestra el clock en pantalla
@@ -64,6 +68,7 @@ extern bool __wifi; // Flag that senialize if the WiFi Service is working or not
 /*! \brief Servicio Wifi*/
 void Task_Wifi(void* nonParameter);
 
+extern bool __bluetooth; // Flag that senialize if the Bluetooth Service is working or not. 'True' Enabled
 /*! \brief Servicio Bluetooth*/
 void Task_Bluetooth(void* nonParameter);
 

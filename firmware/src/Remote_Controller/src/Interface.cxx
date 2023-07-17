@@ -36,9 +36,6 @@ void displayBegin(void){
   semaphoreDisplay = xSemaphoreCreateBinary();
   xSemaphoreGive(semaphoreDisplay); //Inicializado el semaforo
 
-  // Bloquear el semáforo
-  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
-
   //Inicializacion del display con la comunicacion I2C
   display.begin(I2C_ADDRESS, true);
 
@@ -55,16 +52,13 @@ void displayBegin(void){
   display.setTextColor(SH110X_WHITE);
   display.display();
 
-  //Inicializado el semaforo
-  xSemaphoreGive(semaphoreDisplay);
-
 }
 
 //DEBUGGING CURSOR
 uint8_t Interface::hub(void){
   
   //Opciones del menu Principal/Hub
-  std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SHUTDOWN" };
+  PROGMEM std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SHUTDOWN" };
 
   //Cursor Para Hacer el manejo del Hub
   Cursor cursor( strings , &display );
@@ -410,29 +404,79 @@ void Interface::help( const char* text , const uint8_t version ){
 
 void Interface::battery(void){
 
-  PROGMEM const uint8_t batt_high_bits[] = {
-    0xFF, 0x7F, 0x01, 0x40, 0xFD, 0xC3, 0xFD, 0xC3, 0xFD, 0xC3, 0xFD, 0xC3, 0x01, 0x40, 0xFF, 0x7F,
+  // Four tiles for a battery icon of 16x16.
+  // The bitmap for the tiles is vertical!
+  //    The first byte are the pixels on the left.
+  //    The lowest bit is the pixel on top.
+  PROGMEM const uint8_t batteryTile[] = 
+  { 
+    // The upper-left 8x8 pixels:
+    0x00, 0x00, 0xF8, 0x0C, 0x04, 0x02, 0x02, 0x02, 
+    // The upper-right 8x8 pixels:
+    0x02, 0x02, 0x02, 0x04, 0x0C, 0xF8, 0x00, 0x00, 
+    // The lower-left 8x8 pixels:
+    0x00, 0x00, 0x7F, 0x40, 0x40, 0x40, 0x40, 0x40, 
+    // The lower-right 8x8 pixels:
+    0x40, 0x40, 0x40, 0x40, 0x40, 0x7F, 0x00, 0x00, 
   };
 
-  const uint8_t && battery_level = map(analogRead(PIN::Energy::BATTERY) , 0 , 1024 , 1 , 3 );
+  const uint8_t && battery_percent = map( analogRead(PIN::Energy::BATTERY) , 0 , 1024 , 0 , 100 );
 
+  uint8_t tiles[sizeof(batteryTile)];
+
+  memcpy(tiles, batteryTile, 32);
+  PROGMEM constexpr uint8_t  batX = 12;     // the 'x' (column) of the upper-left of the battery
+  PROGMEM constexpr uint8_t batY = 3;     // the 'y' (row) of the upper-left of the battery
+
+  // There are 12 lines to draw inside the battery.
+  // Zero lines is also an option, so there are 13 possible levels.
+  // There are 6 lines in the lower part and 6 lines in the upper part
+  uint8_t lines = battery_percent / 8U; // might need some tuning near 0% and 100%
+  lines = constrain( lines, 0, 12);     // for safety
+  uint8_t lowerlines = min( (const uint8_t) uint8_t(6U), lines);      // 0...6 lines in the lower part
+  uint8_t upperlines = 0U;
+  if( lines > 6U)
+  upperlines = lines - 6U;
+
+  // The lines are over 4 bytes, and the tiles are vertical.
+  // I can not think of any good code, so I just put down what it should do.
+
+  // lower-left
+  for( uint8_t i=3U; i<8U; i++)
+  {
+    for( uint8_t j=0U; j<lowerlines; j++)
+      bitSet( tiles[i+16U], 7-(j+2U));
+  }
+
+  // lower-right
+  for( uint8_t i=0U; i<5U; i++)
+  {
+    for( uint8_t j=0; j<lowerlines; j++)
+      bitSet( tiles[i+24U], 7U-(j+2U));
+  }
+
+  // upper-left
+  for( uint8_t i=3U; i<8U; i++)
+  {
+    for( uint8_t j=0; j<upperlines; j++)
+      bitSet( tiles[i], 7U-j);
+  }
+
+  // upper-right
+  for( uint8_t i=0U; i<5U; i++)
+  {
+    for( uint8_t j=0; j<upperlines; j++)
+      bitSet( tiles[i+8U], 7U-j);
+  }
+
+  //display.drawTile( batX, batY,   2, tiles);                      // 50%-100%
+  display.drawBitmap(batX, batY, tiles, 0, 8, SH110X_WHITE);        // 50%-100%
+  //display.drawTile( batX, batY+1, 2, (uint8_t *) tiles + 16U);    // 50%-0%
+  display.drawBitmap(batX, batY+1, tiles+16U, 0, 8, SH110X_WHITE);  // 50%-0%
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
-  switch( battery_level ){
-
-    case 1: 
-    break;
-
-    case 2: 
-    break;
-
-    case 3:
-    display.drawBitmap( 118 , 10 , batt_high_bits , 10 , 5 , SH110X_WHITE );
   
-    break;
-
-  }
 
   // Desbloquear el semáforo
   xSemaphoreGive( semaphoreDisplay );
@@ -447,7 +491,7 @@ void Interface::clock( const struct tm& time ){
 
 
   display.setCursor( 0 , 0 );
-  display.printf("%2.d/%2.d/%2.d" ,time.tm_hour ,time.tm_min ,time.tm_sec );
+  display.printf("%2d/%2d/%2d" ,time.tm_hour ,time.tm_min ,time.tm_sec );
   display.display();
   
 

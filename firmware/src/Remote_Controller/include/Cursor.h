@@ -16,6 +16,7 @@
 #include <cstdint>              //Tipo de Enteros
 #include <Adafruit_SH110X.h>    // Lib de display Oled
 #include "Interface.h"          // Interfaz del usuario
+#include "Task.h"
 
 //Cursor
 #define MAX_LINE_OPTIONS_OUTPUT (5U)

@@ -88,7 +88,7 @@ void MODE::ShutDown::displayService(void){ display.clearDisplay(); display.displ
 
 void MODE::ShutDown::SDService(void)     { SD.end(); }
 
-void MODE::ShutDown::buttonsWaiting(void){ 
+void MODE::ShutDown::buttonsWaiting(void){
 
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||

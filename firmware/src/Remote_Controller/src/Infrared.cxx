@@ -69,10 +69,9 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
     } else {  // Anything else must be a simple message protocol. ie. <= 64 bits
       success = irsend.send(protocol, IRData->results.value, size);
     }
-    Serial.println(F(success == false
-    ? "Failed sending Signal!"
-    : "Successful sending Signal."   
-    ));
+    success == false
+    ? Serial.println(F("Failed sending Signal!"))
+    : Serial.println(F("Successful sending Signal."));  
   
 }
 

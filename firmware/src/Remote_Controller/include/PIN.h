@@ -13,6 +13,7 @@
 #define PIN_H
 
 #include <stdint.h>
+#include <pgmspace.h>
 
 #define ESP_BOARDS defined ( ESP32 ) || defined( ESP8266 )
 
@@ -22,34 +23,34 @@ namespace PIN{
   
   namespace Energy{
 
-    constexpr uint8_t BATTERY = 35U; // Despues ver este pin que lo puse por tirar para probar el codigo
+    PROGMEM constexpr uint8_t BATTERY = 35U; // Despues ver este pin que lo puse por tirar para probar el codigo
 
   };
 
   namespace Display{
-    constexpr uint8_t SDA    = 21U;
-    constexpr uint8_t SDL    = 22U;
+    PROGMEM constexpr uint8_t SDA    = 21U;
+    PROGMEM constexpr uint8_t SDL    = 22U;
   };
 
   namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 15U;     
+    PROGMEM constexpr uint8_t DATA   = 15U;     
   };
 
   namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = 4U;  
+    PROGMEM constexpr uint8_t DATA   = 4U;  
   };
 
   namespace Buttons{
-    constexpr uint8_t UP     = 13U;
-    constexpr uint8_t DOWN   = 12U;
-    constexpr uint8_t LEFT   = 14U;
-    constexpr uint8_t RIGHT  = 27U;
-    constexpr uint8_t BACK   = 26U;
-    constexpr uint8_t ENTER  = 25U;
+    PROGMEM constexpr uint8_t UP     = 13U;
+    PROGMEM constexpr uint8_t DOWN   = 12U;
+    PROGMEM constexpr uint8_t LEFT   = 14U;
+    PROGMEM constexpr uint8_t RIGHT  = 27U;
+    PROGMEM constexpr uint8_t BACK   = 26U;
+    PROGMEM constexpr uint8_t ENTER  = 25U;
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 5U;
+    PROGMEM constexpr uint8_t chipSelect = 5U;
   }
 
 };
@@ -59,29 +60,29 @@ namespace PIN{
 namespace PIN{
   
   namespace Display{
-    constexpr uint8_t SDA    = 2U;
-    constexpr uint8_t SDL    = 1U;
+    PROGMEM constexpr uint8_t SDA    = 2U;
+    PROGMEM constexpr uint8_t SDL    = 1U;
   };
 
   namespace InfraredReceiver{
-    constexpr uint8_t DATA   = 0U;     
+    PROGMEM constexpr uint8_t DATA   = 0U;     
   };
 
   namespace InfraredTransmitter{
-    constexpr uint8_t DATA   = A0;  
+    PROGMEM constexpr uint8_t DATA   = A0;  
   };
 
   namespace Buttons{
-    constexpr uint8_t UP     = 6U;
-    constexpr uint8_t DOWN   = 5U;
-    constexpr uint8_t LEFT   = 4U;
-    constexpr uint8_t RIGHT  = 3U;
-    constexpr uint8_t BACK   = 2U;
-    constexpr uint8_t ENTER  = 1U;
+    PROGMEM constexpr uint8_t UP     = 6U;
+    PROGMEM constexpr uint8_t DOWN   = 5U;
+    PROGMEM constexpr uint8_t LEFT   = 4U;
+    PROGMEM constexpr uint8_t RIGHT  = 3U;
+    PROGMEM constexpr uint8_t BACK   = 2U;
+    PROGMEM constexpr uint8_t ENTER  = 1U;
   };
 
   namespace SD_t{
-    constexpr uint8_t chipSelect = 15U;  
+    PROGMEM constexpr uint8_t chipSelect = 15U;  
   }
 
 };

@@ -8,8 +8,6 @@
 ***********************************************/
 #warning "Project is in developing, it's not already yet!"
 
-#define DEBUG
-
 #include <Arduino.h>
 #include <Wire.h>               // I2C
 #include <Wifi.h>
@@ -17,8 +15,12 @@
 #include "Tasks.h"
 #include "Modes.h"
 
+//#define DEBUG
+
 SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
+//Velocidad del Monitor Serial
+#define SERIAL_BAUDRATE 115200
 //Frecuencia de Actualizacion del Clock (En Milisegundos)
 #define REFRESH_CLOCK 500 
 // Retocar macro en caso de querer establecer cuanto se pone el modo apagado luego de estar ese tiempo en el modo SLEEPING (En Segundos)
@@ -41,36 +43,34 @@ using namespace MODE;
 
 void setup(){
     
-    Serial.begin(115200 , SERIAL_8N1 , 0, 1);
+    Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
     while (!Serial); // wait for serial port to connect. Needed for native USB port only
     
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
     spi.begin();
-
-    #ifdef DEBUG
+    
+    /*
+    #ifdef DEBUG                                                                                        \
     // Just to know which program is running on my Sketch
-    Serial.println(F("START " __FILE__ " from " __DATE__ "."));
+    Serial.println(F("START " __FILE__ " from " __DATE__ "."));                                         \
 
     //Aviso del compilador utilizado (usando los identificadores de cada uno)                                        
-    Serial.println(F("Tipo de compilador Utilizado: "));                                                \
-    #ifdef (__GNUC__)                                                                               \
-        Serial.println(F("GNU :)"));                                                                    \
-        Serial.print(F("Version del compilador de GNU es: "));                                          \
-        Serial.println(F(__GNUC__));                                                                    \
-    #elif defined(__clang__)                                                                            \
-        Serial.println(F("CLANG !!"));                                                                  \
-        Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));          \
-        Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));          \
-        Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \
-    #else                                                                                               \
-        Serial.println(F("Generico"));                                                                  \
-    #endif
+    Serial.println(F("Tipo de compilador Utilizado: "));                                                \                             
+    #if defined(__GNUC__)                                                                               \\
+        Serial.println(F("GNU :)"));                                                                    \\
+        Serial.print(F("Version del compilador de GNU es: "));                                          \\
+        Serial.println(F(__GNUC__));                                                                    \\
+    #elif defined(__clang__)                                                                            \\
+        Serial.println(F("CLANG !!"));                                                                  \\
+        Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));          \\
+        Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));          \\
+        Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \\
+    #else                                                                                               \\
+        Serial.println(F("Generico"));                                                                  \\
+    #endif                                                                                              \
     #endif                                                                                          
-    
-
-    //Descomentar en Caso de querer saber cual fue el compilador utilizado
-    //UsedCompiler;
+    */
 
     // Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado."));
@@ -89,10 +89,11 @@ void setup(){
     // Conectar a la red WiFi
     WiFi.begin(SSID_IN, PASSWORD_IN);
     Serial.print(F("Conectando a WiFi..."));
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        
-    }
+
+    //Si no se conecta...
+    while (WiFi.status() != WL_CONNECTED) 
+    delay(1000);
+    __wifi = true;
     Serial.println(F("Conectado!"));
     #endif
 

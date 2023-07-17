@@ -86,7 +86,7 @@ void Task_Idle(void * __nonParameter){
     
     while(1){
         #ifdef DEBUG
-        Serial.printf("%s Pila Consume: %d" ,pcTaskGetName ,uxTaskGetStackHighWaterMark(NULL) );
+        Serial.printf("%s RAM used: %d" ,pcTaskGetName ,uxTaskGetStackHighWaterMark(NULL) );
         #endif
         MODE::hub();
     } 
@@ -104,6 +104,7 @@ void Task_WatchDogTimer(void* parameter) {
 }
 
 ESP32Time RTC;
+bool __clock = false;
 void Task_Clock(void* __nonParameter){
 
     while(1){
@@ -133,28 +134,29 @@ void Task_Clock(void* __nonParameter){
 
 bool __wifi = false;
 void Task_Wifi(void* __nonParameter){
-    
-    while(1){
-        //El servicio es inicializado en setup()
-        if(__wifi){
+    //El servicio es inicializado en setup()
+    for(;__wifi;){
 
+            // (DEVELOP) DESARROLLAR PARA QUE SE VEA QUE EL WIFI ESTA PRENDIDO
 
-        
             // Pausar la tarea durante un breve periodo de tiempo
             vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)
-        } else {
-
-            // Bloquear el semáforo
-            xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
-
-
-            // Desbloquear el semáforo
-  xSemaphoreGive(semaphoreDisplay);
-
-        }
+        
 
     }
 
 }
 
-void Task_Bluetooth(void* __nonParameter){}
+bool __bluetooth = false;
+void Task_Bluetooth(void* __nonParameter){
+    //El servicio es inicializado en setup()
+    for(;__bluetooth;){
+        
+            // (DEVELOP) DESARROLLAR PARA QUE SE VEA QUE EL WIFI ESTA PRENDIDO
+
+            // Pausar la tarea durante un breve periodo de tiempo
+            vTaskDelay(pdMS_TO_TICKS(1000)); // Pausa de 1000 milisegundos (1 segundo)
+        
+    }
+    
+}
