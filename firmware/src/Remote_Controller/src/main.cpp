@@ -10,12 +10,21 @@
 
 #include <Arduino.h>
 #include <Wire.h>               // I2C
+#ifdef ESP32
 #include <Wifi.h>
-#include <SPI.h> 
-#include "Tasks.h"
-#include "Modes.h"
+#elif ESP8266
+#include <ESP8266WiFi.h>
+#endif
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#define WIFI_ON
 
-//#define DEBUG
+#include <SPI.h> 
+#include "System.h"
+#include "Storage/Config.h"
+#include "Modes/Modes.h"
+
+#define DEBUG
 
 SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
@@ -33,44 +42,26 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 #define WIFI_ON  
 //#define BLUETOOTH_ON
 
-#define SSID_IN         "Enzo_Fernandez"        //SSID del access point en el que se conectara el servicio WiFi
-#define PASSWORD_IN     "joacoguereta"            //PASSWORD del access point en el que se conectara el servicio WiFi
+#define SSID_IN         "TP-LINK_4F48"        //SSID del access point en el que se conectara el servicio WiFi
+#define PASSWORD_IN     "51807511"            //PASSWORD del access point en el que se conectara el servicio WiFi
 
+//(Desarrollo) Pagina Web
 #define SSID_OUT        "REMOTE_CONTROLLER"   //SSID del access point que se generara
-#define PASSWORD_OUT    "SARAGOYLAJEFA"       //PASSWORD del access point que se generara
-
-using namespace MODE;
+#define PASSWORD_OUT    "TESTING123"       //PASSWORD del access point que se generara
 
 void setup(){
     
     Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
-    while (!Serial); // wait for serial port to connect. Needed for native USB port only
+    while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
     
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
     spi.begin();
     
-    /*
-    #ifdef DEBUG                                                                                        \
+    #ifdef DEBUG
     // Just to know which program is running on my Sketch
-    Serial.println(F("START " __FILE__ " from " __DATE__ "."));                                         \
-
-    //Aviso del compilador utilizado (usando los identificadores de cada uno)                                        
-    Serial.println(F("Tipo de compilador Utilizado: "));                                                \                             
-    #if defined(__GNUC__)                                                                               \\
-        Serial.println(F("GNU :)"));                                                                    \\
-        Serial.print(F("Version del compilador de GNU es: "));                                          \\
-        Serial.println(F(__GNUC__));                                                                    \\
-    #elif defined(__clang__)                                                                            \\
-        Serial.println(F("CLANG !!"));                                                                  \\
-        Serial.println(F("Version Principal del compilador de CLANG es: "  __clang_major__ ));          \\
-        Serial.println(F("Version Secundaria del compilador de CLANG es: " __clang_minor__ ));          \\
-        Serial.println(F("Nivel de parche del compilador de CLANG: "       __clang_patchlevel__ ));     \\
-    #else                                                                                               \\
-        Serial.println(F("Generico"));                                                                  \\
-    #endif                                                                                              \
-    #endif                                                                                          
-    */
+    Serial.println(F("START " __FILE__ " from " __DATE__ "."));
+    #endif
 
     // Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado."));
@@ -84,17 +75,29 @@ void setup(){
     // Inicializacion del sistema del infrarrojo
     infraredBegin();    Serial.println(F("Infrared Inicializado."));
 
+    // configSaved(); // (Canceled) De momento cancelado hasta nuevo aviso
+
+    // clockBegin(); // (Canceled) De momento cancelado hasta nuevo aviso
+
     #ifdef WIFI_ON
     //  Inicializacion del servicio WiFi
     // Conectar a la red WiFi
     WiFi.begin(SSID_IN, PASSWORD_IN);
-    Serial.print(F("Conectando a WiFi..."));
-
-    //Si no se conecta...
-    while (WiFi.status() != WL_CONNECTED) 
-    delay(1000);
+    Serial.print(F("Conectando a WiFi... "));
+    //Si no se conecta... espera hasta conectarse (senializo con LED_BUILTIN la reconexion)
+    for(auto builtInBlink_time = millis() ; WiFi.status() != WL_CONNECTED ; ) {
+        //Mientras blinkea el led BUILTIN
+        bool ledbuiltIn_state;
+        if(millis() - builtInBlink_time >= 500Ul){ //cada 500 Milisegundos
+            ledbuiltIn_state = !ledbuiltIn_state;
+            digitalWrite(LED_BUILTIN , ledbuiltIn_state);
+            builtInBlink_time = millis();
+        }
+    }
+    digitalWrite(LED_BUILTIN , LOW); // Set Off LED_BUILTIN
     __wifi = true;
     Serial.println(F("Conectado!"));
+    
     #endif
 
     // Espero a que todos los procesos terminen para inicializar
@@ -103,78 +106,35 @@ void setup(){
     // Task para correr el programa principal
     xTaskCreate(
         Task_Idle,                  // Funcion codigo del Task
-        "Task_Loop",                // Nombre del Task 
-        15000U,                     // Reserva de espacio en la Pila
+        "Task_Idle",                // Nombre del Task 
+        100024U,                    // Reserva de espacio en la Pila
         NULL,                       // Argumentos
         tskIDLE_PRIORITY,           // Prioridad
         &handleIdle                 // Handle 
     );
 
-    // Task para preguntar si el usuario esta activo de forma dinamica 
-    xTaskCreate(
-        Task_Sleep,                 //Funcion codigo del Task
-        "Task_Sleep",               //Nombre del Task 
-        1500U,                      //Reserva de espacio en la Pila 
-        NULL,                       //Argumentos
-        tskIDLE_PRIORITY + 1U,      //Prioridad
-        &handleSleep                //Handle   
-    );
-
-    // Task para mostrar la bateria en el display de forma dinamica
-    xTaskCreate(
-        Task_Battery,               // Funcion codigo del Task
-        "Task_Battery",             // Nombre del Task
-        1500U,                      // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY,           // Prioridad
-        &handleBattery              // Handle
-    );
-
     // Crear tarea del Watchdog Timer
     xTaskCreate(
-        Task_WatchDogTimer,         // Funcion codigo del Task
-        "Task_WatchDogTimer",       // Nombre del Task
-        1500U,                      // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY + 2U,      // Prioridad
-        NULL                        // Sin Handle
+        Task_WatchDogTimer,             // Funcion codigo del Task
+        "Task_WatchDogTimer",           // Nombre del Task
+        configMINIMAL_STACK_SIZE + 256U,// Reserva de espacio en la Pila
+        NULL,                           // Argumentos
+        tskIDLE_PRIORITY + 2U,          // Prioridad
+        NULL                            // Sin Handle
     );
-    
-    #ifdef CLOCK_ON
-    // Crear tarea del Reloj
-    xTaskCreate(
-        Task_Clock,                 // Funcion codigo del Task
-        "Task_Clock",               // Nombre del Task 
-        3000U,   // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY,           // Prioridad
-        &handleClock                // Handle 
-    );
-    #endif
 
-    #ifdef WIFI_ON
-    // Crear tarea para el funcionamiento WI-FI
+    // Task para preguntar si el usuario esta activo de forma dinamica 
     xTaskCreate(
-        Task_Wifi,                  // Funcion codigo del Task
-        "Task_Wifi",                // Nombre del Task 
-        3000U,   // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY,           // Prioridad
-        &handleWiFi                 // Handle 
+        Task_AFK,                       //Funcion codigo del Task
+        "Task_AFK",                     //Nombre del Task 
+        configMINIMAL_STACK_SIZE + 256U,//Reserva de espacio en la Pila 
+        NULL,                           //Argumentos
+        tskIDLE_PRIORITY + 1U,          //Prioridad
+        &handleSleep                    //Handle   
     );
-    #endif
 
-    #ifdef BLUETOOTH_ON
-    // Crear tarea para el funcionamiento BLUETOOTH
-    xTaskCreate(
-        Task_Bluetooth,             // Funcion codigo del Task
-        "Task_Bluetooth",           // Nombre del Task 
-        configMINIMAL_STACK_SIZE,   // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY,           // Prioridad
-        &handleBluetooth            // Sin Handle 
-    );
-    #endif
+    // UI.time_status = true; // (Canceled) De momento cancelado hasta nuevo aviso
+    UI.run(); // Task para la User Interface
 
     // Iniciar el scheduler de FreeRTOS
     //vTaskStartScheduler(); // Genera un core dump si se permite el uso del void loop() Asegurarse de usar si es que no se usa el void loop() (Generado por el Watch Dog Timer)
@@ -182,5 +142,5 @@ void setup(){
 }
 
 
-//Solamente se encarga de hacer el reinicio si es pedido
-void loop(){  } 
+//Puesto unicamente por el framework de arduino. El sistema esta montado en Tasks gracias a FreeRTOS (Amazon)
+void loop(){ MODE::hub();} //El Idle esta ubicado en System.h (Programa principal)

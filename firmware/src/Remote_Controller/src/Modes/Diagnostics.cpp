@@ -1,0 +1,56 @@
+//Copyright Grupo 11, Inc. All Rights Reserved.
+/***********************************************
+ * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ * Source of Diagnostics.
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * *
+***********************************************/
+
+#include "Modes/Diagnostics.h"
+
+void MODE::showDiagnostics(void){
+
+  //Si se presiona cualquier boton... FIN DEL MENU: "Diagnostics"
+  while(!(buttonState(PIN::Buttons::BACK)  == HIGH  ||
+          buttonState(PIN::Buttons::UP)    == HIGH  ||
+          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
+          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
+          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
+          buttonState(PIN::Buttons::ENTER) == HIGH    )){
+
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
+
+    display.setTextSize(1);
+    display.setTextColor(SH110X_WHITE);
+    display.clearDisplay();
+    display.setCursor( 0 , 0 );
+  
+    // Servicios de Clock, Wifi, Bluetooth
+    display.println(F("Services:"));
+    display.printf( 
+      "Clock: %s\n"     ,__clock      ? "true" : "false"
+      "Wi-Fi: %s\n"     ,__wifi       ? "true" : "false"
+      "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false" 
+    );  
+  
+    // Memoria disponible aun
+    display.printf("Free memory: %llu\n" ,[freespace = SD.totalBytes() - SD.usedBytes()] () -> uint64_t{
+      return (freespace == 0ull) ? 0ull : ( static_cast<uint64_t>(std::log10(freespace)) + 1ull );
+    }());
+    // display.printf("== %d subprofiles" ,( SD.totalBytes() - SD.usedBytes() ) / sizeof(storedIRDataStruct) ); //Masomenos el total de subperfiles a agregar disponibles
+    //display.printf("Total mAh Bat: %d" ,batteryPercentage() ); // Total mili Ampere Hora de bateria
+    
+    //Velocidad de CPU
+    display.printf("CPU speed: %lu \n" ,ESP.getCpuFreqMHz() );
+  
+    display.display();
+  
+    xSemaphoreGive( semaphoreDisplay ); // Desbloquear el semáforo
+  
+    }
+  
+  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
+
+
+}

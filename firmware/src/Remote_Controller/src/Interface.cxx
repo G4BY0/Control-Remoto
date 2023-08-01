@@ -9,9 +9,8 @@
 #include "Interface.h"
 
 //Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
-Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-//Semaforo para el libre uso del display
-SemaphoreHandle_t semaphoreDisplay;  
+Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
+SemaphoreHandle_t semaphoreDisplay; //Semaforo para el libre uso del display
 
 void buttonsBegin(void){
 
@@ -34,13 +33,11 @@ void displayBegin(void){
 
   // Inicializacion del Semaforo
   semaphoreDisplay = xSemaphoreCreateBinary();
-  xSemaphoreGive(semaphoreDisplay); //Inicializado el semaforo
+  xSemaphoreGive(semaphoreDisplay);
 
-  //Inicializacion del display con la comunicacion I2C
-  display.begin(I2C_ADDRESS, true);
+  display.begin(I2C_ADDRESS, true); //Inicializacion del display con la comunicacion I2C
 
-  //Expulso de la RAM hacia el display las instrucciones guardadas
-  display.display();
+  display.display(); //Expulso de la RAM hacia el display las instrucciones guardadas en el buffer (Adafruit_Industries->{LOGO})
 
   //Limpio la pantalla porque al inicio mete una imagen el buffer de entrada
   display.clearDisplay();
@@ -58,21 +55,28 @@ void displayBegin(void){
 uint8_t Interface::hub(void){
   
   //Opciones del menu Principal/Hub
-  PROGMEM std::vector<std::string> strings  = { "PROFILES" , "ADD PROFILE" , "DELETE PROFILE" , "ADD SUBPROFILE" , "DELETE SUBPROFILE" , "HELP" , "SHUTDOWN" };
+  PROGMEM std::vector<std::string> strings  = { 
+    "PROFILES" , 
+    "ADD PROFILE" , 
+    "DELETE PROFILE" , 
+    "ADD SUBPROFILE" , 
+    "DELETE SUBPROFILE" , 
+    "HELP" , 
+    "SHUTDOWN",
+    "DIAGNOSTICS" 
+  };
 
   //Cursor Para Hacer el manejo del Hub
-  Cursor cursor( strings , &display );
+  Cursor cursor( strings , display );
   const char* selected;
 
   do{ selected = cursor.getSelectedOption(); } 
   while(selected == nullptr);
 
   //Busco el numero de la opcion seleccionada y lo retorno
-  for(uint8_t iterator = 0; iterator < strings.size(); iterator++ ){
-    if(strcmp( selected , strings[iterator].c_str() ) == 0) 
-    return iterator; 
-  }
-
+  for( auto it = strings.begin() ; it != strings.end() ; it++ )
+    if(strcmp( selected , it->c_str() ) == 0) 
+      return std::distance(strings.begin(), it); 
 }
 //---------------------------------------------------
 
@@ -86,10 +90,10 @@ void Interface::profiles(void){
     return; // El puntero es nulo, salir de la función
   }
 
-  profiles_ptr.insert( profiles_ptr.begin() , "ADD PROFILES" ); //Primera Opcion
-  profiles_ptr.insert( profiles_ptr.begin() +1 , "DELETE PROFILES" );  //Segunda Opcion
+  profiles_ptr.insert( profiles_ptr.begin()   , "ADD PROFILES" ); //Primera Opcion
+  profiles_ptr.insert( profiles_ptr.begin()+1 , "DELETE PROFILES" );  //Segunda Opcion
 
-  Cursor cursor( profiles_ptr , &display );
+  Cursor cursor( profiles_ptr , display );
   const char* profile_selected = cursor.getSelectedOption();
   
   //Si el usuario no selecciono nada o hubo algun problema
@@ -116,10 +120,9 @@ void Interface::addProfile(void){
   WritterV2 writter( &display );
 
   std::string profileName = writter.stringFinished();
-  delay(DEBOUNCE_TIME);
   
   //En caso de cualquier problema incluyendo si el usuario cancelo la creacion de un nuevo perfil
-  if( profileName.c_str() == nullptr ) return; //Failure, el usuario habia cancelado la escritura del nombre 
+  if( profileName.empty() ) return; //Failure, el usuario habia cancelado la escritura del nombre 
 
   //Creo el perfil en el almacenamiento con el nombre dado Y pregunto si no se cumplió correctamente...
   if(! Profiles::createProfile(profileName.c_str()) ) {
@@ -127,8 +130,7 @@ void Interface::addProfile(void){
     return;
   }
 
-  // Bloquear el semáforo
-  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
 
   //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
   //Establezco los parametros a utilizar para la muestra a la salida del display
@@ -149,9 +151,9 @@ void Interface::addProfile(void){
   display.println(F("other to Cancel"));
 
   display.display();
-
-  // Desbloquear el semáforo
-  xSemaphoreGive(semaphoreDisplay);
+  
+  display.flush(); // Flush antes de liberar el mutex
+  xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
 
   //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
   while(1){
@@ -170,11 +172,10 @@ void Interface::addProfile(void){
   }
 
   if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
-  yield();
 
   //Recbido del usuario (A traves del writter) el nombre del nuevo subperfil
   std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
-  if(subProfileName.c_str() == nullptr ) return; // SI no recibo ningun nombre...
+  if( subProfileName.empty() ) return; // SI no recibo ningun nombre...
 
   
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
@@ -188,14 +189,16 @@ void Interface::deleteProfile(void){
   auto names = Profiles::getProfiles();
   
   //Si recibo el vector vacio, hubo un problema
-  if (names.empty() == true) {
+  if (names.empty()) {
     Interface::EmergencyCalls::nonProfiles();
     return; // El puntero es nulo, salir de la función
   }
 
   //Inicializo un Cursor para recibir del usuario el perfil seleccionado
-  Cursor cursor(names,&display);
+  Cursor cursor(names,display);
   const char* selected = cursor.getSelectedOption();
+
+  if(selected == nullptr) return;
 
   //Pido al almacenamiento eliminar el perfil dado
   Profiles::deleteProfile(selected);
@@ -211,11 +214,11 @@ void Interface::subProfiles(const char *profileName_){
   subprofiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
 
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
-  Cursor cursor( subprofiles ,&display , 2 ); 
+  Cursor cursor( subprofiles ,display , 2 ); 
 
   for(const char* subprofile_selected = cursor.getSelectedOption() ; subprofile_selected != nullptr ; subprofile_selected = cursor.getSelectedOption()){
   
-    if(subprofile_selected == nullptr) return; // Si no se selecciono ninguno...
+    if(strcmp(subprofile_selected, "") == 0) return; // Si no se selecciono ninguno...
 
     if(subprofile_selected == "ADD SUBPROFILE"){
     Interface::createSubProfile(profileName_);
@@ -235,26 +238,27 @@ void Interface::subProfiles(const char *profileName_){
     }
 
     sendCode(IRToSend); //Envio la señal a la salida con la informacion dada
-    Serial.println(F("Successfull Sended."));
   }
 
 }
 
-void Interface::createSubProfile(const char* profileSelected = nullptr){
+void Interface::createSubProfile(std::string profileSelected){
 
-  if(profileSelected == nullptr){
+  if(profileSelected.empty()){
 
     auto namesProfile = Profiles::getProfiles(); // Recibo del almacenamiento todos los nombres de los perfiles
 
     //Si no llegara a recibir ningun nombre de ningun perfil o si hubo un error inesperado...
-    if ( namesProfile.empty() == true ) {
+    if ( namesProfile.empty() ) {
       Interface::EmergencyCalls::nonProfiles();
       return; 
     }
 
     //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
-    Cursor cursor(namesProfile,&display);
-    const char* profileSelected = cursor.getSelectedOption();
+    Cursor cursor(namesProfile,display);
+    profileSelected = cursor.getSelectedOption();
+
+    if(profileSelected.empty()) return;
 
   }
 
@@ -263,7 +267,9 @@ void Interface::createSubProfile(const char* profileSelected = nullptr){
 
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
-  const char* subProfileName = writter.stringFinished();
+  std::string subProfileName = writter.stringFinished();
+
+  if(subProfileName.empty()) return;
 
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
@@ -279,14 +285,14 @@ void Interface::createSubProfile(const char* profileSelected = nullptr){
   xSemaphoreGive( semaphoreDisplay );
 
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::createSubProfile(  subProfileName , Protocols::IR , profileSelected ); 
+  SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileSelected.c_str() ); 
 
 }
 
-void Interface::deleteSubProfile(const char* profileSelected = nullptr){
+void Interface::deleteSubProfile(std::string profileSelected){
 
   //Si no recibo ningun nombre...
-  if(profileSelected == nullptr){
+  if(profileSelected.empty()){
 
     //Recibo del almacenamiento el nombre de los perfiles
     auto namesProfiles = Profiles::getProfiles();
@@ -297,23 +303,23 @@ void Interface::deleteSubProfile(const char* profileSelected = nullptr){
     }
 
     //Inicializo un cursor para pedirle al usuario que perfil desea
-    Cursor cursor( namesProfiles , &display );
+    Cursor cursor( namesProfiles , display );
     const char* && profileSelected = cursor.getSelectedOption();
 
   }
 
   //Recido del almacenamiento el nombre de los subperfiles del perfil dado
-  auto namesSubProfiles = SubProfiles::getSubProfiles(profileSelected);
+  auto namesSubProfiles = SubProfiles::getSubProfiles(profileSelected.c_str());
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
-  Cursor cursor2( namesSubProfiles , &display ); 
+  Cursor cursor2( namesSubProfiles , display ); 
   const char* && selectedSubProfile = cursor2.getSelectedOption();
 
   //Si no recibo ningun Subperfil...
   if(selectedSubProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de subperfiles
 
   //Elimino el subperfil dado del subperfil dado
-  SubProfiles::deleteSubProfile(profileSelected, selectedSubProfile);
+  SubProfiles::deleteSubProfile(profileSelected.c_str(), selectedSubProfile);
 
 }
 
@@ -358,48 +364,6 @@ bool Interface::waitingForIR(void){
   delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
   return true; //Recibido Correctamente
 
-}
-
-void Interface::help( const char* text , const uint8_t version ){
-
-  // Bloquear el semáforo
-  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
-
-  //Establezco los parametros a utilizar para la muestra a la salida del display
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-  display.display();
-  
-  QRCode qrcode;
-  uint8_t qrcodeData[qrcode_getBufferSize(version)];
-  qrcode_initText(&qrcode , qrcodeData , version , 0 , text );
-
-  int scale = min( SCREEN_WIDTH / qrcode.size , SCREEN_HEIGHT / qrcode.size ) * 2; 
-
-  int shiftX = ( SCREEN_WIDTH - qrcode.size * scale ) / 2;
-  int shiftY = ( SCREEN_HEIGHT - qrcode.size * scale ) / 2;
-
-  for(uint8_t y = 0 ; y < qrcode.size ; y++){
-    for(uint8_t x = 0 ; x < qrcode.size ; x++){
-      if(qrcode_getModule(&qrcode , x , y ))
-        display.fillRect( shiftX + x * scale , shiftY + y * scale , scale , scale , SH110X_WHITE );
-    }
-
-  }
-  display.display();
-
-  // Desbloquear el semáforo
-  xSemaphoreGive( semaphoreDisplay );
-
-  //Si se presiona cualquier boton...
-  while(!(buttonState(PIN::Buttons::BACK)  == HIGH  ||
-          buttonState(PIN::Buttons::UP)    == HIGH  ||
-          buttonState(PIN::Buttons::DOWN)  == HIGH  ||
-          buttonState(PIN::Buttons::LEFT)  == HIGH  ||
-          buttonState(PIN::Buttons::RIGHT) == HIGH  || 
-          buttonState(PIN::Buttons::ENTER) == HIGH    ));
-  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
 }
 
 void Interface::battery(void){
@@ -476,28 +440,23 @@ void Interface::battery(void){
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
-  
-
   // Desbloquear el semáforo
   xSemaphoreGive( semaphoreDisplay );
 
-
 }
 
-void Interface::clock( const struct tm& time ){
+void Interface::clock( const struct tm& time , char* buff){
 
-  // Bloquear el semáforo
-  xSemaphoreTake( semaphoreDisplay, portMAX_DELAY );
-
-
-  display.setCursor( 0 , 0 );
-  display.printf("%2d/%2d/%2d" ,time.tm_hour ,time.tm_min ,time.tm_sec );
-  display.display();
-  
-
-  // Desbloquear el semáforo
-  xSemaphoreGive(semaphoreDisplay);
-
+  PROGMEM const char* days[]= {
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat",
+    "sun"
+  };
+  snprintf(buff, 10U,"%s%2i:%2i:%2i%c" ,days[time.tm_wday] ,time.tm_hour ,time.tm_min ,time.tm_sec ,'\0'); 
 }
 
 void Interface::EmergencyCalls::nonProfiles(void){

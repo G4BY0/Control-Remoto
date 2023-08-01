@@ -23,12 +23,15 @@
 #include <Wire.h> //I2C
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include <QRRCODE.h>
 
 #include "PIN.h"
-#include "Cursor.h"
+#include "System.h"
+#include "Tools/Cursor.h"
+#include "Tools/Writter.h"
+#include "Tools/Book.h"
 #include "Infrared.h"
-#include "Profiles.h"
+#include "Storage/Profiles.h"
+
 
 //Objeto para el manejo de la pantalla a utilizar (tecnologia OLED con driver SH1106G)
 extern Adafruit_SH1106G display;
@@ -42,10 +45,13 @@ extern Adafruit_SH1106G display;
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define I2C_ADDRESS 0x3c // initialize with the I2C addr 0x3C Typically eBay OLED's
 // #define i2c_Address 0x3d //initialize with the I2C addr 0x3D Typically Adafruit OLED's
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Oled display size
+#define SCREEN_WIDTH  (128U) // OLED display width, in pixels
+#define SCREEN_HEIGHT (64U)  // OLED display height, in pixels
+
 #define OLED_RESET -1    //   QT-PY / XIAO
-#define BLINK_TIME 500 //Exclusivo para hacer parpadear un texto
+#define BLINK_TIME 500   // Exclusivo para hacer parpadear un texto
 
 //Pulsadores
 /*! \brief Estado logico de la botonera
@@ -94,11 +100,11 @@ namespace Interface {
   
   /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
-  void createSubProfile(const char* profileSelected);
+  void createSubProfile(std::string profileSelected = std::string(""));
 
   /*! \brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
   */
-  void deleteSubProfile(const char* profileSelected);
+  void deleteSubProfile(std::string profileSelected = std::string(""));
   
   /*! \brief    Interfaz del modo "Esperando Infrarrojo" 
       \return   'true' Si cumplió correctamente.
@@ -107,20 +113,15 @@ namespace Interface {
   */
   bool waitingForIR(void);
 
-  /*! \brief    Muestra las instrucciones de como se usa el dispositivo
-      \param    text Recibe String que se codificara en el codigo QR
-      \param    version Version del QR (permite mas o menos informacion dentro)
-      \note     El usuario debe scanear un QR y recibirá el string del parametro */
-  void help(const char* text , const uint8_t version = 4);
-
   /*! \brief Muestra la bateria en la pantalla
       \note Se muestra en alguna de las esquinas de la pantalla*/
   void battery(void);
 
-  /*! \brief Muestra el clock en tiempo real
+  /*! \brief Decodifica la estructura recibida y devuelve tiempo en string
       \param rtc Objeto de Registro del Tiempo
-      \note Se refresca cada 'REFRESH CLOCK' (MACRO que estipula el tiempo de actualizacion)*/
-  void clock( const struct tm& time ) ;
+      \param buff Buffer en el que se llenara con el string de time dado
+      \note Hace la copia del string en el buffer, "%s%2i:%2i:%2i" <---- Example: thu 05:08:34. No tiene en cuenta el size del buffer, usar con precaucion.*/
+  void clock( const struct tm& time , char* buff);
 
   namespace EmergencyCalls {
 
@@ -157,6 +158,5 @@ namespace Interface {
   };
 
 };
-
 
 #endif //Interface_h

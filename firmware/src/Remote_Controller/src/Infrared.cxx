@@ -25,7 +25,7 @@ void infraredBegin(void){
 
   // Inicializacion del IRSender
   irsend.begin(); // Start up the IR sender.
-  
+
 }
 
 void Receive_start(void){
@@ -47,10 +47,11 @@ void Receive_stop(void){
 
 void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
   Serial.flush(); // To avoid disturbing the software PWM generation by serial output interrupts
- 
+
   bool success = true;
   uint16_t size = IRData->results.bits;
   decode_type_t protocol = IRData->results.decode_type;
+  Serial.flush();
   if (protocol == decode_type_t::UNKNOWN) {  // Yes.
       // Convert the results into an array suitable for sendRaw().
       // resultToRawArray() allocates the memory we need for the array.
@@ -69,10 +70,16 @@ void sendCode(std::shared_ptr<storedIRDataStruct> IRData) {
     } else {  // Anything else must be a simple message protocol. ie. <= 64 bits
       success = irsend.send(protocol, IRData->results.value, size);
     }
-    success == false
-    ? Serial.println(F("Failed sending Signal!"))
-    : Serial.println(F("Successful sending Signal."));  
-  
+    if(success == false) 
+     Serial.println(F("Failed sending Signal!"));
+    else {
+    // Display a crude timestamp & notification.
+    uint32_t now = millis();
+    Serial.printf(
+        "A %d-bit %s message was %ssuccessfully retransmitted.\n"
+        , size, typeToString(protocol).c_str(),
+        success ? "" : "un");
+    }
 }
 
 // Stores the code for later playback
