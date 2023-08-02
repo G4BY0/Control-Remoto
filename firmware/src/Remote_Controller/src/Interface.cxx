@@ -256,9 +256,12 @@ void Interface::createSubProfile(std::string profileSelected){
 
     //Inicializo un cursor para preguntar en que perfil desea almacenar el nuevo subperfil
     Cursor cursor(namesProfile,display);
-    profileSelected = cursor.getSelectedOption();
+    const char* buffer = cursor.getSelectedOption();
 
-    if(profileSelected.empty()) return;
+    if(buffer == nullptr)
+      return;
+    profileSelected = buffer;
+
 
   }
 
@@ -304,7 +307,10 @@ void Interface::deleteSubProfile(std::string profileSelected){
 
     //Inicializo un cursor para pedirle al usuario que perfil desea
     Cursor cursor( namesProfiles , display );
-    const char* && profileSelected = cursor.getSelectedOption();
+    const char* buffer = cursor.getSelectedOption();
+    if(buffer == nullptr)
+      return;
+    profileSelected = buffer;
 
   }
 
@@ -313,13 +319,13 @@ void Interface::deleteSubProfile(std::string profileSelected){
   
   //Inicializo un cursor para pedirle al usuario que SUbperfil desea
   Cursor cursor2( namesSubProfiles , display ); 
-  const char* && selectedSubProfile = cursor2.getSelectedOption();
+  std::string selectedSubProfile = cursor2.getSelectedOption();
 
   //Si no recibo ningun Subperfil...
-  if(selectedSubProfile == nullptr) return; //Failure, el usuario cancelo la seleccion de subperfiles
+  if(selectedSubProfile.empty()) return; //Failure, el usuario cancelo la seleccion de subperfiles
 
   //Elimino el subperfil dado del subperfil dado
-  SubProfiles::deleteSubProfile(profileSelected.c_str(), selectedSubProfile);
+  SubProfiles::deleteSubProfile(profileSelected.c_str(), selectedSubProfile.c_str());
 
 }
 
@@ -456,7 +462,7 @@ void Interface::clock( const struct tm& time , char* buff){
     "sat",
     "sun"
   };
-  snprintf(buff, 10U,"%s%2i:%2i:%2i%c" ,days[time.tm_wday] ,time.tm_hour ,time.tm_min ,time.tm_sec ,'\0'); 
+  snprintf(buff, 10U,"%s %02i:%02i:%02i%c" ,days[time.tm_wday] ,time.tm_hour ,time.tm_min ,time.tm_sec ,'\0'); 
 }
 
 void Interface::EmergencyCalls::nonProfiles(void){

@@ -273,7 +273,7 @@ const char* Cursor::getSelectedOption() {
     // Boton BACK Y Boton IZQUIERDA
     if (buttonState(PIN::Buttons::BACK) == true || buttonState(PIN::Buttons::LEFT) == true ) {
       delay(DEBOUNCE_TIME);
-      return nullptr;
+      return NULL;
     }
     // Boton UP
     if (buttonState(PIN::Buttons::UP) == true ) {

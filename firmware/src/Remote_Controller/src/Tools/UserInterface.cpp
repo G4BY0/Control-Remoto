@@ -2,7 +2,7 @@
 
 void UI_t::batteryPercentage(char* buffer){
   //ADC de 12 BITS 0 - 4095
-  snprintf(buffer, 5U, "%3u%s", static_cast<uint8_t>(map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l )) , "%" );
+  snprintf(buffer, 5U, "%003l%s", map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l ) , "%" );
 }
 
 void UI_t::graphic(UI_position manifest){
@@ -14,7 +14,7 @@ void UI_t::graphic(UI_position manifest){
     
   case UI_position::UPPERLEFT_CORNER:
     display.setCursor(0,0);
-    display.print(F("         "));
+    display.print(F("           "));
     
     if(time_status == true)
       Interface::clock(time_RTC, buffer); 
@@ -33,7 +33,7 @@ void UI_t::graphic(UI_position manifest){
 
   case UI_position::LOWERLEFT_CORNER:
     display.setCursor(0,58);
-    display.print(F("         "));
+    display.print(F("           "));
     if(time_status == true)
       Interface::clock(time_RTC, buffer);
     if(battery_status == true)

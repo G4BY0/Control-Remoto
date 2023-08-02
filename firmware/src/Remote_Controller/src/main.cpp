@@ -52,8 +52,13 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 void setup(){
     
     Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
+
+    #ifdef DEBUG
     while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
-    
+    #else
+    delay(1250);
+    #endif
+
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
     spi.begin();
@@ -95,7 +100,7 @@ void setup(){
         }
     }
     digitalWrite(LED_BUILTIN , LOW); // Set Off LED_BUILTIN
-    __wifi = true;
+    WIFI_SERVICE_STATUS = true;
     Serial.println(F("Conectado!"));
     
     #endif
@@ -105,12 +110,12 @@ void setup(){
 
     // Task para correr el programa principal
     xTaskCreate(
-        Task_Idle,                  // Funcion codigo del Task
-        "Task_Idle",                // Nombre del Task 
-        100024U,                    // Reserva de espacio en la Pila
-        NULL,                       // Argumentos
-        tskIDLE_PRIORITY,           // Prioridad
-        &handleIdle                 // Handle 
+        Task_Idle,                      // Funcion codigo del Task
+        "Task_Idle",                    // Nombre del Task 
+        100024U,                        // Reserva de espacio en la Pila
+        NULL,                           // Argumentos
+        tskIDLE_PRIORITY,               // Prioridad
+        &handleIdle                     // Handle 
     );
 
     // Crear tarea del Watchdog Timer
@@ -133,7 +138,8 @@ void setup(){
         &handleSleep                    //Handle   
     );
 
-    // UI.time_status = true; // (Canceled) De momento cancelado hasta nuevo aviso
+    UI.show = true;
+    UI.battery_status = true; // (Canceled) De momento cancelado hasta nuevo aviso
     UI.run(); // Task para la User Interface
 
     // Iniciar el scheduler de FreeRTOS
@@ -143,4 +149,4 @@ void setup(){
 
 
 //Puesto unicamente por el framework de arduino. El sistema esta montado en Tasks gracias a FreeRTOS (Amazon)
-void loop(){ MODE::hub();} //El Idle esta ubicado en System.h (Programa principal)
+void loop(){ MODE::hub(); } //El Idle esta ubicado en System.h (Programa principal)
