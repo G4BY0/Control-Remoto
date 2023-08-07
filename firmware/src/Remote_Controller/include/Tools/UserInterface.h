@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <string>
+#include <sstream>
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>  //FreeRTOS Operative System
 #include <freeRTOS/task.h>      //MultiThreading
@@ -24,9 +25,9 @@
 class UI_t{
 private:
   enum class UI_position{
-  UPPERLEFT_CORNER = 0,
+  UPPERLEFT_CORNER  = 0,
   UPPERRIGHT_CORNER = 1,
-  LOWERLEFT_CORNER = 2,
+  LOWERLEFT_CORNER  = 2,
   LOWERRIGHT_CORNER = 3
   };
 public:
@@ -46,18 +47,17 @@ public:
       \note (Deleting Task)*/
   void stop(void); // Task Delete
   
+  /*! \brief Graphic The UI in the output*/
   void graphic(UI_position manifest = UI_position::UPPERLEFT_CORNER);
 
-private:
-  char buffer[13] = {'\0'}; // day (3 char) + hour (2 char) + min (2 char) + sec (2 char) + Bateria (3 char) + EOF (1 char) == 9<--- based on docs of Interface::clock() 
 private:
   /*! \brief Obtiene porcentage total de bateria
       \param buff Buffer
       \note Lo carga el string en el buffer dado*/
   void batteryPercentage(char* buffer);
-
+  struct tm time_RTC;
 }; extern UI_t UI; // Global manipulation of UI
 
-static void UI_Task(void* nonParameters); // Task Asincronico
-
+static void UI_async(void* nonParameters); // Task Asincronico
+static std::ostringstream buffer;
 #endif // USERINTERFACE_H

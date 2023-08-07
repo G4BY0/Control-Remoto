@@ -60,7 +60,7 @@ extern Adafruit_SH1106G display;
   \returns Si esta presionado 'true', sino 'false' */
 #define buttonState(PIN_BUTTON) !digitalRead(PIN_BUTTON) 
 
-#define DEBOUNCE_TIME 500 //Tiempo de seguridad por el rebote mecanico de los pulsadores
+#define DEBOUNCE_TIME 300 //Tiempo de seguridad por el rebote mecanico de los pulsadores
 #define TRUE_PULLUP 0x0
 #define TRUE_PULLDOWN 0x1
 #define FALSE_PULLUP 0x1

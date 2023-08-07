@@ -158,7 +158,7 @@ void clockBegin(void){
     //Si el Wifi Esta Habilidado, la sincronizo con Internet
     #ifdef WIFI_ON
     timeClient.begin();
-    time.tm_mday = timeClient.getDay();
+    timeClient.update();
     time.tm_mday = timeClient.getDay();
     time.tm_hour = timeClient.getHours();
     time.tm_hour = timeClient.getMinutes();
@@ -172,4 +172,3 @@ void clockBegin(void){
     #endif
 
 }
-#undef REFRESH_CLOCK

@@ -46,18 +46,16 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 #define PASSWORD_IN     "51807511"            //PASSWORD del access point en el que se conectara el servicio WiFi
 
 //(Desarrollo) Pagina Web
-#define SSID_OUT        "REMOTE_CONTROLLER"   //SSID del access point que se generara
-#define PASSWORD_OUT    "TESTING123"       //PASSWORD del access point que se generara
+#define SSID_OUT        "Remote_Controller"   //SSID del access point que se generara
+#define PASSWORD_OUT    "Authors:GMJ"       //PASSWORD del access point que se generara
 
 void setup(){
     
     Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
 
-    #ifdef DEBUG
-    while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
-    #else
+    // while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
     delay(1250);
-    #endif
+
 
     // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
     spi=SPIClass(VSPI); 
@@ -82,8 +80,7 @@ void setup(){
 
     // configSaved(); // (Canceled) De momento cancelado hasta nuevo aviso
 
-    // clockBegin(); // (Canceled) De momento cancelado hasta nuevo aviso
-
+    /* (DEBUGGING)
     #ifdef WIFI_ON
     //  Inicializacion del servicio WiFi
     // Conectar a la red WiFi
@@ -103,11 +100,14 @@ void setup(){
     WIFI_SERVICE_STATUS = true;
     Serial.println(F("Conectado!"));
     
-    #endif
+    clockBegin(); // (Dev) De momento cancelado hasta nuevo aviso
 
+    #endif
+    */
+   
     // Espero a que todos los procesos terminen para inicializar
     Serial.flush(); yield();
-
+    /*
     // Task para correr el programa principal
     xTaskCreate(
         Task_Idle,                      // Funcion codigo del Task
@@ -117,7 +117,7 @@ void setup(){
         tskIDLE_PRIORITY,               // Prioridad
         &handleIdle                     // Handle 
     );
-
+    */
     // Crear tarea del Watchdog Timer
     xTaskCreate(
         Task_WatchDogTimer,             // Funcion codigo del Task
@@ -139,7 +139,8 @@ void setup(){
     );
 
     UI.show = true;
-    UI.battery_status = true; // (Canceled) De momento cancelado hasta nuevo aviso
+    UI.time_status = false;
+    UI.battery_status = true;
     UI.run(); // Task para la User Interface
 
     // Iniciar el scheduler de FreeRTOS
@@ -147,6 +148,5 @@ void setup(){
 
 }
 
-
-//Puesto unicamente por el framework de arduino. El sistema esta montado en Tasks gracias a FreeRTOS (Amazon)
+//Puesto unicamente por el framework de arduino. El sistema esta montado en Tasks gracias a FreeRTOS
 void loop(){ MODE::hub(); } //El Idle esta ubicado en System.h (Programa principal)

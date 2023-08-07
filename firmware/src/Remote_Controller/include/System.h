@@ -29,7 +29,7 @@
 #include "Modes/Modes.h"
 
 extern WiFiUDP ntpUDP;
-constexpr auto utcOffsetInSeconds = 3 * 60 * 60 ; //Argentina == UTF-3
+constexpr long utcOffsetInSeconds = -3 * (60 * 60) ; //Argentina == UTF-3
 extern NTPClient timeClient;
 
 //Handles
@@ -109,7 +109,6 @@ extern bool __clock_digital;
 
 
 //Frecuencia de Actualizacion del Clock (En milisegundos)
-#define REFRESH_CLOCK 500
 /*! \brief Muestra el clock en pantalla
     \note Cada Vez que se refresca en pantalla reserva su semaforo*/
 void clockBegin(void);

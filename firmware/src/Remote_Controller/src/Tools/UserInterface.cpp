@@ -1,66 +1,108 @@
 #include "Tools/UserInterface.h"
 
 void UI_t::batteryPercentage(char* buffer){
-  //ADC de 12 BITS 0 - 4095
-  snprintf(buffer, 5U, "%003l%s", map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l ) , "%" );
+  /* (DEBUGGING AND DEVELOPING) - FEATURE: SIMBOLS 
+  // Carácter Unicode 🔋 (U+1F50B) en un wchar_t
+  constexpr wchar_t batteryFull_unicodeChar = 0x1F50B;
+
+  // Carácter Unicode ⚡ (U+26A1) en un wchar_t
+  constexpr wchar_t charging_unicodeChar = 0x26A1;
+
+  // Carácter Unicode 🔌 (U+1F50C) en un wchar_t
+  constexpr wchar_t batteryLow_unicodeChar = 0x1F50C;
+
+  const uint8_t battery_percentage = map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l );
+
+  // Convertir el número a una cadena wchar_t*
+  std::wstring battery_percentage_wstr = std::to_wstring(battery_percentage);
+
+  */
+  /* (DEBUGGING AND DEVELOPING) - FEATURE: SIMBOLS 
+  battery_percentage_wstr += battery_percentage > 20 ? batteryFull_unicodeChar : batteryLow_unicodeChar;
+
+  // Copiar la cadena de wstr al búfer buffer usando wcscpy
+  wcscpy(buffer, battery_percentage_wstr.c_str());
+
+  // Convertir el número a una cadena wchar_t*
+  swprintf(buffer, sizeof(buffer) / sizeof(wchar_t), L"%ld", battery_percentage_wstr);
+  */
+
+  sprintf(buffer, "%ld%%" ,map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l ));
+  
+
 }
 
 void UI_t::graphic(UI_position manifest){
-  const struct tm time_RTC = RTC.getTimeStruct(); // Obtengo La hora en tiempo real
-  
+  buffer << [&]() -> std::string {
+    std::string _spaces;
+    std::string buff = buffer.str();
+    for(std::string::iterator it = buff.begin(); it != buff.end(); it++)
+      buffer << " ";
+    return _spaces;
+  }();
+  display.setTextColor(SH110X_BLACK);
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
-  // (DEBUG) Serial.printf("buffer UI: %s\n" ,buffer);
   switch (manifest){
     
   case UI_position::UPPERLEFT_CORNER:
     display.setCursor(0,0);
-    display.print(F("           "));
-    
-    if(time_status == true)
-      Interface::clock(time_RTC, buffer); 
-
-    if(battery_status == true)
-      batteryPercentage(buffer+9);
-
+    display.print(buffer.str().c_str());
     display.setCursor(0,0);
-    display.print(buffer);
-
     break;
 
   case UI_position::UPPERRIGHT_CORNER:
-    //Aun no desarrollado
+    display.setCursor(58,0);
+    display.print(buffer.str().c_str());
+    display.setCursor(58,0);
+    // (dev) Aun no testeado
     break;
 
   case UI_position::LOWERLEFT_CORNER:
     display.setCursor(0,58);
-    display.print(F("           "));
-    if(time_status == true)
-      Interface::clock(time_RTC, buffer);
-    if(battery_status == true)
-      batteryPercentage(buffer);
+    display.print(buffer.str().c_str());
     display.setCursor(0,58);
-    display.print(buffer);
     break;
 
   case UI_position::LOWERRIGHT_CORNER:
-    //Aun no desarrollado
+    display.setCursor(58,58);
+    display.print(buffer.str().c_str());
+    display.setCursor(58,58);
+    // (dev) Aun no testeado
     break;
   
-  default: break;
-  } 
+  }
+  display.setTextColor(SH110X_WHITE);
+  buffer.str("");
+  //Tiempo
+  if(time_status == true){
+      time_RTC = RTC.getTimeStruct(); // Sincronizo el tiempo a mostrar con el clock del sistema
+      char clock_str[13] = {'\0'};
+      Interface::clock(time_RTC, clock_str);
+      buffer << clock_str;
+      buffer << " ";
+  }
+  //Nivel de bateria en porcentaje
+  if(battery_status == true){
+    /*(DEV) - FEATURE: SIMBOLS 
+    wchar_t* battery_str[5] = {'\0'};*/
+    char battery_str[5] = {'\0'};
+    batteryPercentage(battery_str);
+    buffer << battery_str;
+  }
+  display.print(buffer.str().c_str());
   display.flush();
   display.display();
   xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
 
-} UI_t UI;
+}
 
 void UI_t::run(void){
 
   //Task Asincronico para el UI
   xTaskCreate(
-    UI_Task,                    //Funcion codigo del Task
+    UI_async,                    //Funcion codigo del Task
     "Task_UI",                  //Nombre del Task 
-    2000U,                      //Reserva de espacio en la Pila 
+    3000U,                      //Reserva de espacio en la Pila 
     NULL,                       //Argumentos
     tskIDLE_PRIORITY,           //Prioridad
     &handle                     //Handle   
@@ -68,13 +110,14 @@ void UI_t::run(void){
 
 } 
 
-void UI_Task(void* nonParameters){
+void UI_async(void* nonParameters){
+  buffer.str("");
   while(1){
     if(UI.show == true)
       UI.graphic();
     
     // Pausar la tarea durante un breve periodo de tiempo
-    vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
+    vTaskDelay(pdMS_TO_TICKS(1U));
   }
   vTaskDelete(NULL);
 }
@@ -83,8 +126,10 @@ void UI_t::stop(void){
   vTaskDelete(handle);
 }
 
-UI_t::UI_t(void){}
-UI_t::~UI_t(void){ stop(); }
+UI_t::UI_t(void){ }
+UI_t::~UI_t(void){ }
+
+UI_t UI;
 
 /*
 // Four tiles for a battery icon of 16x16.

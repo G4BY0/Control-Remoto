@@ -28,29 +28,24 @@ void MODE::showDiagnostics(void){
   
     // Servicios de Clock, Wifi, Bluetooth
     display.println(F("Services:"));
-    display.printf( 
-      "Clock: %s\n"     ,__clock      ? "true" : "false"
-      "Wi-Fi: %s\n"     ,__wifi       ? "true" : "false"
-      "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false" 
-    );  
+    display.printf( "Clock: %s\n"     ,__clock      ? "true" : "false"  ); 
+    display.printf( "Wi-Fi: %s\n"     ,__wifi       ? "true" : "false"  ); 
+    display.printf( "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false"  );  
   
     // Memoria disponible aun
     display.printf("Free memory: %llu\n" ,[freespace = SD.totalBytes() - SD.usedBytes()] () -> uint64_t{
-      return (freespace == 0ull) ? 0ull : ( static_cast<uint64_t>(std::log10(freespace)) + 1ull );
+      return (freespace == 0ull) ? 0ull : ( std::log10(freespace) + 1ull );
     }());
     // display.printf("== %d subprofiles" ,( SD.totalBytes() - SD.usedBytes() ) / sizeof(storedIRDataStruct) ); //Masomenos el total de subperfiles a agregar disponibles
     //display.printf("Total mAh Bat: %d" ,batteryPercentage() ); // Total mili Ampere Hora de bateria
     
     //Velocidad de CPU
-    display.printf("CPU speed: %lu \n" ,ESP.getCpuFreqMHz() );
+    display.printf("CPU speed: %lu\n" ,ESP.getCpuFreqMHz() );
   
     display.display();
   
     xSemaphoreGive( semaphoreDisplay ); // Desbloquear el semáforo
   
-    }
-  
-  delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
-
+  } delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO  
 
 }

@@ -51,9 +51,15 @@ void displayBegin(void){
 
 }
 
-//DEBUGGING CURSOR
 uint8_t Interface::hub(void){
-  
+  UI.show = true; //UI activado
+
+  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
+  display.clearDisplay();
+  display.setContrast(255); // Establecer el valor de contraste máximo
+  display.display();
+  xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
+
   //Opciones del menu Principal/Hub
   PROGMEM std::vector<std::string> strings  = { 
     "PROFILES" , 
@@ -78,7 +84,6 @@ uint8_t Interface::hub(void){
     if(strcmp( selected , it->c_str() ) == 0) 
       return std::distance(strings.begin(), it); 
 }
-//---------------------------------------------------
 
 void Interface::profiles(void){
   
@@ -99,15 +104,17 @@ void Interface::profiles(void){
   //Si el usuario no selecciono nada o hubo algun problema
   if(profile_selected == nullptr) return;
 
-  if(profile_selected == "ADD PROFILES"){
+  /* (BUG)
+  if(strcmp(profile_selected, "ADD PROFILES") == 0){
   Interface::addProfile();
   return;
   }
 
-  if(profile_selected == "DELETE PROFILES"){
+  if(strcmp(profile_selected , "DELETE PROFILES") == 0){
   Interface::deleteProfile();
   return;
   }
+  */
 
   //Muestro los subperfiles del perfil seleccionado por el usuario
   Interface::subProfiles( profile_selected );
@@ -115,6 +122,7 @@ void Interface::profiles(void){
 }
 
 void Interface::addProfile(void){
+  UI.show = false; //UI desactivado
 
   //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
   WritterV2 writter( &display );
@@ -209,10 +217,10 @@ void Interface::subProfiles(const char *profileName_){
 
   // Pido del almacenamiento los nombres de los subperfiles del perfil dado
   auto subprofiles = SubProfiles::getSubProfiles(profileName_); 
-  
+  /* (DEBUGGING)
   subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" ); // Primera Opcion
-  subprofiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
-
+  sub profiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
+  */
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
   Cursor cursor( subprofiles ,display , 2 ); 
 
@@ -267,6 +275,8 @@ void Interface::createSubProfile(std::string profileSelected){
 
   //Pido la informacion a la entrada
   if(!waitingForIR()) return; //Failure, Retorna que el usuario canceló la recepcion de la señal.
+
+  UI.show = false; //UI desactivado
 
   //Inicializo un Writter para pedirle al usuario el nombre del nuevo subperfil
   WritterV2 writter(&display);
@@ -462,7 +472,7 @@ void Interface::clock( const struct tm& time , char* buff){
     "sat",
     "sun"
   };
-  snprintf(buff, 10U,"%s %02i:%02i:%02i%c" ,days[time.tm_wday] ,time.tm_hour ,time.tm_min ,time.tm_sec ,'\0'); 
+  sprintf(buff, "%s %02i:%02i:%02i" ,days[time.tm_wday] ,time.tm_hour ,time.tm_min ,time.tm_sec); 
 }
 
 void Interface::EmergencyCalls::nonProfiles(void){
