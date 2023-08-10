@@ -20,6 +20,7 @@
 
 #include "Interface.h"
 #include "System.h"
+#include "Fonts/icons_UI.hpp"
 
 //! \brief UserInterface
 class UI_t{

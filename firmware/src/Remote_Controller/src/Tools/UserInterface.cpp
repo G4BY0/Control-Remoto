@@ -90,6 +90,21 @@ void UI_t::graphic(UI_position manifest){
     buffer << battery_str;
   }
   display.print(buffer.str().c_str());
+  bool wifi_current_status = WiFi.status();
+  display.setFont(&icons_UI);
+  if(wifi_current_status == WL_CONNECTED){ //When WiFi is conected
+    auto wifi_signal = map(WiFi.RSSI(), 0, -127, 1, 5);
+    switch (wifi_signal){
+      case 1: display.print(36); break;
+      case 2: display.print(37); break;
+      case 3: display.print(38); break;
+      case 4: display.print(39); break;
+      case 5: display.print(40); break;
+    }
+  }
+  else display.print(49); // For disconnected
+  display.setFont(NULL);
+
   display.flush();
   display.display();
   xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
@@ -100,7 +115,7 @@ void UI_t::run(void){
 
   //Task Asincronico para el UI
   xTaskCreate(
-    UI_async,                    //Funcion codigo del Task
+    UI_async,                   //Funcion codigo del Task
     "Task_UI",                  //Nombre del Task 
     3000U,                      //Reserva de espacio en la Pila 
     NULL,                       //Argumentos

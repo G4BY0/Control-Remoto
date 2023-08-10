@@ -1,7 +1,7 @@
 #pragma once
 #include <Adafruit_GFX.h>
 
-const uint32_t icons_UI_bitmap[] PROGMEM = {
+static const uint32_t icons_UI_bitmap[] PROGMEM = {
 		//f3b635d2-e762-4110-b202-488f5b6ca5df
             // Space
 0xFE000000,0x92000000,0x54000000,0x38000000,0x10000000,0x14000000,0x14000000,0x14000000,
@@ -38,7 +38,7 @@ const uint32_t icons_UI_bitmap[] PROGMEM = {
 // 0
 0xF8000000,0x84880000,0xB2500000,0x82200000,0xBA500000,0xBA880000,0x82000000,0xFE000000,
 // 1
-0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
+0xFE000000,0x82000000,0x54840000,0x38480000,0x10300000,0x10300000,0x10480000,0x10840000,
 // 2
 0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
 // 3
@@ -196,8 +196,8 @@ const uint32_t icons_UI_bitmap[] PROGMEM = {
 //f3b635d2-e762-4110-b202-488f5b6ca5df
 };
 
-const GFXglyph FreeSans24pt7bGlyphs[] PROGMEM = {
-    {0, 12, 8, 1, 12, 1},        // 0x20 ' '
+static const GFXglyph icons_UI_glyph[] PROGMEM = {
+    {0, 12, 8, 1, 12, -24},     // 0x20 ' '
     {0, 4, 34, 16, 6, -33},     // 0x21 '!'
     {17, 11, 12, 16, 2, -32},   // 0x22 '"'
     {34, 24, 33, 26, 1, -31},   // 0x23 '#'
@@ -293,3 +293,11 @@ const GFXglyph FreeSans24pt7bGlyphs[] PROGMEM = {
     {7386, 11, 44, 16, 2, -33}, // 0x7D '}'
     {7447, 19, 7, 24, 2, -19}   // 0x7E '~'
 }; 
+
+const GFXfont icons_UI PROGMEM = {
+    (uint8_t  *)icons_UI_bitmap,        ///< Glyph bitmaps, concatenated
+    (GFXglyph *)icons_UI_glyph,         ///< Glyph array
+    32U,                                ///< ASCII extents (first char)
+    49U,                                ///< ASCII extents (last char)
+    8U                                  ///< Newline distance (y axis)
+};
