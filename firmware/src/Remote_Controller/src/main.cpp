@@ -80,30 +80,7 @@ void setup(){
 
     // configSaved(); // (Canceled) De momento cancelado hasta nuevo aviso
 
-    /* (DEBUGGING)
-    #ifdef WIFI_ON
-    //  Inicializacion del servicio WiFi
-    // Conectar a la red WiFi
-    WiFi.begin(SSID_IN, PASSWORD_IN);
-    Serial.print(F("Conectando a WiFi... "));
-    //Si no se conecta... espera hasta conectarse (senializo con LED_BUILTIN la reconexion)
-    for(auto builtInBlink_time = millis() ; WiFi.status() != WL_CONNECTED ; ) {
-        //Mientras blinkea el led BUILTIN
-        bool ledbuiltIn_state;
-        if(millis() - builtInBlink_time >= 500Ul){ //cada 500 Milisegundos
-            ledbuiltIn_state = !ledbuiltIn_state;
-            digitalWrite(LED_BUILTIN , ledbuiltIn_state);
-            builtInBlink_time = millis();
-        }
-    }
-    digitalWrite(LED_BUILTIN , LOW); // Set Off LED_BUILTIN
-    WIFI_SERVICE_STATUS = true;
-    Serial.println(F("Conectado!"));
     
-    clockBegin(); // (Dev) De momento cancelado hasta nuevo aviso
-
-    #endif
-    */
    
     // Espero a que todos los procesos terminen para inicializar
     Serial.flush(); yield();
