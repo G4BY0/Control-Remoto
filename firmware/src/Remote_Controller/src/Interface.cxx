@@ -62,27 +62,20 @@ uint8_t Interface::hub(void){
 
   //Opciones del menu Principal/Hub
   PROGMEM std::vector<std::string> strings  = { 
-    "PROFILES" , 
-    "ADD PROFILE" , 
-    "DELETE PROFILE" , 
-    "ADD SUBPROFILE" , 
-    "DELETE SUBPROFILE" , 
-    "HELP" , 
+    "PROFILES", 
+    "EDIT",
+    "HELP", 
     "SHUTDOWN",
     "DIAGNOSTICS" 
   };
 
   //Cursor Para Hacer el manejo del Hub
   Cursor cursor( strings , display );
-  const char* selected;
+  int selected;
 
-  do{ selected = cursor.getSelectedOption(); } 
-  while(selected == nullptr);
-
-  //Busco el numero de la opcion seleccionada y lo retorno
-  for( auto it = strings.begin() ; it != strings.end() ; it++ )
-    if(strcmp( selected , it->c_str() ) == 0) 
-      return std::distance(strings.begin(), it); 
+  do{ selected = cursor.getSelectedOption_number(); } 
+  while(selected == -1);
+  return selected;
 }
 
 void Interface::profiles(void){
@@ -95,9 +88,6 @@ void Interface::profiles(void){
     return; // El puntero es nulo, salir de la función
   }
 
-  profiles_ptr.insert( profiles_ptr.begin()   , "ADD PROFILES" ); //Primera Opcion
-  profiles_ptr.insert( profiles_ptr.begin()+1 , "DELETE PROFILES" );  //Segunda Opcion
-
   Cursor cursor( profiles_ptr , display );
   const char* profile_selected = cursor.getSelectedOption();
   
@@ -109,7 +99,7 @@ void Interface::profiles(void){
 
 }
 
-void edit(void){
+void Interface::edit(void){
 
   PROGMEM std::vector<String> edit_options = {
     "ADD PROFILE",
@@ -119,29 +109,15 @@ void edit(void){
   };
 
   Cursor cursor( edit_options , display );
-  const char* edit_option_selected = cursor.getSelectedOption();
+  int edit_option_selected = cursor.getSelectedOption_number();
 
-  //Si el usuario no selecciono ninguna o hubo algun problema
-  if(edit_option_selected == nullptr) return;
-
-  if(strcmp(edit_option_selected, "ADD PROFILE") == 0){         // Crear perfil
-  Interface::addProfile();
-  return;
-  }
-
-  if(strcmp(edit_option_selected, "DELETE PROFILE") == 0){      // Eliminar perfil
-  Interface::addProfile();
-  return;
-  }
-
-  if(strcmp(edit_option_selected , "ADD SUBPROFILE") == 0){     // Agregar subperfil
-  Interface::addSubProfile();
-  return;
-  }
-
-  if(strcmp(edit_option_selected , "DELETE SUBPROFILE") == 0){  // Eliminar subperfil
-  Interface::deleteSubProfile();
-  return;
+  switch (edit_option_selected) {
+  default:
+  case -1: return; //Si el usuario no selecciono ninguna o hubo algun problema
+  case 0: Interface::addProfile();        break; // Crear perfil
+  case 1: Interface::deleteProfile();     break; // Eliminar perfil
+  case 2: Interface::addSubProfile();     break; // Agregar subperfil
+  case 3: Interface::deleteSubProfile();  break; // Eliminar subperfil
   }
 
 }
@@ -176,7 +152,7 @@ void Interface::addProfile(void){
   display.println(F("Do you want to add"));
   display.setCursor(6,20);
   display.println(F("a Subprofile Now?"));
-  display.setCursor(20,30);
+  display.setCursor(20,30);  
   display.println(F("Press Enter To "));
   display.setCursor(10,40);
   display.println(F("Continue. Press any"));
@@ -210,7 +186,6 @@ void Interface::addProfile(void){
   std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
   if( subProfileName.empty() ) return; // SI no recibo ningun nombre...
 
-  
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
   SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
@@ -281,10 +256,8 @@ void Interface::addSubProfile(std::string profileSelected){
     Cursor cursor(namesProfile,display);
     const char* buffer = cursor.getSelectedOption();
 
-    if(buffer == nullptr)
-      return;
+    if(buffer == nullptr) return;
     profileSelected = buffer;
-
 
   }
 

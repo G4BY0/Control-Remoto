@@ -84,6 +84,10 @@ namespace Interface {
   */
   void profiles(void);
 
+  /*! \brief Menu de edicion de perfiles y subperfiles
+      \note Generara una interacion entre el usuario otorgandole permisos de movimiento de perfiles y subperfiles*/
+  void edit(void);
+
   /*! \brief    Interfaz del modo "addProfile" a la salida del display
   */
   void addProfile(void);
