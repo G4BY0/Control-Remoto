@@ -100,7 +100,7 @@ namespace Interface {
   
   /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
-  void createSubProfile(std::string profileSelected = std::string(""));
+  void addSubProfile(std::string profileSelected = std::string(""));
 
   /*! \brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
   */

@@ -35,7 +35,7 @@ void MODE::hub(void){
 void MODE::profiles(void)           { Interface::profiles();          }
 void MODE::addProfile(void)         { Interface::addProfile();        }
 void MODE::deleteProfile(void)      { Interface::deleteProfile();     }
-void MODE::addSubProfile(void)      { Interface::createSubProfile();  }
+void MODE::addSubProfile(void)      { Interface::addSubProfile();  }
 void MODE::deleteSubProfile(void)   { Interface::deleteSubProfile();  }
 
 void MODE::help(void)               { helpQR(URL_USER_HELP , QRVERSION ); /*Apartado de Joaco Para el desarrollo de la pagina*/ }

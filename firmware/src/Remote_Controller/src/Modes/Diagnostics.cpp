@@ -33,9 +33,10 @@ void MODE::showDiagnostics(void){
     display.printf( "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false"  );  
   
     // Memoria disponible aun
-    display.printf("Free memory: %llu\n" ,[freespace = SD.totalBytes() - SD.usedBytes()] () -> uint64_t{
+    display.printf("Free memory: %llu\n" ,[freespace = SD.cardSize() - SD.usedBytes()] () -> uint64_t{
       return (freespace == 0ull) ? 0ull : ( std::log10(freespace) + 1ull );
     }());
+    
     // display.printf("== %d subprofiles" ,( SD.totalBytes() - SD.usedBytes() ) / sizeof(storedIRDataStruct) ); //Masomenos el total de subperfiles a agregar disponibles
     //display.printf("Total mAh Bat: %d" ,batteryPercentage() ); // Total mili Ampere Hora de bateria
     

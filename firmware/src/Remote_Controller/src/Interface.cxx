@@ -101,23 +101,48 @@ void Interface::profiles(void){
   Cursor cursor( profiles_ptr , display );
   const char* profile_selected = cursor.getSelectedOption();
   
-  //Si el usuario no selecciono nada o hubo algun problema
+  //Si el usuario no selecciono ninguna o hubo algun problema
   if(profile_selected == nullptr) return;
 
-  /* (BUG)
-  if(strcmp(profile_selected, "ADD PROFILES") == 0){
+  //Muestro los subperfiles del perfil seleccionado por el usuario
+  Interface::subProfiles( profile_selected );
+
+}
+
+void edit(void){
+
+  PROGMEM std::vector<String> edit_options = {
+    "ADD PROFILE",
+    "DELETE PROFILE",
+    "ADD SUBPROFILE",
+    "DELETE SUBPROFILE"
+  };
+
+  Cursor cursor( edit_options , display );
+  const char* edit_option_selected = cursor.getSelectedOption();
+
+  //Si el usuario no selecciono ninguna o hubo algun problema
+  if(edit_option_selected == nullptr) return;
+
+  if(strcmp(edit_option_selected, "ADD PROFILE") == 0){         // Crear perfil
   Interface::addProfile();
   return;
   }
 
-  if(strcmp(profile_selected , "DELETE PROFILES") == 0){
-  Interface::deleteProfile();
+  if(strcmp(edit_option_selected, "DELETE PROFILE") == 0){      // Eliminar perfil
+  Interface::addProfile();
   return;
   }
-  */
 
-  //Muestro los subperfiles del perfil seleccionado por el usuario
-  Interface::subProfiles( profile_selected );
+  if(strcmp(edit_option_selected , "ADD SUBPROFILE") == 0){     // Agregar subperfil
+  Interface::addSubProfile();
+  return;
+  }
+
+  if(strcmp(edit_option_selected , "DELETE SUBPROFILE") == 0){  // Eliminar subperfil
+  Interface::deleteSubProfile();
+  return;
+  }
 
 }
 
@@ -228,16 +253,6 @@ void Interface::subProfiles(const char *profileName_){
   
     if(strcmp(subprofile_selected, "") == 0) return; // Si no se selecciono ninguno...
 
-    if(subprofile_selected == "ADD SUBPROFILE"){
-    Interface::createSubProfile(profileName_);
-    return;
-    }
-
-    if(subprofile_selected == "DELETE SUBPROFILE"){
-    Interface::deleteSubProfile(profileName_);
-    return;
-    }
-
     // Informacion a enviar a la salida
     auto IRToSend = SubProfiles::returnSubProfile( profileName_ , subprofile_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
     if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
@@ -250,7 +265,7 @@ void Interface::subProfiles(const char *profileName_){
 
 }
 
-void Interface::createSubProfile(std::string profileSelected){
+void Interface::addSubProfile(std::string profileSelected){
 
   if(profileSelected.empty()){
 

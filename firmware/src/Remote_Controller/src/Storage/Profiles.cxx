@@ -28,9 +28,8 @@ void SDBegin(void){
 
   // Inicializar la comunicación con la tarjeta SD
   if (!SD.begin()) {
-    Serial.println(F("Error al inicializar el almacenamiento."));
-    Serial.println(F("Esperando respuesta del almacenamiento..."));
-    while (!SD.begin());
+    Serial.println(F("Failed to comunicate with external storage."));
+    return;
   }
 
   // Archivo necesario para la necesidad de querer borrar subperfiles, espacio reservado para exclusivamente esa funcionalidad
