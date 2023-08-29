@@ -1,0 +1,2 @@
+Adentro de la carpeta "invertidos" estan los pdf con el pcb invertido, es decir, en modo espejo.
+Que chimba este .txt parce
