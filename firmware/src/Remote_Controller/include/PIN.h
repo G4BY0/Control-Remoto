@@ -23,7 +23,7 @@ namespace PIN{
   
   namespace Energy{
 
-    PROGMEM constexpr uint8_t BATTERY = 35U; // Despues ver este pin que lo puse por tirar para probar el codigo
+    PROGMEM constexpr uint8_t BATTERY = 35U; 
 
   };
 
@@ -33,7 +33,7 @@ namespace PIN{
   };
 
   namespace InfraredReceiver{
-    PROGMEM constexpr uint8_t DATA   = 15U;     
+    PROGMEM constexpr uint8_t DATA   = 13U;     
   };
 
   namespace InfraredTransmitter{
@@ -41,11 +41,11 @@ namespace PIN{
   };
 
   namespace Buttons{
-    PROGMEM constexpr uint8_t UP     = 13U;
-    PROGMEM constexpr uint8_t DOWN   = 12U;
-    PROGMEM constexpr uint8_t LEFT   = 14U;
+    PROGMEM constexpr uint8_t UP     = 26U;
+    PROGMEM constexpr uint8_t DOWN   = 14U;
+    PROGMEM constexpr uint8_t LEFT   = 32U;
     PROGMEM constexpr uint8_t RIGHT  = 27U;
-    PROGMEM constexpr uint8_t BACK   = 26U;
+    PROGMEM constexpr uint8_t BACK   = 33U;
     PROGMEM constexpr uint8_t ENTER  = 25U;
   };
 
