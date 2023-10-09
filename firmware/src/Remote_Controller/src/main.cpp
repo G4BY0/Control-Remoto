@@ -51,21 +51,12 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
 void setup(){
     
-    Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
+    Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 );
 
-    // while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
-    delay(1250);
-
-
-    // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
+    // Configuracion de protocolo de comunicacion para el almacenamiento
     spi=SPIClass(VSPI); 
     spi.begin();
     
-    #ifdef DEBUG
-    // Just to know which program is running on my Sketch
-    Serial.println(F("START " __FILE__ " from " __DATE__ "."));
-    #endif
-
     // Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado."));
 
@@ -77,11 +68,9 @@ void setup(){
 
     // Inicializacion del sistema del infrarrojo
     infraredBegin();    Serial.println(F("Infrared Inicializado."));
-
+    
     // configSaved(); // (Canceled) De momento cancelado hasta nuevo aviso
 
-    
-   
     // Espero a que todos los procesos terminen para inicializar
     Serial.flush(); yield();
     /*

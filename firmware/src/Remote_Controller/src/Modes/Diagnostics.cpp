@@ -33,8 +33,8 @@ void MODE::showDiagnostics(void){
     display.printf( "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false"  );  
   
     // Memoria disponible aun
-    display.printf("Free storage: %llu\n" ,[freespace = SD.cardSize() - SD.usedBytes()] () -> uint64_t{
-      return (freespace == 0ull) ? 0ull : ( std::log10(freespace) + 1ull );
+    display.printf("Free storage: %llu\n" ,[&] () -> uint64_t{
+      return (SD.cardSize() - SD.usedBytes() == 0ull) ? 0ull : ( std::log10(SD.cardSize() - SD.usedBytes()) + 1ull );
     }());
     
     //Velocidad de CPU

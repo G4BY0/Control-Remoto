@@ -71,8 +71,8 @@ void __sleep(uint32_t Seconds);
     \note El boton BACK se debe mantener presionado en SLEEP_TIME_BUTTONPRESSING O En Caso de no presionar ningun boton en */
 void Task_AFK(void* __nonParameter);
 
-//Tarea de ejecucion en el momento de reinicio
-void restart_now(void* __nonParameter);
+//Funcion de ejecucion en el momento de reinicio, no retorna
+void restart_now(void);
 
 /*! \brief Stoppea todos los servicios y pone en modo sleeping a la placa de desarrollo */
 void ShutDown_now(void);

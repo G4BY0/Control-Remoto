@@ -10,7 +10,7 @@
 #include "Infrared.h"
 
 // The IR transmitter.
-IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, false);
+IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, 0);
 // The IR receiver.
 IRsend irsend(kIrLedPin);
 // Somewhere to store the captured message.
@@ -29,13 +29,13 @@ void infraredBegin(void){
 }
 
 void Receive_start(void){
+  Serial.flush();
   // Inicializacion del IRReceiver
   irrecv.enableIRIn();  // Start up the IR receiver.
   irrecv.resume(); // Resume receiver
 }
 
 bool Receive_check(void){
-
   // Logica de checkeo si la informacion recibida es correcta o incorrecta...
   return ( irrecv.decode(&results) ? true : false );
   

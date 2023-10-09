@@ -350,6 +350,7 @@ bool Interface::waitingForIR(void){
   Receive_start();
   //Mientras el codigo recibido sea invalido...
   while( !Receive_check() ){
+
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
         buttonState(PIN::Buttons::UP)     ||
@@ -358,7 +359,7 @@ bool Interface::waitingForIR(void){
         buttonState(PIN::Buttons::RIGHT)  ||
         buttonState(PIN::Buttons::ENTER)    ) {
       Receive_stop();
-      Serial.println(F("End Receiving for infrared signals."));
+      Serial.println(F("Canceled Receiving infrared signal."));
       delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
       return false; //Failure, se cancelo
     }
