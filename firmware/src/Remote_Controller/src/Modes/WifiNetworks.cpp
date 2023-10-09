@@ -36,9 +36,10 @@ void MODE::wifiNetworks(void){
 
     Serial.print(F("Conectando a WiFi... "));
     //Si no se conecta... espera hasta conectarse (senializo con LED_BUILTIN la reconexion)
+    const bool wifi_current_status = WiFi.status();
     for(auto waitingTime = millis() ; WiFi.status() != WL_CONNECTED ; ) {
 
-      if( WiFi.status() == WL_CONNECT_FAILED){
+      if( wifi_current_status == WL_CONNECT_FAILED){
         Serial.println(F("Conexion WiFi Perdida."));
         break;
       }

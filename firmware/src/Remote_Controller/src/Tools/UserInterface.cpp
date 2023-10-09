@@ -32,64 +32,80 @@ void UI_t::batteryPercentage(char* buffer){
 
 }
 
-void UI_t::graphic(UI_position manifest){
-  buffer << [&]() -> std::string {
-    std::string _spaces;
-    std::string buff = buffer.str();
-    for(std::string::iterator it = buff.begin(); it != buff.end(); it++)
-      buffer << " ";
-    return _spaces;
-  }();
-  display.setTextColor(SH110X_BLACK);
+void UI_t::graphic(void){
+
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
-  switch (manifest){
-    
-  case UI_position::UPPERLEFT_CORNER:
-    display.setCursor(0,0);
-    display.print(buffer.str().c_str());
-    display.setCursor(0,0);
-    break;
+  display.setTextColor(SH110X_BLACK);
+  display.drawRect(0,0,128,8,SH110X_BLACK);
 
-  case UI_position::UPPERRIGHT_CORNER:
-    display.setCursor(58,0);
-    display.print(buffer.str().c_str());
-    display.setCursor(58,0);
-    // (dev) Aun no testeado
-    break;
-
-  case UI_position::LOWERLEFT_CORNER:
-    display.setCursor(0,58);
-    display.print(buffer.str().c_str());
-    display.setCursor(0,58);
-    break;
-
-  case UI_position::LOWERRIGHT_CORNER:
-    display.setCursor(58,58);
-    display.print(buffer.str().c_str());
-    display.setCursor(58,58);
-    // (dev) Aun no testeado
-    break;
-  
-  }
+  display.setCursor(0,0);
   display.setTextColor(SH110X_WHITE);
-  buffer.str("");
   //Tiempo
-  if(time_status == true){
-      time_RTC = RTC.getTimeStruct(); // Sincronizo el tiempo a mostrar con el clock del sistema
-      char clock_str[13] = {'\0'};
-      Interface::clock(time_RTC, clock_str);
-      buffer << clock_str;
-      buffer << " ";
+  if(show_time == true && WiFi.status() == WL_CONNECTED){
+    time_RTC = RTC.getTimeStruct(); // Sincronizo el tiempo a mostrar con el clock del sistema
+    char clock_str[13] = {'\0'};
+    Interface::clock(time_RTC, clock_str);
+    display.print(clock_str);
+    display.print(' ');
   }
+
   //Nivel de bateria en porcentaje
-  if(battery_status == true){
+  if(show_battery == true){
     /*(DEV) - FEATURE: SIMBOLS 
     wchar_t* battery_str[5] = {'\0'};*/
     char battery_str[5] = {'\0'};
     batteryPercentage(battery_str);
-    buffer << battery_str;
+    display.print(battery_str);
+    display.setFont(&icons_UI);
+    //display.print();
+    display.setFont(NULL);
   }
-  display.print(buffer.str().c_str());
+  if(WIFI_SERVICE_STATUS == true){
+    bool wifi_current_status = WiFi.status();
+    display.setFont(&icons_UI);
+    if(wifi_current_status == WL_CONNECTED){ //When WiFi is conected
+      const int8_t wifi_signal = map(WiFi.RSSI(), -127, 0, 1, 5); // dbm Unit
+      switch (wifi_signal){
+        case 1: display.print(36); break;
+        case 2: display.print(37); break;
+        case 3: display.print(38); break;
+        case 4: display.print(39); break;
+        case 5: display.print(40); break;
+      }
+    }
+    else display.print(49); // For disconnected
+    display.setFont(NULL);
+  }
+  
+  //Almacenamiento porcentaje usado
+  if(show_storage == true){
+    display.setFont(&icons_UI);
+    const uint64_t &&storage_max_size = SD.cardSize();
+    const uint64_t &&storage_used = SD.usedBytes();
+    if(!SD.begin()) {
+      display.print(F("N/A"));
+      display.setFont(&icons_UI);
+      //display.print();
+      display.setFont(NULL);
+    } else{
+
+      //Hago mi propia funcion map() pero para que retorne uint64_t
+      auto map_uint16_t = [](unsigned long long x, unsigned long long in_min, unsigned long long in_max, unsigned long long out_min, unsigned long long out_max) -> uint64_t {
+      if (in_max <= in_min || out_max <= out_min) { // Asegurarse de que los límites sean válidos
+          return x;
+      }
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min; // Realizar el mapeo
+      };
+
+      display.print(map_uint16_t(SD.cardSize() - SD.usedBytes(), 0ull , SD.cardSize() , 0 , 100));
+      display.setFont(&icons_UI);
+      //display.print();
+      display.setFont(NULL);
+
+    }
+    
+  }
+
   display.flush();
   display.display();
   xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
@@ -100,7 +116,7 @@ void UI_t::run(void){
 
   //Task Asincronico para el UI
   xTaskCreate(
-    UI_async,                    //Funcion codigo del Task
+    UI_async,                   //Funcion codigo del Task
     "Task_UI",                  //Nombre del Task 
     3000U,                      //Reserva de espacio en la Pila 
     NULL,                       //Argumentos
@@ -111,7 +127,6 @@ void UI_t::run(void){
 } 
 
 void UI_async(void* nonParameters){
-  buffer.str("");
   while(1){
     if(UI.show == true)
       UI.graphic();
@@ -130,80 +145,3 @@ UI_t::UI_t(void){ }
 UI_t::~UI_t(void){ }
 
 UI_t UI;
-
-/*
-// Four tiles for a battery icon of 16x16.
-  // The bitmap for the tiles is vertical!
-  //    The first byte are the pixels on the left.
-  //    The lowest bit is the pixel on top.
-  PROGMEM const uint8_t batteryTile[] = 
-  { 
-    // The upper-left 8x8 pixels:
-    0x00, 0x00, 0xF8, 0x0C, 0x04, 0x02, 0x02, 0x02, 
-    // The upper-right 8x8 pixels:
-    0x02, 0x02, 0x02, 0x04, 0x0C, 0xF8, 0x00, 0x00, 
-    // The lower-left 8x8 pixels:
-    0x00, 0x00, 0x7F, 0x40, 0x40, 0x40, 0x40, 0x40, 
-    // The lower-right 8x8 pixels:
-    0x40, 0x40, 0x40, 0x40, 0x40, 0x7F, 0x00, 0x00, 
-  };
-
-  const uint8_t && battery_percent = map( analogRead(PIN::Energy::BATTERY) , 0 , 1024 , 0 , 100 );
-
-  uint8_t tiles[sizeof(batteryTile)];
-
-  memcpy(tiles, batteryTile, 32);
-  PROGMEM constexpr uint8_t  batX = 12;     // the 'x' (column) of the upper-left of the battery
-  PROGMEM constexpr uint8_t batY = 3;     // the 'y' (row) of the upper-left of the battery
-
-  // There are 12 lines to draw inside the battery.
-  // Zero lines is also an option, so there are 13 possible levels.
-  // There are 6 lines in the lower part and 6 lines in the upper part
-  uint8_t lines = battery_percent / 8U; // might need some tuning near 0% and 100%
-  lines = constrain( lines, 0, 12);     // for safety
-  uint8_t lowerlines = min( (const uint8_t) uint8_t(6U), lines);      // 0...6 lines in the lower part
-  uint8_t upperlines = 0U;
-  if( lines > 6U)
-  upperlines = lines - 6U;
-
-  // The lines are over 4 bytes, and the tiles are vertical.
-  // I can not think of any good code, so I just put down what it should do.
-
-  // lower-left
-  for( uint8_t i=3U; i<8U; i++)
-  {
-    for( uint8_t j=0U; j<lowerlines; j++)
-      bitSet( tiles[i+16U], 7-(j+2U));
-  }
-
-  // lower-right
-  for( uint8_t i=0U; i<5U; i++)
-  {
-    for( uint8_t j=0; j<lowerlines; j++)
-      bitSet( tiles[i+24U], 7U-(j+2U));
-  }
-
-  // upper-left
-  for( uint8_t i=3U; i<8U; i++)
-  {
-    for( uint8_t j=0; j<upperlines; j++)
-      bitSet( tiles[i], 7U-j);
-  }
-
-  // upper-right
-  for( uint8_t i=0U; i<5U; i++)
-  {
-    for( uint8_t j=0; j<upperlines; j++)
-      bitSet( tiles[i+8U], 7U-j);
-  }
-
-  //display.drawTile( batX, batY,   2, tiles);                      // 50%-100%
-  display.drawBitmap(batX, batY, tiles, 0, 8, SH110X_WHITE);        // 50%-100%
-  //display.drawTile( batX, batY+1, 2, (uint8_t *) tiles + 16U);    // 50%-0%
-  display.drawBitmap(batX, batY+1, tiles+16U, 0, 8, SH110X_WHITE);  // 50%-0%
-  // Bloquear el semáforo
-  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
-
-  // Desbloquear el semáforo
-  xSemaphoreGive( semaphoreDisplay );
-*/

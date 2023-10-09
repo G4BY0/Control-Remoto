@@ -18,8 +18,7 @@
 #include "Interface.h"
 #include "System.h"              //Para el manejo del mutex del display
 
-// Mario's Ideas
-// Text input using OLED display an 5 Key Keyboard
+#define CURSOR_SYMBOL '>'
 
 /*! @brief Cursor que se desplaza a traves del display*/
 class Cursor {
@@ -46,11 +45,17 @@ public:
   */
   Cursor(const std::vector<String>& menuOptions ,Adafruit_SH1106G& display ,const uint8_t MAX_LINE_OPTIONS_OUTPUT = 5U ,const uint16_t _x = 0U ,const uint16_t _y = 10U);
 
-  /*! \brief Inicia bucle infinito 
-      \returns
-      \note Lo muestra en el screen Oled
+  /*! \brief Inicia el proceso de interacion con el usuario
+      \returns Opcion seleccionada (en string)
+      \note Hasta que el usuario no termine la interaccion con el cursor, esta funcion no termina.
   */
   const char* getSelectedOption(void);
+
+  /*! \brief Inicia el proceso de interacion con el usuario
+      \returns Opcion seleccionada (el numero en base al array/vector recibido)
+      \note Hasta que el usuario no termine la interaccion con el cursor, esta funcion no termina.
+  */
+  int32_t getSelectedOption_number(void);
 
 private:
   
@@ -77,19 +82,5 @@ private:
   */
   void clearPage(void);
 };
-
-
-
-/*! \brief Cursor que Se planteaba usar y quedo en desuso
-    \deprecated Reemplazado por "Cursor" */
-namespace CursorUltimate{
-
-  /*! \brief Proceso de seleccion para el usuario
-      \return String seleccionado
-      \note Si se cancela la seleccion, retorna 'nullptr'
-      \deprecated Reemplazado por "Cursor" */
-  const char* [[deprecated("Se reemplazo por Cursor, esta en desuso, no esta terminado y tiene errores")]] getOption( std::vector<std::string> Strings , const size_t CantidadDeStrings , Adafruit_SH1106G* OLEDObject_ptr );
-
-}
 
 #endif //Cursor_h

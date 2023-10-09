@@ -62,27 +62,20 @@ uint8_t Interface::hub(void){
 
   //Opciones del menu Principal/Hub
   PROGMEM std::vector<std::string> strings  = { 
-    "PROFILES" , 
-    "ADD PROFILE" , 
-    "DELETE PROFILE" , 
-    "ADD SUBPROFILE" , 
-    "DELETE SUBPROFILE" , 
-    "HELP" , 
+    "PROFILES", 
+    "EDIT",
+    "HELP", 
     "SHUTDOWN",
     "DIAGNOSTICS" 
   };
 
   //Cursor Para Hacer el manejo del Hub
   Cursor cursor( strings , display );
-  const char* selected;
+  int selected;
 
-  do{ selected = cursor.getSelectedOption(); } 
-  while(selected == nullptr);
-
-  //Busco el numero de la opcion seleccionada y lo retorno
-  for( auto it = strings.begin() ; it != strings.end() ; it++ )
-    if(strcmp( selected , it->c_str() ) == 0) 
-      return std::distance(strings.begin(), it); 
+  do{ selected = cursor.getSelectedOption_number(); } 
+  while(selected == -1);
+  return selected;
 }
 
 void Interface::profiles(void){
@@ -95,29 +88,37 @@ void Interface::profiles(void){
     return; // El puntero es nulo, salir de la función
   }
 
-  profiles_ptr.insert( profiles_ptr.begin()   , "ADD PROFILES" ); //Primera Opcion
-  profiles_ptr.insert( profiles_ptr.begin()+1 , "DELETE PROFILES" );  //Segunda Opcion
-
   Cursor cursor( profiles_ptr , display );
   const char* profile_selected = cursor.getSelectedOption();
   
-  //Si el usuario no selecciono nada o hubo algun problema
+  //Si el usuario no selecciono ninguna o hubo algun problema
   if(profile_selected == nullptr) return;
-
-  /* (BUG)
-  if(strcmp(profile_selected, "ADD PROFILES") == 0){
-  Interface::addProfile();
-  return;
-  }
-
-  if(strcmp(profile_selected , "DELETE PROFILES") == 0){
-  Interface::deleteProfile();
-  return;
-  }
-  */
 
   //Muestro los subperfiles del perfil seleccionado por el usuario
   Interface::subProfiles( profile_selected );
+
+}
+
+void Interface::edit(void){
+
+  PROGMEM std::vector<String> edit_options = {
+    "ADD PROFILE",
+    "DELETE PROFILE",
+    "ADD SUBPROFILE",
+    "DELETE SUBPROFILE"
+  };
+
+  Cursor cursor( edit_options , display );
+  int edit_option_selected = cursor.getSelectedOption_number();
+
+  switch (edit_option_selected) {
+  default:
+  case -1: return; //Si el usuario no selecciono ninguna o hubo algun problema
+  case 0: Interface::addProfile();        break; // Crear perfil
+  case 1: Interface::deleteProfile();     break; // Eliminar perfil
+  case 2: Interface::addSubProfile();     break; // Agregar subperfil
+  case 3: Interface::deleteSubProfile();  break; // Eliminar subperfil
+  }
 
 }
 
@@ -151,7 +152,7 @@ void Interface::addProfile(void){
   display.println(F("Do you want to add"));
   display.setCursor(6,20);
   display.println(F("a Subprofile Now?"));
-  display.setCursor(20,30);
+  display.setCursor(20,30);  
   display.println(F("Press Enter To "));
   display.setCursor(10,40);
   display.println(F("Continue. Press any"));
@@ -185,7 +186,6 @@ void Interface::addProfile(void){
   std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
   if( subProfileName.empty() ) return; // SI no recibo ningun nombre...
 
-  
   //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
   SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
@@ -228,16 +228,6 @@ void Interface::subProfiles(const char *profileName_){
   
     if(strcmp(subprofile_selected, "") == 0) return; // Si no se selecciono ninguno...
 
-    if(subprofile_selected == "ADD SUBPROFILE"){
-    Interface::createSubProfile(profileName_);
-    return;
-    }
-
-    if(subprofile_selected == "DELETE SUBPROFILE"){
-    Interface::deleteSubProfile(profileName_);
-    return;
-    }
-
     // Informacion a enviar a la salida
     auto IRToSend = SubProfiles::returnSubProfile( profileName_ , subprofile_selected ); //Pido del almacenamiento la informacion de la señal a transmitir del subperfil dado
     if( IRToSend == nullptr ){ // Si no se encuentra almacenada o hubo un error inesperado...
@@ -250,7 +240,7 @@ void Interface::subProfiles(const char *profileName_){
 
 }
 
-void Interface::createSubProfile(std::string profileSelected){
+void Interface::addSubProfile(std::string profileSelected){
 
   if(profileSelected.empty()){
 
@@ -266,10 +256,8 @@ void Interface::createSubProfile(std::string profileSelected){
     Cursor cursor(namesProfile,display);
     const char* buffer = cursor.getSelectedOption();
 
-    if(buffer == nullptr)
-      return;
+    if(buffer == nullptr) return;
     profileSelected = buffer;
-
 
   }
 
@@ -362,6 +350,7 @@ bool Interface::waitingForIR(void){
   Receive_start();
   //Mientras el codigo recibido sea invalido...
   while( !Receive_check() ){
+
     //Logica de si se llegara a presionar algun boton
     if( buttonState(PIN::Buttons::BACK)   ||
         buttonState(PIN::Buttons::UP)     ||
@@ -370,7 +359,7 @@ bool Interface::waitingForIR(void){
         buttonState(PIN::Buttons::RIGHT)  ||
         buttonState(PIN::Buttons::ENTER)    ) {
       Receive_stop();
-      Serial.println(F("End Receiving for infrared signals."));
+      Serial.println(F("Canceled Receiving infrared signal."));
       delay(DEBOUNCE_TIME); //Rebote del fenomeno del pulsador
       return false; //Failure, se cancelo
     }

@@ -20,6 +20,7 @@
 
 #include "Interface.h"
 #include "System.h"
+#include "Fonts/icons_UI.hpp"
 
 //! \brief UserInterface
 class UI_t{
@@ -31,10 +32,11 @@ private:
   LOWERRIGHT_CORNER = 3
   };
 public:
-    bool show = true; // Initialize enabled in the display
-    bool time_status = false; // If it's true. The time will be shown in the upper-left corner (Doesn't developed yet)
-    bool battery_status = false; // If it's true. The baterry will be shown in the upper-left corner (Doesn't developed yet)
-    TaskHandle_t handle; // No sera valido hasta no hacer run()
+    bool show = false; // If it's true. The User Interface will be shown
+    bool show_time = false; // If it's true. The time will be shown
+    bool show_battery = false; // If it's true. The baterry percentage will be shown
+    bool show_storage = false; // If it's true. The free storage percentage will be shown 
+    TaskHandle_t handle; // handle al task asincronico del UI
 public:
   /*! \brief Constructor*/
   UI_t(void);
@@ -48,7 +50,7 @@ public:
   void stop(void); // Task Delete
   
   /*! \brief Graphic The UI in the output*/
-  void graphic(UI_position manifest = UI_position::UPPERLEFT_CORNER);
+  void graphic(void);
 
 private:
   /*! \brief Obtiene porcentage total de bateria
@@ -59,5 +61,4 @@ private:
 }; extern UI_t UI; // Global manipulation of UI
 
 static void UI_async(void* nonParameters); // Task Asincronico
-static std::ostringstream buffer;
 #endif // USERINTERFACE_H

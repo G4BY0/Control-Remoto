@@ -51,21 +51,12 @@ SPIClass spi; // Medio de Comunicacion con el Almacenamiento
 
 void setup(){
     
-    Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 , 0, 1);
+    Serial.begin(SERIAL_BAUDRATE , SERIAL_8N1 );
 
-    // while (!Serial); // wait for serial port to connect. Needed for native USB port only (SACARLO LUEGO CUANDO SE PONGA EN PLAQUETA ya que no va a estar constantemente leyendo el serial el usuario)
-    delay(1250);
-
-
-    // Voy a usar los puertos de VSPI para la comunicacion SPI (Almacenamiento)
+    // Configuracion de protocolo de comunicacion para el almacenamiento
     spi=SPIClass(VSPI); 
     spi.begin();
     
-    #ifdef DEBUG
-    // Just to know which program is running on my Sketch
-    Serial.println(F("START " __FILE__ " from " __DATE__ "."));
-    #endif
-
     // Inicializacion del sistema del display
     displayBegin();     Serial.println(F("Display Inicializado."));
 
@@ -77,34 +68,9 @@ void setup(){
 
     // Inicializacion del sistema del infrarrojo
     infraredBegin();    Serial.println(F("Infrared Inicializado."));
-
+    
     // configSaved(); // (Canceled) De momento cancelado hasta nuevo aviso
 
-    /* (DEBUGGING)
-    #ifdef WIFI_ON
-    //  Inicializacion del servicio WiFi
-    // Conectar a la red WiFi
-    WiFi.begin(SSID_IN, PASSWORD_IN);
-    Serial.print(F("Conectando a WiFi... "));
-    //Si no se conecta... espera hasta conectarse (senializo con LED_BUILTIN la reconexion)
-    for(auto builtInBlink_time = millis() ; WiFi.status() != WL_CONNECTED ; ) {
-        //Mientras blinkea el led BUILTIN
-        bool ledbuiltIn_state;
-        if(millis() - builtInBlink_time >= 500Ul){ //cada 500 Milisegundos
-            ledbuiltIn_state = !ledbuiltIn_state;
-            digitalWrite(LED_BUILTIN , ledbuiltIn_state);
-            builtInBlink_time = millis();
-        }
-    }
-    digitalWrite(LED_BUILTIN , LOW); // Set Off LED_BUILTIN
-    WIFI_SERVICE_STATUS = true;
-    Serial.println(F("Conectado!"));
-    
-    clockBegin(); // (Dev) De momento cancelado hasta nuevo aviso
-
-    #endif
-    */
-   
     // Espero a que todos los procesos terminen para inicializar
     Serial.flush(); yield();
     /*
@@ -139,8 +105,8 @@ void setup(){
     );
 
     UI.show = true;
-    UI.time_status = false;
-    UI.battery_status = true;
+    UI.show_battery = true;
+    UI.show_storage = true;
     UI.run(); // Task para la User Interface
 
     // Iniciar el scheduler de FreeRTOS

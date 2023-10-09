@@ -52,69 +52,27 @@ void Task_AFK(void* __nonParameter){ // Como la funcion no recibe parametros no 
 #undef SLEEP_TIME_BUTTONPRESSING       
 #undef SLEEP_TIME_AFK
 
-void restart_now(void* __nonParameter){
-    
-    //disconnect WiFi as it's no longer needed
-    WiFi.disconnect(true);
-    WiFi.mode(WIFI_OFF);
-    //Elimino todos los Tasks del sistema
-    vTaskDelete(handleIdle);
-    vTaskDelete(handleBattery);
-    UI.stop();
-    #ifdef CLOCK_ON
-    vTaskDelete(handleClock);
-    #endif
-    #ifdef WIFI_ON
-    vTaskDelete(handleWiFi);
-    #endif
-    #ifdef BLUETOOTH_ON
-    vTaskDelete(handleBluetooth);
-    #endif
-    // Le doy tiempo a los demas Tasks de liberar los recursos que estaban consumiendo
-    vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
-    //Reinicio del Sistema, se despierta del ShutDown
-    #if defined(ESP32) || defined(ESP8266)
-    ESP.restart();
-    #else
-    asm volatile("reset");
-    #endif
-    
-    //Probablemente no se ejecutara porque se reinicia
-    vTaskDelete(NULL);
-
+void restart_now(void){
+  //Reinicio del Sistema
+  ESP.restart();
+  
 }
 
 void ShutDown_now(void) { 
 
-  //Servicio de pantalla off
-  ShutDown::displayService(); 
-  //Servicio de Almacenamiento off
-  ShutDown::SDService();
-  //Servicio de comunicacion SPI off
-  SPI.end(); 
+  ShutDown::displayService(); //Servicio de pantalla off
+  
+  ShutDown::SDService(); //Servicio de Almacenamiento off
+  
+  SPI.end(); //Servicio de comunicacion SPI off
 
-  //Aviso que se entro en el modo ShutDown
-  Serial.println(F("Entrando al modo ShutDown."));
-  // Asegura que se envíen los datos pendientes antes de apagar el Serial
-  Serial.flush(); 
-  //Servicio de comunicacion Serial (Rx/Tx) off
-  Serial.end(); 
 
-  //Servicio de botonera en espera
-  ShutDown::buttonsWaiting();
+  Serial.flush(); // Asegura que se envíen los datos pendientes antes de apagar el Serial
+  
+  Serial.end(); //Servicio de comunicacion Serial (Rx/Tx) off
 
-  // Task para mostrar la bateria en el display de forma dinamica
-  xTaskCreate(
-    restart_now,               // Funcion codigo del Task
-    "restart_now",             // Nombre del Task 
-    1024U,                      // Reserva de espacio en la Pila
-    NULL,                       // Argumentos
-    tskIDLE_PRIORITY + 4U,      // Prioridad
-    NULL                        // Handle 
-  );
-
-  // Código de limpieza y finalización del task
-  vTaskDelete(NULL); // Delete este mismo Task (Idle Task)
+  ShutDown::buttonsWaiting(); //Servicio de botonera en espera
+  restart_now();
 
 }
 
@@ -124,7 +82,7 @@ void ShutDown::SDService(void)     { SD.end(); }
 
 void ShutDown::buttonsWaiting(void){
 
-  //Logica de si se llegara a pulsar cualquier boton
+  //Dando espera a la pulsacion de algun boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
             buttonState(PIN::Buttons::DOWN ) == HIGH  ||

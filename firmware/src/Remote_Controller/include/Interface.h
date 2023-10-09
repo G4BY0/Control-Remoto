@@ -84,6 +84,10 @@ namespace Interface {
   */
   void profiles(void);
 
+  /*! \brief Menu de edicion de perfiles y subperfiles
+      \note Generara una interacion entre el usuario otorgandole permisos de movimiento de perfiles y subperfiles*/
+  void edit(void);
+
   /*! \brief    Interfaz del modo "addProfile" a la salida del display
   */
   void addProfile(void);
@@ -100,7 +104,7 @@ namespace Interface {
   
   /*! \brief    Interfaz del modo "Crear SubPerfil (Pre-Alpha)" almacenados" a la salida del display
   */
-  void createSubProfile(std::string profileSelected = std::string(""));
+  void addSubProfile(std::string profileSelected = std::string(""));
 
   /*! \brief    Interfaz del modo "Eliminar SubPerfil (Pre-Alpha)" a la salida del display
   */

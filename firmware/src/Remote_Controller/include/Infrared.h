@@ -22,7 +22,7 @@
 // The GPIO an IR detector/demodulator is connected to. Recommended: 14 (D5)
 // Note: GPIO 16 won't work on the ESP8266 as it does not have interrupts.
 // Note: GPIO 14 won't work on the ESP32-C3 as it causes the board to reboot.
-constexpr uint16_t kRecvPin = 15U;
+constexpr uint16_t kRecvPin = 13U;
 // GPIO to use to control the IR LED circuit. Recommended: 4 (D2).
 constexpr uint16_t kIrLedPin = 4U;
 // The Serial connection baud rate.
@@ -36,7 +36,7 @@ constexpr uint16_t kCaptureBufferSize = 1024U;
 // message ended.
 constexpr uint8_t kTimeout = 50U;  // Milli-Seconds
 // kFrequency is the modulation frequency all messages will be replayed at.
-constexpr uint16_t kFrequency = 38000;  // in Hz. e.g. 38kHz.
+constexpr uint16_t kFrequency = 38000U;  // in Hz. e.g. 38kHz.
 
 // Storage for the recorded code
 // Estructura de almacenamiento de datos del infrarrojo
