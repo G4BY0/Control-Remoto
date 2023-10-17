@@ -27,7 +27,7 @@ void UI_t::batteryPercentage(char* buffer){
   swprintf(buffer, sizeof(buffer) / sizeof(wchar_t), L"%ld", battery_percentage_wstr);
   */
 
-  sprintf(buffer, "%ld%%" ,map(analogRead(PIN::Energy::BATTERY), 0l , 4095l , 0l , 100l ));
+  sprintf(buffer, "%ld%%" ,map(analogRead(PIN::Energy::BATTERY), 0 , 4095 , 0 , 100 ));
   
 
 }
@@ -127,6 +127,14 @@ void UI_t::run(void){
 } 
 
 void UI_async(void* nonParameters){
+
+  pinMode(PIN::Energy::BATTERY, INPUT);
+  pinMode(PIN::Energy::CHARGE, INPUT);
+  pinMode(PIN::Energy::STANDBY, INPUT);
+  pinMode(PIN::Energy::CIRCUIT_MEDITION,OUTPUT);
+
+  digitalWrite(PIN::Energy::CIRCUIT_MEDITION, HIGH); // Close circuit of medition
+
   while(1){
     if(UI.show == true)
       UI.graphic();
@@ -138,7 +146,10 @@ void UI_async(void* nonParameters){
 }
 
 void UI_t::stop(void){
+
+  digitalWrite(PIN::Energy::CIRCUIT_MEDITION, LOW); // Open circuit of medition
   vTaskDelete(handle);
+
 }
 
 UI_t::UI_t(void){ }

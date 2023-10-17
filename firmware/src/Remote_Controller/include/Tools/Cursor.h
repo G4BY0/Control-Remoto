@@ -57,6 +57,10 @@ public:
   */
   int32_t getSelectedOption_number(void);
 
+  /*! \brief Si deseas que se entrecorte en el caso de que sea muy largo alguna de las opciones
+      \note Tener cuidado al modificarla, porque podria sobrepasar por lo largo que podria ser alguna y puede causar problemas inesperados*/
+  uint8_t CutString = true;
+
 private:
   
   std::vector<std::string> options;

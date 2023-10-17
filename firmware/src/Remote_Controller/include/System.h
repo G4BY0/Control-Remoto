@@ -16,6 +16,7 @@
 #include <freeRTOS/task.h>      //MultiThreading
 #include <freeRTOS/semphr.h>    //Semaphore
 
+#include <esp_sleep.h>
 #include <ESP32Time.h>          //Built-IN RTC
 #ifdef ESP32
 #include <Wifi.h>
@@ -60,6 +61,9 @@ void Task_Idle(void * __nonParameter);
 /*! \brief Realimentacion Constante para el Watch Dog Timer
     \note (BUG) NECESARIO PARA QUE EL PROGRAMA NO CRASHEE*/
 void Task_WatchDogTimer(void* __nonparameter);
+
+/*! \brief Task para preguntar si se desea un reinicio de emergencia */
+void Task_emergencyRestart(void* __nonParameter);
 
 /*! \brief Deja el dispositivo en espera a respuesta del usuario.
     \param Seconds si pasa el tiempo estipulado, se coloca el dispositivo en MODE::ShutDown */

@@ -24,8 +24,9 @@ namespace PIN{
   namespace Energy{
 
     PROGMEM constexpr uint8_t BATTERY = 35U; 
-    PROGMEM constexpr uint8_t BatteryCHARGE = 34U;
-    PROGMEM constexpr uint8_t BatterySTANDBY = 15U;
+    PROGMEM constexpr uint8_t CIRCUIT_MEDITION = 2U;
+    PROGMEM constexpr uint8_t CHARGE = 34U;
+    PROGMEM constexpr uint8_t STANDBY = 15U;
 
   };
 

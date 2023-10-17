@@ -104,6 +104,16 @@ void setup(){
         &handleSleep                    //Handle   
     );
 
+    // Task para preguntar si se desea un reinicio de emergencia
+    xTaskCreate(
+        Task_emergencyRestart,              //Funcion codigo del Task
+        "Task_AskingForEmergencyRestart",   //Nombre del Task 
+        configMINIMAL_STACK_SIZE + 256U,    //Reserva de espacio en la Pila 
+        NULL,                               //Argumentos 
+        tskIDLE_PRIORITY + 2U,              //Prioridad
+        NULL                                //Handle   
+    );
+
     UI.show = true;
     UI.show_battery = true;
     UI.show_storage = true;

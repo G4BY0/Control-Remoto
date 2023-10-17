@@ -109,6 +109,7 @@ void Interface::edit(void){
   };
 
   Cursor cursor( edit_options , display );
+  cursor.CutString = false;
   int edit_option_selected = cursor.getSelectedOption_number();
 
   switch (edit_option_selected) {
@@ -123,6 +124,7 @@ void Interface::edit(void){
 }
 
 void Interface::addProfile(void){
+
   UI.show = false; //UI desactivado
 
   //Inicializo un Writter para recibir del usuario el nombre del nuevo perfil
@@ -138,56 +140,6 @@ void Interface::addProfile(void){
     Interface::EmergencyCalls::noProfileCreated();
     return;
   }
-
-  xSemaphoreTake( semaphoreDisplay , portMAX_DELAY ); // Bloquear el semáforo
-
-  //Pantalla Emergente que le pregunta al usuario si desea agregar un subperfil en este momento
-  //Establezco los parametros a utilizar para la muestra a la salida del display
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SH110X_WHITE);
-
-  //Le digo al usuario por pantalla si desea agregar un Subperfil en este momento
-  display.setCursor(5,10);
-  display.println(F("Do you want to add"));
-  display.setCursor(6,20);
-  display.println(F("a Subprofile Now?"));
-  display.setCursor(20,30);  
-  display.println(F("Press Enter To "));
-  display.setCursor(10,40);
-  display.println(F("Continue. Press any"));
-  display.setCursor(20,50);
-  display.println(F("other to Cancel"));
-
-  display.display();
-  
-  display.flush(); // Flush antes de liberar el mutex
-  xSemaphoreGive(semaphoreDisplay); // Desbloquear el semáforo
-
-  //Hasta que no haya una respuesta de los pulsadores (ENTER para continuar y los demas para Cancelar)
-  while(1){
-    if(buttonState(PIN::Buttons::ENTER) == HIGH ){
-      delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
-      break;
-    } 
-    else if( buttonState(PIN::Buttons::BACK)  == HIGH  ||
-             buttonState(PIN::Buttons::UP)    == HIGH  ||
-             buttonState(PIN::Buttons::DOWN)  == HIGH  ||
-             buttonState(PIN::Buttons::LEFT)  == HIGH  ||
-             buttonState(PIN::Buttons::RIGHT) == HIGH    ){
-      delay(DEBOUNCE_TIME);  // DELAY PARA EL REBOTE DEL PULSADOR DE FENOMENO MECANICO
-      return;
-    }
-  }
-
-  if(waitingForIR() == EXIT_FAILURE) return; //Si se cancela o se recibe un error al recibir la señal infrarroja (Se almacena en el objeto global "IrReceiver")
-
-  //Recbido del usuario (A traves del writter) el nombre del nuevo subperfil
-  std::string subProfileName = writter.stringFinished(); //Recibo el nombre del subperfil seleccionado por el usuario
-  if( subProfileName.empty() ) return; // SI no recibo ningun nombre...
-
-  //Crea un subperfil para la señal recibida con: la señal recibida y los nombres escritos por el usuario
-  SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileName.c_str() ); 
 
 }
 
@@ -217,12 +169,14 @@ void Interface::subProfiles(const char *profileName_){
 
   // Pido del almacenamiento los nombres de los subperfiles del perfil dado
   auto subprofiles = SubProfiles::getSubProfiles(profileName_); 
-  /* (DEBUGGING)
-  subprofiles.insert(  subprofiles.begin() , "ADD SUBPROFILE" ); // Primera Opcion
-  sub profiles.insert(  subprofiles.begin()+1 , "DELETE SUBPROFILE" ); // Segunda Opcion
-  */
+
+  if(subprofiles.empty()){
+    Interface::EmergencyCalls::nonSubProfiles();
+    ESP.restart();
+  }
+
   // Inicializo Un cursor para pedir al usuario que subperfil desea seleccionar
-  Cursor cursor( subprofiles ,display , 2 ); 
+  Cursor cursor( subprofiles ,display ); 
 
   for(const char* subprofile_selected = cursor.getSelectedOption() ; subprofile_selected != nullptr ; subprofile_selected = cursor.getSelectedOption()){
   
@@ -286,7 +240,7 @@ void Interface::addSubProfile(std::string profileSelected){
   xSemaphoreGive( semaphoreDisplay );
 
   //Creo en el almacenamiento el nuevo subperfil en el perfil junto a la informacion
-  SubProfiles::createSubProfile(  subProfileName.c_str() , Protocols::IR , profileSelected.c_str() ); 
+  SubProfiles::createSubProfile(  subProfileName.c_str() , profileSelected.c_str() ); 
 
 }
 
@@ -389,7 +343,7 @@ void Interface::battery(void){
     0x40, 0x40, 0x40, 0x40, 0x40, 0x7F, 0x00, 0x00, 
   };
 
-  const uint8_t && battery_percent = map( analogRead(PIN::Energy::BATTERY) , 0 , 1024 , 0 , 100 );
+  const uint8_t && battery_percent = map( analogRead(PIN::Energy::BATTERY) , 0 , 4095 , 0 , 100 );
 
   uint8_t tiles[sizeof(batteryTile)];
 

@@ -79,28 +79,28 @@ void WritterV2::drawCursor(void) {
     msgToSend[0] = '\0';
     index = 0;
     num = 0;
-    buttonDelay = 0;
+    buttonDelay = -10;
     booleanStringFinished = true;
     return;
     }
     if(buttonState(PIN::Buttons::UP) == HIGH) {
       y -= 10;
-      buttonDelay = 0;
+      buttonDelay = -7;
       transmit = false;
     }
     if(buttonState(PIN::Buttons::DOWN) == HIGH) {
       y += 10;
-      buttonDelay = 0;
+      buttonDelay = -7;
       transmit = false;
     }
     if(buttonState(PIN::Buttons::LEFT) == HIGH) {
       x -= 12;
-      buttonDelay = 0;
+      buttonDelay = -7;
       transmit = false;
     }
     if(buttonState(PIN::Buttons::RIGHT) == HIGH) {
       x += 12;
-      buttonDelay = 0;
+      buttonDelay = -7;
       transmit = false;
     }
     //limit cursor movement
@@ -138,7 +138,7 @@ void WritterV2::drawCursor(void) {
     }
   }
   if (selectDelay >= 3 && buttonState(PIN::Buttons::ENTER) == HIGH) {
-    selectDelay = 0;
+    selectDelay = -7;
     select = true;
     
   }
