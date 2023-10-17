@@ -35,8 +35,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 1.0,
-          "height": 2.0,
-          "width": 3.0
+          "height": 3.0,
+          "width": 2.1
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -474,7 +474,7 @@
     },
     "net_format_name": "",
     "page_layout_descr_file": "",
-    "plot_directory": "",
+    "plot_directory": "./",
     "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
     "spice_model_current_sheet_as_root": true,
