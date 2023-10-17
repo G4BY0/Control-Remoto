@@ -117,43 +117,31 @@ bool Profiles::deleteProfile(const char* name){
 
 }
 
-void SubProfiles::createSubProfile(const char* subProfileName, Protocols protocol, const char* profileName){
+void SubProfiles::createSubProfile(const char* subProfileName, const char* profileName){
 
-  //switch (protocol){
-
-    //case Protocols::IR:
-      auto IRData = storeCode( subProfileName );
-      //(DEBUG)
-      Serial.printf("Nombre de perfil a almacenar: %s\nNombre del subperfil a almacenar: %s" ,profileName ,subProfileName);
+  auto IRData = storeCode( subProfileName );
+  
+  //(DEBUG)
+  Serial.printf("Nombre de perfil a almacenar: %s\nNombre del subperfil a almacenar: %s" ,profileName ,subProfileName);
 
 
-      File root = SD.open( profilePath(profileName) , FILE_WRITE );
+  File root = SD.open( profilePath(profileName) , FILE_WRITE );
 
-      //Si el archivo no esta disponible...
-      if(!root){ 
-        Serial.println(F("The file of the profile cannot be open successfully."));
-        return; 
-      }
+  //Si el archivo no esta disponible...
+  if(!root){ 
+    Serial.println(F("The file of the profile cannot be open successfully."));
+    return; 
+  }
 
-      //Voy hasta el final del archivo
-      root.seek(root.size());
-      //Escritura de la informacion en el archivo
-      root.write((const byte*) IRData.get(), sizeof( *IRData.get() ) );
-      root.flush();
+  //Voy hasta el final del archivo
+  root.seek(root.size());
+  //Escritura de la informacion en el archivo
+  root.write((const byte*) IRData.get(), sizeof( *IRData.get() ) );
+  root.flush();
 
-      Serial.println(F("Successfull Uploaded SubProfile."));
-      Serial.printf("Now the Profile weights %d Bytes\n" , root.size() );
-      root.close();
-
-    //break;
-
-    //case Protocols::WIFI:
-    //break;
-
-    //case Protocols::BLUETOOTH:
-    //break;
-
-  //}
+  Serial.println(F("Successfull Uploaded SubProfile."));
+  Serial.printf("Now the Profile weights %d Bytes\n" , root.size() );
+  root.close();
 
 }
 
@@ -233,9 +221,10 @@ void SubProfiles::deleteSubProfile(const char* profileName, const char* subProfi
     return; //Failure, No se pudo abrir el archivo correctamente 
   }
 
-  storedIRDataStruct object_copy;
   while( old_file.position() != old_file.size() ){
     
+    storedIRDataStruct object_copy;
+
     //Leo en mi buffer lo del fileStream
     old_file.read((byte*)  &object_copy   , sizeof(  object_copy  ));
     

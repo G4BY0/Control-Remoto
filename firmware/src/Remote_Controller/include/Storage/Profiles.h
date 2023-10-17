@@ -74,13 +74,11 @@ namespace SubProfiles{
     using ::storedIRDataStruct;
     using ::Protocols;
 
-    /*! \deprecated En desuso porque no se usara en la version Pre-Alpha
-     *  \brief Crea un subperfil para un perfil
+    /*! \brief Crea un subperfil para un perfil
      *  \param subProfilename Nombre del subperfil
-     *  \param storedIRData Portador de la informacion de la señal
      *  \param profileName Nombre del perfil en el que quiere guardar el subperfil
     */
-    void createSubProfile(const char* subProfileName, Protocols protocol , const char* profileName);
+    void createSubProfile(const char* subProfileName, const char* profileName);
  
     /*! \brief Hace lectura del nombre de los sub-perfiles dentro del almacenamiento del perfil dado
      *  \param name Nombre del perfil

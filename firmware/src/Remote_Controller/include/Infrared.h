@@ -19,12 +19,14 @@
 #include <IRremoteESP8266.h> // Tambien tiene soporte para placas espressif32!
 #include <IRutils.h>
 
+#include "PIN.h"
+
 // The GPIO an IR detector/demodulator is connected to. Recommended: 14 (D5)
 // Note: GPIO 16 won't work on the ESP8266 as it does not have interrupts.
 // Note: GPIO 14 won't work on the ESP32-C3 as it causes the board to reboot.
-constexpr uint16_t kRecvPin = 13U;
+constexpr uint16_t kRecvPin = PIN::InfraredReceiver::DATA;
 // GPIO to use to control the IR LED circuit. Recommended: 4 (D2).
-constexpr uint16_t kIrLedPin = 4U;
+constexpr uint16_t kIrLedPin = PIN::InfraredTransmitter::DATA;
 // The Serial connection baud rate.
 // NOTE: Make sure you set your Serial Monitor to the same speed.
 constexpr uint32_t kBaudRate = 115200;
@@ -34,7 +36,7 @@ constexpr uint32_t kBaudRate = 115200;
 constexpr uint16_t kCaptureBufferSize = 1024U;
 // kTimeout is the Nr. of milli-Seconds of no-more-data before we consider a
 // message ended.
-constexpr uint8_t kTimeout = 50U;  // Milli-Seconds
+constexpr uint8_t kTimeout = 25U;  // Milli-Seconds
 // kFrequency is the modulation frequency all messages will be replayed at.
 constexpr uint16_t kFrequency = 38000U;  // in Hz. e.g. 38kHz.
 

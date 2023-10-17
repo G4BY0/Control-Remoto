@@ -10,7 +10,7 @@
 #include "Infrared.h"
 
 // The IR transmitter.
-IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, 0);
+IRrecv irrecv(kRecvPin, kCaptureBufferSize, kTimeout, false);
 // The IR receiver.
 IRsend irsend(kIrLedPin);
 // Somewhere to store the captured message.

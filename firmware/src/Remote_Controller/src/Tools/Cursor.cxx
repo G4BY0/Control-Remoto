@@ -36,6 +36,7 @@ void Cursor::showCurrentPage() {
     __display.setCursor(_x, _y + it_algebra * 10 );
     if(currentIndex == std::distance(options.begin() , it_str))
       __display.print(CURSOR_SYMBOL);
+    if(CutString){
     __display.print([&it_str](void)->std::string{
       if( it_str->size() > 13U){
         std::string string_result = it_str->substr(0U,12U);
@@ -44,32 +45,13 @@ void Cursor::showCurrentPage() {
       }
       return *it_str;
     }().c_str());
+    } else __display.print(it_str->c_str());
+    
     
   }
-  /*
-  for (uint16_t iterator = currentPage * MAX_LINE_OPTIONS_OUTPUT; 
-    iterator < options.size();
-    iterator++
-    ) {
-    __display.setCursor(0, (iterator - currentPage * MAX_LINE_OPTIONS_OUTPUT + 1U) * 10U);
-    if (iterator == currentIndex) __display.print(CURSOR_SYMBOL); // Si la opcion actual se encuentra el cursor, dibujarlo
-    __display.print([string = options[iterator]](void)->std::string{
-      
-      if( string.size() > 13U){
-        std::string string_result = string.substr(0U,12U);
-        string_result.append("...");
-
-        return string_result;
-      }
-      return string;
-
-    }().c_str());
-    
-  }
-  */
 
   __display.setCursor( 100 , 56 );
-  __display.printf("%2u/%2u" ,currentPage , ceil(options.size() / MAX_LINE_OPTIONS_OUTPUT) );
+  __display.printf("%2u/%2u" ,currentPage+1U, ceil(options.size() / MAX_LINE_OPTIONS_OUTPUT) );
 
   __display.flush(); // Flush antes de liberar el mutex
   __display.display();

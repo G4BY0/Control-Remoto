@@ -21,8 +21,28 @@ void Task_WatchDogTimer(void* parameter) {
 }
 #undef WATCHDOG_FEED_PERIOD_MS
 
+void Task_emergencyRestart(void* __nonParameter){
+
+  for(;;){
+
+    for(uint32_t timeLapsePressing = millis(); buttonState(PIN::Buttons::BACK) == HIGH ;){
+
+      if(millis() - timeLapsePressing >= 5000U){
+        ESP.restart();
+        vTaskDelete(NULL);
+      }
+
+    }
+
+    // Pausar la tarea durante un breve periodo de tiempo
+    vTaskDelay(pdMS_TO_TICKS(500U));
+
+  }
+
+}
+
 void __sleep(uint32_t Seconds){
-  auto countSleep = millis();
+  const uint32_t countSleep = millis();
   //Logica de si se llegara a pulsar cualquier boton
   while(!(  buttonState(PIN::Buttons::BACK ) == HIGH  ||
             buttonState(PIN::Buttons::UP   ) == HIGH  ||
@@ -37,16 +57,15 @@ void __sleep(uint32_t Seconds){
 void Task_AFK(void* __nonParameter){ // Como la funcion no recibe parametros no lo voy a usar el argumento
     while(1){
       for(auto countPressed = millis(); buttonState(PIN::Buttons::BACK) == true; )
-      if ( ( millis() - countPressed ) >= SLEEP_TIME_BUTTONPRESSING ){   
+      if ( ( millis() - countPressed ) >= SLEEP_TIME_BUTTONPRESSING ){
         // Control de modo Sleeping Hasta el tiempo estipulado, si pasa entrara en ShutDown
         __sleep(SLEEP_TIME_WAITING_TO_SHUTDOWN);
         // Pausar la tarea durante un breve periodo de tiempo
-        vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
+        vTaskDelay(pdMS_TO_TICKS(1000U)); 
       }
       // Pausar la tarea durante un breve periodo de tiempo
-      vTaskDelay(pdMS_TO_TICKS(1000U)); // Pausa de 1000 milisegundos (1 segundo)
+      vTaskDelay(pdMS_TO_TICKS(1000U));
     }
-
 }
 #undef SLEEP_TIME_WAITING_TO_SHUTDOWN
 #undef SLEEP_TIME_BUTTONPRESSING       
@@ -65,7 +84,6 @@ void ShutDown_now(void) {
   ShutDown::SDService(); //Servicio de Almacenamiento off
   
   SPI.end(); //Servicio de comunicacion SPI off
-
 
   Serial.flush(); // Asegura que se envíen los datos pendientes antes de apagar el Serial
   
