@@ -283,6 +283,8 @@ void Interface::deleteSubProfile(std::string profileSelected){
 
 bool Interface::waitingForIR(void){
 
+  UI.show = false;
+
   // Bloquear el semáforo
   xSemaphoreTake( semaphoreDisplay , portMAX_DELAY );
 
