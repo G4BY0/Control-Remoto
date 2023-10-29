@@ -130,7 +130,6 @@ void UI_async(void* nonParameters){
 
   pinMode(PIN::Energy::BATTERY, INPUT);
   pinMode(PIN::Energy::CHARGE, INPUT);
-  pinMode(PIN::Energy::STANDBY, INPUT);
   pinMode(PIN::Energy::CIRCUIT_MEDITION,OUTPUT);
 
   digitalWrite(PIN::Energy::CIRCUIT_MEDITION, HIGH); // Close circuit of medition

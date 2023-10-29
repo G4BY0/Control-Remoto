@@ -36,7 +36,7 @@ constexpr uint32_t kBaudRate = 115200;
 constexpr uint16_t kCaptureBufferSize = 1024U;
 // kTimeout is the Nr. of milli-Seconds of no-more-data before we consider a
 // message ended.
-constexpr uint8_t kTimeout = 25U;  // Milli-Seconds
+constexpr uint8_t kTimeout = 50U;  // Milli-Seconds
 // kFrequency is the modulation frequency all messages will be replayed at.
 constexpr uint16_t kFrequency = 38000U;  // in Hz. e.g. 38kHz.
 

@@ -26,7 +26,6 @@ namespace PIN{
     PROGMEM constexpr uint8_t BATTERY = 35U; 
     PROGMEM constexpr uint8_t CIRCUIT_MEDITION = 2U;
     PROGMEM constexpr uint8_t CHARGE = 34U;
-    PROGMEM constexpr uint8_t STANDBY = 15U;
 
   };
 
@@ -36,7 +35,7 @@ namespace PIN{
   };
 
   namespace InfraredReceiver{
-    PROGMEM constexpr uint8_t DATA   = 13U;     
+    PROGMEM constexpr uint8_t DATA   = 15U;     
   };
 
   namespace InfraredTransmitter{
