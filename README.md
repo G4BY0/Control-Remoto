@@ -4,6 +4,8 @@
 
 The purpose of this project is to have in one room, one infrared remote for everything.
 
+https://github.com/G4BY0/Control-Remoto/blob/af7007d788a45e271489a508236b302a6bf80a4f/Picture.jpeg
+
 ## Contents
 
   -[How it works?](#how-it-works?)
