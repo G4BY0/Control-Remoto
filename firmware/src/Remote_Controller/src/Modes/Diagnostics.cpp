@@ -28,9 +28,9 @@ void MODE::showDiagnostics(void){
   
     // Servicios de Clock, Wifi, Bluetooth
     display.println(F("Services:"));
-    display.printf( "Clock: %s\n"     ,__clock      ? "true" : "false"  ); 
-    display.printf( "Wi-Fi: %s\n"     ,__wifi       ? "true" : "false"  ); 
-    display.printf( "Bluetooth: %s\n" ,__bluetooth  ? "true" : "false"  );  
+    display.printf( "Clock: %s\n"     ,__clock      ? "ON" : "OFF"  ); 
+    display.printf( "Wi-Fi: %s\n"     ,__wifi       ? "ON" : "OFF"  ); 
+    display.printf( "Bluetooth: %s\n" ,__bluetooth  ? "ON" : "OFF"  );  
   
     // Memoria disponible aun
     display.printf("Free storage: %llu\n" ,[&] () -> uint64_t{

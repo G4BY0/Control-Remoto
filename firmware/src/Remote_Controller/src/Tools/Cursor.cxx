@@ -66,6 +66,7 @@ void Cursor::clearPage(void){
   uint16_t it_algebra = 0U;
   for(auto it_str = options.begin() + currentPage * MAX_LINE_OPTIONS_OUTPUT ; it_str < options.end() &&  it_algebra < MAX_LINE_OPTIONS_OUTPUT; it_str++,it_algebra++ ){
     __display.setCursor(_x, _y + it_algebra * 10 );
+    if(CutString){
     if(currentIndex == std::distance(options.begin() , it_str))
       __display.print(CURSOR_SYMBOL);
     __display.print([&it_str](void)->std::string{
@@ -76,6 +77,7 @@ void Cursor::clearPage(void){
       }
       return *it_str;
     }().c_str());
+    } else __display.print(it_str->c_str());
     
   }
 

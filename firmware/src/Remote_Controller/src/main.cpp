@@ -116,7 +116,7 @@ void setup(){
 
     UI.show = true;
     UI.show_battery = true;
-    UI.show_storage = true;
+    UI.show_storage = false;
     UI.run(); // Task para la User Interface
 
     // Iniciar el scheduler de FreeRTOS
