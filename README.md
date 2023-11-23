@@ -11,7 +11,7 @@ The purpose of this project is to have in one room, one infrared remote for ever
   -[Hardware](#hardware)
   -[Dependencies](#dependencies)
 
-### How it works? (Software)
+## How it works? (Software)
 
 The structure of the stored Infrared signals is:
 
@@ -26,13 +26,13 @@ Example: LG_TV.db
 
 This files have the binary of infrared signals with the name of their subprofiles.
 
-### Development Status
+## Development Status
 
 Latest Stable Release  [![Release Version](https://img.shields.io/github/release/G4BY0/Control-Remoto.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/latest/) [![Release Date](https://img.shields.io/github/release-date/G4BY0/Control-Remoto.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/latest/) [![Downloads](https://img.shields.io/github/downloads/G4BY0/Control-Remoto/latest/total.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/latest/)
 
 Latest Development Release  [![Release Version](https://img.shields.io/github/release/G4BY0/Control-Remoto/all.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/) [![Release Date](https://img.shields.io/github/release-date-pre/G4BY0/Control-Remoto.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/) [![Downloads](https://img.shields.io/github/downloads-pre/G4BY0/Control-Remoto/latest/total.svg?style=plastic)](https://github.com/G4BY0/Control-Remoto/releases/)
 
-### Hardware
+## Hardware
 
 * [PCB](https://github.com/G4BY0/Control-Remoto/tree/main/hardware)
 * Display Adafruit SH110X
@@ -51,7 +51,7 @@ Latest Development Release  [![Release Version](https://img.shields.io/github/re
 * [Case](https://github.com/G4BY0/Control-Remoto/tree/main/hardware/STL's)
 * Cable USB-C for charging
 
-### Dependencies
+## Dependencies
 
 * [Adafruit BusIO](https://github.com/adafruit/Adafruit_BusIO)
 * [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
